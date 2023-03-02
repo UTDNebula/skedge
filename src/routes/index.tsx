@@ -5,7 +5,7 @@ import { ProfessorProfile } from "./ProfessorProfile"
 
 export const Routing = () => (
   <Routes>
-    <Route path="/" element={<ProfessorProfile />} />
-    <Route path="/about" element={<About />} />
+    <Route path="/" element={<About />} />
+    <Route path="/about" element={<ProfessorProfile />} />
   </Routes>
 )
