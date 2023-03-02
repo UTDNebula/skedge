@@ -3,6 +3,39 @@ export interface fetchProfessor_params {
     lastName: string
 };
 
+export interface fetchCourse_params {
+    subjectPrefix: string,
+    courseNumber: string
+}
+
+export interface requisites {
+    options: Array<any>,
+    required: number,
+    type: string
+}
+
+export interface courseData {
+    __v: number,
+    _id: string,
+    activity_type: string,
+    class_level: string,
+    co_or_pre_requisites: requisites,
+    corequisites: requisites,
+    course_number: string,
+    credit_hours: string,
+    description: string,
+    grading: string,
+    internal_course_number: string,
+    laboratory_contact_hours: string,
+    lecture_contact_hours: string,
+    offering_frequency: string,
+    prerequisites: requisites,
+    school: string,
+    sections: Array<string>,
+    subject_prefix: string,
+    title: string,
+}
+
 export interface office {
     building: string,
     room: string,
