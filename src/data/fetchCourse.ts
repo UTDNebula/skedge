@@ -1,6 +1,6 @@
 
 import fetch from "node-fetch";
-import type { fetchCourse_params, courseData } from "nebulaInterfaces";
+import type { fetchCourse_params, courseData } from "./nebulaInterfaces.js";
 import { unRegister } from "./removeLater.js";
 
 // TO RUN, RUN THIS WITH 
