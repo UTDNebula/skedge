@@ -52,6 +52,21 @@ function getGraphQlUrlProps(professorIds: string[]) {
     return graphQlUrlProps
 }
 
+function fetchWithGraphQl(graphQlUrlProps: any[], resolve) {
+    const graphqlUrl = "https://www.ratemyprofessors.com/graphql";
+
+    Promise.all(graphQlUrlProps.map(u=>fetch(graphqlUrl, u)))
+        .then(responses => Promise.all(responses.map(res => res.json())))
+        .then(ratings => {
+            for (let i = 0; i < ratings.length; i++) {
+                if (ratings[i] != null && ratings[i].hasOwnProperty("data") && ratings[i]["data"].hasOwnProperty("node")) {
+                    ratings[i] = ratings[i]["data"]["node"];
+                }
+            }
+            resolve(ratings)
+        })
+}
+
 export interface RMPRequest {
     professorNames: string[],
     schoolId: string
@@ -70,28 +85,17 @@ export function requestProfessors(request: RMPRequest) {
             .then(texts => {
                 const professorIds = getProfessorIds(texts, request.professorNames)
 
-                const graphqlUrl = "https://www.ratemyprofessors.com/graphql";
-
                 // create fetch objects for each professor id
-                const graphqlUrlProps = getGraphQlUrlProps(professorIds)
+                const graphQlUrlProps = getGraphQlUrlProps(professorIds)
 
                 // fetch professor info by id with graphQL
-                Promise.all(graphqlUrlProps.map(u=>fetch(graphqlUrl, u))).then(responses =>
-                    Promise.all(responses.map(res => res.json()))
-                ).then(ratings => {
-                    for (let i = 0; i < ratings.length; i++) {
-                        if (ratings[i] != null && ratings[i].hasOwnProperty("data") && ratings[i]["data"].hasOwnProperty("node")) {
-                            ratings[i] = ratings[i]["data"]["node"];
-                        }
-                    }
-
-                    console.log(Date.now() - startTime);
-                    resolve(ratings);
-                })
+                fetchWithGraphQl(graphQlUrlProps, resolve)
             }
         ).catch(error => {
             console.log(error)
             reject(error);
         });
+
+        console.log(Date.now() - startTime);
     })
 }
