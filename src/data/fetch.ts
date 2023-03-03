@@ -1,3 +1,5 @@
+import fetch from "node-fetch"
+
 const HEADERS = {
     "Authorization": "Basic dGVzdDp0ZXN0",
     "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/87.0.4280.88 Safari/537.36",
@@ -9,18 +11,24 @@ const PROFESSOR_QUERY = {
     "variables": {}
 }
 
+function getProfessorUrl(professorName: string, schoolId: string): string {
+    return `https://www.ratemyprofessors.com/search/teachers?query=${encodeURIComponent(professorName)}&sid=${btoa(`School-${schoolId}`)}`
+}
+function getProfessorUrls(professorNames: string[], schoolId: string): string[] {
+    const professorUrls = []
+    for (let i = 0; i < professorNames.length; i++) {
+        professorUrls.push(getProfessorUrl(professorNames[i], schoolId))
+    }
+    return professorUrls
+}
+
 export function requestProfessors(request) {
     return new Promise((resolve, reject) => {
         console.log("Running request professors...")
-
-        var professorUrls = [];
-
-        var startTime = Date.now();
+        const startTime = Date.now();
 
         // make a list of urls for promises
-        for (let i = 0; i < request.profNames.length; i++) {
-            professorUrls.push(`https://www.ratemyprofessors.com/search/teachers?query=${encodeURIComponent(request.profNames[i])}&sid=${btoa(`School-${request.schoolId}`)}`);
-        }
+        const professorUrls = getProfessorUrls(request.profNames, request.schoolId)
 
         // fetch professor ids from each url
         Promise.all(professorUrls.map(u=>fetch(u))).then(responses =>
