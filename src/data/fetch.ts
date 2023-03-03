@@ -22,6 +22,19 @@ function getProfessorUrls(professorNames: string[], schoolId: string): string[] 
     return professorUrls
 }
 
+function getProfessorIds(texts: string[], professorNames: string[]): string[] {
+    const professorIds = []
+    texts.forEach(text => {
+        const regex = /"legacyId":(\d+).*?"firstName":"(\w+)","lastName":"(\w+)"/g;
+        for (const match of text.matchAll(regex)) {
+            if (professorNames.includes(match[2] + " " + match[3])) {
+                professorIds.push(match[1]);
+            }
+        }
+    })
+    return professorIds
+}
+
 export interface RMPRequest {
     professorNames: string[],
     schoolId: string
@@ -35,25 +48,16 @@ export function requestProfessors(request: RMPRequest) {
         const professorUrls = getProfessorUrls(request.professorNames, request.schoolId)
 
         // fetch professor ids from each url
-        Promise.all(professorUrls.map(u=>fetch(u))).then(responses =>
-            Promise.all(responses.map(res => res.text()))
-        ).then(texts => {
-                var profIds = [];
-
-                texts.forEach(text => {
-                    const regex = /"legacyId":(\d+).*?"firstName":"(\w+)","lastName":"(\w+)"/g;
-                    for (const match of text.matchAll(regex)) {
-                        if (request.professorNames.includes(match[2] + " " + match[3])) {
-                            profIds.push(match[1]);
-                        }
-                    }
-                })
+        Promise.all(professorUrls.map(u=>fetch(u)))
+            .then(responses => Promise.all(responses.map(res => res.text())))
+            .then(texts => {
+                const professorIds = getProfessorIds(texts, request.professorNames)
 
                 var graphqlUrlProps = [];
                 const graphqlUrl = "https://www.ratemyprofessors.com/graphql";
 
                 // create fetch objects for each professor id
-                profIds.forEach(professorID => {
+                professorIds.forEach(professorID => {
                     HEADERS["Referer"] = `https://www.ratemyprofessors.com/ShowRatings.jsp?tid=${professorID}`
                     PROFESSOR_QUERY["variables"]["id"] = btoa(`Teacher-${professorID}`)
                     graphqlUrlProps.push({
