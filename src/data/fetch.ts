@@ -35,6 +35,23 @@ function getProfessorIds(texts: string[], professorNames: string[]): string[] {
     return professorIds
 }
 
+function getGraphQlUrlProp(professorId: string) {
+    HEADERS["Referer"] = `https://www.ratemyprofessors.com/ShowRatings.jsp?tid=${professorId}`
+    PROFESSOR_QUERY["variables"]["id"] = btoa(`Teacher-${professorId}`)
+    return {
+        method: "POST",
+        headers: HEADERS,
+        body: JSON.stringify(PROFESSOR_QUERY)
+    }
+}
+function getGraphQlUrlProps(professorIds: string[]) {
+    const graphQlUrlProps = []
+    professorIds.forEach(professorId => {
+        graphQlUrlProps.push(getGraphQlUrlProp(professorId))
+    })
+    return graphQlUrlProps
+}
+
 export interface RMPRequest {
     professorNames: string[],
     schoolId: string
@@ -53,19 +70,10 @@ export function requestProfessors(request: RMPRequest) {
             .then(texts => {
                 const professorIds = getProfessorIds(texts, request.professorNames)
 
-                var graphqlUrlProps = [];
                 const graphqlUrl = "https://www.ratemyprofessors.com/graphql";
 
                 // create fetch objects for each professor id
-                professorIds.forEach(professorID => {
-                    HEADERS["Referer"] = `https://www.ratemyprofessors.com/ShowRatings.jsp?tid=${professorID}`
-                    PROFESSOR_QUERY["variables"]["id"] = btoa(`Teacher-${professorID}`)
-                    graphqlUrlProps.push({
-                        method: "POST",
-                        headers: HEADERS,
-                        body: JSON.stringify(PROFESSOR_QUERY)
-                    })
-                })
+                const graphqlUrlProps = getGraphQlUrlProps(professorIds)
 
                 // fetch professor info by id with graphQL
                 Promise.all(graphqlUrlProps.map(u=>fetch(graphqlUrl, u))).then(responses =>
