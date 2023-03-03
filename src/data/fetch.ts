@@ -22,13 +22,17 @@ function getProfessorUrls(professorNames: string[], schoolId: string): string[] 
     return professorUrls
 }
 
-export function requestProfessors(request) {
+export interface RMPRequest {
+    professorNames: string[],
+    schoolId: string
+}
+export function requestProfessors(request: RMPRequest) {
     return new Promise((resolve, reject) => {
         console.log("Running request professors...")
         const startTime = Date.now();
 
         // make a list of urls for promises
-        const professorUrls = getProfessorUrls(request.profNames, request.schoolId)
+        const professorUrls = getProfessorUrls(request.professorNames, request.schoolId)
 
         // fetch professor ids from each url
         Promise.all(professorUrls.map(u=>fetch(u))).then(responses =>
@@ -39,7 +43,7 @@ export function requestProfessors(request) {
                 texts.forEach(text => {
                     const regex = /"legacyId":(\d+).*?"firstName":"(\w+)","lastName":"(\w+)"/g;
                     for (const match of text.matchAll(regex)) {
-                        if (request.profNames.includes(match[2] + " " + match[3])) {
+                        if (request.professorNames.includes(match[2] + " " + match[3])) {
                             profIds.push(match[1]);
                         }
                     }
