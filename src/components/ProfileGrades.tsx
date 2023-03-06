@@ -8,7 +8,7 @@ export interface GradeDistribution {
 
 import { AiFillCaretLeft, AiFillCaretRight } from "react-icons/ai"
 
-const gradeChartOptions = {
+export const gradeChartOptions = {
   plotOptions: {
     bar: {
       distributed: true
