@@ -1,70 +1,15 @@
 import Chart from "react-apexcharts"
 import { useState } from "react"
+import { AiFillCaretLeft, AiFillCaretRight } from "react-icons/ai"
+import { gradeChartOptions } from "~utils/styling";
 
 export interface GradeDistribution {
   name: string;
   series: ApexAxisChartSeries;
 }
 
-import { AiFillCaretLeft, AiFillCaretRight } from "react-icons/ai"
-
-const gradeChartOptions = {
-  plotOptions: {
-    bar: {
-      distributed: true
-    }
-  },
-  dataLabels: {
-    enabled: false
-  },
-  legend: {
-    show: false
-  },
-  colors: [
-    '#79ff57',
-    '#92ff57',
-    '#abff57',
-    '#c4ff57',
-    '#ddff57',
-    '#f7ff57',
-    '#ffee57',
-    '#ffd557',
-    '#ffbc57',
-    '#ffa357',
-    '#ff8957',
-    '#ff7057',
-    '#ff5757',
-    '#b8b8b8',
-  ],
-  chart: {
-    toolbar: {
-      show: false
-    },
-    id: 'grade-distribution'
-  },
-  grid: {
-    padding: {
-      left: 20,
-      right: 20
-    },
-    yaxis: {
-      lines: {
-        show: false
-      }
-    }
-  },
-  xaxis: {
-    categories: ['A+', 'A', 'A-', 'B+', 'B', 'B-', 'C+', 'C', 'C-', 'D+', 'D', 'D-', 'F', 'W']
-  },
-  yaxis: {
-    show: false
-  }
-}
-
-export const ProfileGrades = (props) => {
+export const ProfileGrades = ({ gradeDistributionData } : { gradeDistributionData: GradeDistribution[] }) => {
   const [page, setPage] = useState(0);
-
-  const { gradeDistributionData }:{ gradeDistributionData: GradeDistribution[] } = props;
 
   const prevPage = () => {
     if (page == 0) {
