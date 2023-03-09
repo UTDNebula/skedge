@@ -1,41 +1,7 @@
 import Chart from "react-apexcharts"
+import { ratingsChartOptions } from "~utils/styling";
 
-const ratingsChartOptions = {
-  dataLabels: {
-    enabled: false
-  },
-  chart: {
-    toolbar: {
-      show: false
-    },
-    id: 'ratings-distribution'
-  },
-  grid: {
-    padding: {
-      bottom: -95
-    }
-  },
-  plotOptions: {
-    pie: {
-      startAngle: -90,
-      endAngle: 90,
-      offsetY: 10
-    }
-  },
-  colors: [
-    '#79ff57',
-    '#c4ff57',
-    '#ffee57',
-    '#ffa357',
-    '#ff5757',
-  ],
-  labels: ['5', '4', '3', '2', '1']
-}
-
-export const RmpRatings = (props) => {
-
-  const { ratingsDistributionData }:{ ratingsDistributionData: number[] } = props;
-
+export const RmpRatings = ({ ratingsDistributionData } : { ratingsDistributionData: number[] }) => {
   return (
     <>
       <header className="bg-blue-dark rounded-t-2xl flex">
