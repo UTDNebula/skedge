@@ -6,7 +6,7 @@ export const ProfileHeader = ({ name, profilePicUrl } : { name: string, profileP
   const navigation: NavigateFunction = useNavigate();
 
   const returnToSections = (): void => {
-    navigation("/")
+    navigation(-1)
   }
 
   return (
