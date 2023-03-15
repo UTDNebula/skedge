@@ -1,26 +1,26 @@
+/**
+ * This script runs when we select a course in the Scheduler
+ * - It scrapes the page for course data
+ * - It scrapes the names of instructors
+ * - It injects the instructor names into the section table
+ */
+
 Promise.all([getCourseInfo(), injectAndGetProfessorNames()]).then(([courseData, professors]) => {
   console.log(courseData.subjectPrefix, courseData.courseNumber, professors);
 });
 
-export async function getCourseInfo() {
-  const course = await waitForElement('h1');
-  const courseData = course.innerText.split(" ");
-  return { subjectPrefix: courseData[0], courseNumber: courseData[1] };
-}
-
-export function waitForElement(selector: string): Promise<HTMLElement> {
+/** Gets the first element from the DOM specified by selector */
+function waitForElement(selector: string): Promise<HTMLElement> {
   return new Promise(resolve => {
     if (document.querySelector(selector)) {
       return resolve(document.querySelector<HTMLElement>(selector));
     }
-
     const observer = new MutationObserver(() => {
       if (document.querySelector(selector)) {
         resolve(document.querySelector<HTMLElement>(selector));
         observer.disconnect();
       }
     });
-
     observer.observe(document.body, {
       childList: true,
       subtree: true
@@ -28,7 +28,20 @@ export function waitForElement(selector: string): Promise<HTMLElement> {
   });
 }
 
-export async function injectAndGetProfessorNames(): Promise<string[]> {
+interface CourseHeader {
+  subjectPrefix: string;
+  courseNumber: string;
+}
+
+/** Gets the course prefix and number from the course page */
+async function getCourseInfo(): Promise<CourseHeader> {
+  const course = await waitForElement('h1');
+  const courseData = course.innerText.split(" ");
+  return { subjectPrefix: courseData[0], courseNumber: courseData[1] };
+}
+
+/** Gets all professor names and then injects them into the section table */
+async function injectAndGetProfessorNames(): Promise<string[]> {
   const courseTable = await waitForElement('table')
   const professors = [];
   const courseRows = courseTable.querySelectorAll('tbody');
@@ -36,10 +49,10 @@ export async function injectAndGetProfessorNames(): Promise<string[]> {
   // add Professor header to the table
   const tableHeaders = courseTable.querySelector('thead > tr');
   const newHeader = document.createElement('th');
-  newHeader.innerText = 'Professor';
+  newHeader.innerText = 'Instructor(s)';
   tableHeaders.insertBefore(newHeader, tableHeaders.children[7]);
 
-  courseRows.forEach((courseRow) => {
+  courseRows.forEach(courseRow => {
     // get professor name from course row
     const sectionDetailsButton = courseRow.querySelector<HTMLButtonElement>('tr > td > button');
     // expand section details to load the details
@@ -73,3 +86,5 @@ export async function injectAndGetProfessorNames(): Promise<string[]> {
   });
   return [... new Set(professors)];
 };
+
+export {}
