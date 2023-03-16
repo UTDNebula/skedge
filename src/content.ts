@@ -5,6 +5,10 @@
  * - It injects the instructor names into the section table
  */
 
+export const config = {
+  matches: ["https://utdallas.collegescheduler.com/terms/*/courses/*"]
+}
+
 Promise.all([getCourseInfo(), injectAndGetProfessorNames()]).then(([courseData, professors]) => {
   console.log(courseData.subjectPrefix, courseData.courseNumber, professors);
 });

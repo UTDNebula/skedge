@@ -1,6 +1,9 @@
 import contentFile from 'url:./content.ts';
 
-chrome.webNavigation.onHistoryStateUpdated.addListener(function (details) {
+let courseTabId: number = null;
+
+/** Injects the content script if we hit a course page */
+chrome.webNavigation.onHistoryStateUpdated.addListener(details => {
   if (/^.*:\/\/utdallas\.collegescheduler\.com\/terms\/.*\/courses\/.+$/.test(
       details.url
   )) 
@@ -15,6 +18,17 @@ chrome.webNavigation.onHistoryStateUpdated.addListener(function (details) {
         // b/c of the plasmo dev server connections
         files: [contentFile.replace(/chrome-extension:\/\/[a-z]*\/([\w\.\_\-]*)(?:.*)/i, '$1')]
     });
+    chrome.action.setBadgeText({text: "!"});
+    chrome.action.setBadgeBackgroundColor({color: 'green'});
+    courseTabId = details.tabId
+  } else {
+    chrome.action.setBadgeText({text: ""});
+  }
+});
+
+/** Sets the icon to be active if we're on a course tab */
+chrome.tabs.onActivated.addListener(details => {
+  if (details.tabId == courseTabId) {
     chrome.action.setBadgeText({text: "!"});
     chrome.action.setBadgeBackgroundColor({color: 'green'});
   } else {

@@ -33,7 +33,8 @@
     "permissions": [
       "storage",
       "scripting",
-      "webNavigation"
+      "webNavigation",
+      "tabs"
     ],
     "host_permissions": [
       "https://utdallas.collegescheduler.com/terms/*/courses/*",
