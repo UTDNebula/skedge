@@ -85,9 +85,9 @@ export const ratingsChartOptions: ApexOptions = {
     }
   },
   colors: [
-    '#79ff57',
-    '#c4ff57',
-    '#ffee57',
+    '#5ae630',
+    '#91e630',
+    '#e6d230',
     '#ffa357',
     '#ff5757',
   ],
