@@ -47,7 +47,7 @@ async function getCourseInfo(): Promise<CourseHeader> {
 /** Gets all professor names and then injects them into the section table */
 async function injectAndGetProfessorNames(): Promise<string[]> {
   const courseTable = await waitForElement('table')
-  const professors = [];
+  const professors: string[] = [];
   const courseRows = courseTable.querySelectorAll('tbody');
 
   // add Professor header to the table
@@ -78,13 +78,8 @@ async function injectAndGetProfessorNames(): Promise<string[]> {
     sectionProfessors.forEach(sectionProfessor => {
       professors.push(sectionProfessor.trim());
     })
-    // append span element with professor as text to the newTd
-    // const newSpan = document.createElement('span');
-    // newSpan.innerText = professor;
-    // newTd.appendChild(newSpan);
     const courseRowCells = courseRow.querySelector('tr');
     courseRowCells.insertBefore(newTd, courseRowCells.children[7]);
-
     // collapse section details
     sectionDetailsButton.click();
   });
