@@ -1,11 +1,11 @@
 import { Route, Routes } from "react-router-dom"
 
 import { About } from "./about"
-import { Home } from "./home"
+import { ProfessorProfile } from "./ProfessorProfile"
 
 export const Routing = () => (
   <Routes>
-    <Route path="/" element={<Home />} />
-    <Route path="/about" element={<About />} />
+    <Route path="/" element={<About />} />
+    <Route path="/about" element={<ProfessorProfile />} />
   </Routes>
 )
