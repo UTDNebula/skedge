@@ -4,13 +4,31 @@
  * - It scrapes the names of instructors
  * - It injects the instructor names into the section table
  */
+import type { CourseHeader } from "./backgroundInterfaces";
 
 export const config = {
   matches: ["https://utdallas.collegescheduler.com/terms/*/courses/*"]
 }
 
+var messageType = {
+	SHOW_COURSE_TAB: 'SHOW_COURSE_TAB',
+	SHOW_PROFESSOR_TAB: 'SHOW_PROFESSOR_TAB',
+}
+
+// send event to to extension to show the course info tab
+function sendCourseDataToExtension(courseData: CourseHeader, professors: string[]) {
+	chrome.runtime.sendMessage({
+		type: messageType.SHOW_COURSE_TAB,
+		payload: {
+			courseData,
+			professors,
+		}
+	});
+}
+
 Promise.all([getCourseInfo(), injectAndGetProfessorNames()]).then(([courseData, professors]) => {
   console.log(courseData.subjectPrefix, courseData.courseNumber, professors);
+  sendCourseDataToExtension(courseData, professors);
 });
 
 /** Gets the first element from the DOM specified by selector */
@@ -30,11 +48,6 @@ function waitForElement(selector: string): Promise<HTMLElement> {
       subtree: true
     });
   });
-}
-
-interface CourseHeader {
-  subjectPrefix: string;
-  courseNumber: string;
 }
 
 /** Gets the course prefix and number from the course page */
