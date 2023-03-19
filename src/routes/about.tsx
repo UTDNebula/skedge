@@ -13,12 +13,12 @@ export interface ProfessorProfileInterface {
 }
 
 /** Temporary for testing */
-const mockData: ProfessorProfileInterface = {
+export const mockData: ProfessorProfileInterface = {
   name: "Johny Deere",
   profilePicUrl: "https://encrypted-tbn2.gstatic.com/images?q=tbn:ANd9GcSUe2eaB9QYVkoJORkwnG2yfpPRqpqvRyUkWXOfvLOirm1mudvx",
   rmpScore: 4.3,
   diffScore: 2.55,
-  wtaScore: 91,
+  wtaScore: 100,
   rmpTags: ["GREAT LECTURES", "SKIP CLASS? YOU WON'T PASS", "FRIENDLY", "TOUGH GRADER", "LOTS OF HOMEWORK"],
   gradeDistributions: [
     {
