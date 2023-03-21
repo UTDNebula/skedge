@@ -1,13 +1,13 @@
 import { getScoreColor } from "~utils/styling";
 
-interface MiniScoreInterface {
+interface MiniScoreProps {
   name: "RMP" | "DIFF" | "WTA";
   score: number;
   maxScore: number;
   inverted: boolean;
 }
 
-export const MiniScore = ({ name, score, maxScore, inverted } : MiniScoreInterface) => {
+export const MiniScore = ({ name, score, maxScore, inverted } : MiniScoreProps) => {
 
   return(
     <div className="grid grid-cols-12">
