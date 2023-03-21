@@ -3,21 +3,11 @@ import { useEffect, useState } from "react";
 import { Rings } from "react-loader-spinner";
 import { useLocation } from "react-router-dom";
 import type { ShowCourseTabPayload } from "~background";
+import { Landing } from "~components/Landing";
 import { Loading } from "~components/Loading";
 import { MiniProfessor } from "~components/MiniProfessor"
 import type { GradeDistribution } from "~components/ProfileGrades";
-import { buildProfessorProfiles } from "~data/builder";
-
-export interface ProfessorProfileInterface {
-  name: string;
-  profilePicUrl: string;
-  rmpScore: number;
-  diffScore: number;
-  wtaScore: number;
-  rmpTags: string[];
-  gradeDistributions: GradeDistribution[];
-  ratingsDistribution: number[]; // temp
-}
+import { buildProfessorProfiles, ProfessorProfileInterface } from "~data/builder";
 
 // Example of how to fetch the scraped data from the background script, given that it exists
 async function getCourseData () {
@@ -49,10 +39,11 @@ export const CoursePage = () => { // TODO: CHANGE INTERFACE
 
   return(
     <div className="w-[450px] p-4">
-      { !loading && 
+      { !loading && profiles &&
         profiles.map((item, index) => <div className="mb-4"><MiniProfessor key={index} profiles={profiles} professorData={item} /></div>)
       }
-      { loading && <Loading /> }  
+      { loading && <Loading /> }
+      { !loading && !profiles && <Landing />}
     </div>
   )
 }

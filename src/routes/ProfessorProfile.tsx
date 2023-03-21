@@ -6,14 +6,14 @@ import { ProfileGrades } from "~components/ProfileGrades"
 import { ProfileHeader } from "~components/ProfileHeader"
 import { RmpRatings } from "~components/RmpRatings"
 import { RmpTag } from "~components/RmpTag"
-import type { ProfessorProfileInterface } from "./CoursePage"
+import type { ProfessorProfileInterface } from "~data/builder"
 
 export const ProfessorProfile = () => {
   const { state } : { state: { professorData: ProfessorProfileInterface, profiles: ProfessorProfileInterface[] } } = useLocation();
   const { professorData, profiles } = state;
   return (
     <div className="w-[400px] p-4">
-      <ProfileHeader name={professorData.name} profilePicUrl={professorData.profilePicUrl} profiles={profiles} />
+      <ProfileHeader name={professorData.name} profilePicUrl={professorData.profilePicUrl} rmpId={professorData.rmpId} profiles={profiles} />
       <Card>
         <div className="my-16"></div>  {/* spacer */}
         <HorizontalScores rmpScore={professorData.rmpScore} diffScore={professorData.diffScore} wtaPercent={professorData.wtaScore} />
@@ -22,7 +22,9 @@ export const ProfessorProfile = () => {
             <RmpTag key={index} text={item.toUpperCase()} />
           )}
         </div>
-        <RmpRatings ratingsDistributionData={professorData.ratingsDistribution}/>
+        { professorData.ratingsDistribution.length > 0 && 
+          <RmpRatings ratingsDistributionData={professorData.ratingsDistribution}/>
+        }
         <ProfileGrades gradeDistributionData={professorData.gradeDistributions} />
         <LinkButton />
       </Card>

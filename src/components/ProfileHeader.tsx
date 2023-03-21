@@ -1,13 +1,17 @@
 import { TiArrowBack } from "react-icons/ti"
 import { FaExternalLinkAlt } from "react-icons/fa"
 import { NavigateFunction, useNavigate } from "react-router-dom"
-import type { ProfessorProfileInterface } from "~routes/CoursePage";
+import type { ProfessorProfileInterface } from "~data/builder";
 
-export const ProfileHeader = ({ name, profilePicUrl, profiles } : { name: string, profilePicUrl: string, profiles: ProfessorProfileInterface[] }) => {
+export const ProfileHeader = ({ name, profilePicUrl, rmpId, profiles } : { name: string, profilePicUrl: string, rmpId: number, profiles: ProfessorProfileInterface[] }) => {
   const navigation: NavigateFunction = useNavigate();
 
   const returnToSections = (): void => {
     navigation("/", { state: profiles })
+  }
+
+  const navigativeToRmp = (): void => {
+    window.open('https://www.ratemyprofessors.com/professor/' + rmpId, '_blank')
   }
 
   return (
@@ -17,7 +21,7 @@ export const ProfileHeader = ({ name, profilePicUrl, profiles } : { name: string
           <TiArrowBack size={40} color="white" className="p-2 hover:bg-blue-dark-hover rounded-lg transition duration-250 ease-in-out" />
         </button>
         <h2 className="col-span-3 text-center text-white mx-auto my-auto">{name}</h2>
-        <button className="justify-center items-center flex">
+        <button className="justify-center items-center flex" onClick={navigativeToRmp}>
           <FaExternalLinkAlt size={40} color="white" className="p-3 hover:bg-blue-dark-hover rounded-lg transition duration-250 ease-in-out" />
         </button>
       </div>

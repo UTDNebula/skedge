@@ -3,7 +3,7 @@ import { fetchNebulaCourse, fetchNebulaProfessor, fetchNebulaSections } from "./
 import { requestProfessorsFromRmp } from "~data/fetchFromRmp";
 import { SCHOOL_ID } from "./config";
 
-interface ProfessorProfileInterface {
+export interface ProfessorProfileInterface {
   name: string;
   profilePicUrl: string;
   rmpId: number;

@@ -15,7 +15,7 @@ export const gradeChartOptions: ApexOptions = {
     }
   },
   noData: {
-    text: "No data found",
+    text: "No grade data found",
     align: "center",
     verticalAlign: "middle",
   },
@@ -125,7 +125,7 @@ export const miniGradeChartOptions: ApexOptions = {
     },
   },
   noData: {
-    text: "No data found",
+    text: "No grade data found",
     align: "center",
     verticalAlign: "middle",
   },
