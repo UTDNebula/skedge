@@ -18,7 +18,7 @@ export const ProfessorProfile = () => {
         <div className="my-16"></div>  {/* spacer */}
         <HorizontalScores rmpScore={professorData.rmpScore} diffScore={professorData.diffScore} wtaPercent={professorData.wtaScore} />
         <div className="flex flex-wrap gap-2 my-2 justify-center"> {/* RMP Tag area */}
-          {professorData.rmpTags?.sort((a, b) => b.length - a.length).map((item: string, index: number) => 
+          {professorData.rmpTags?.slice(0, 4).map((item: string, index: number) => 
             <RmpTag key={index} text={item.toUpperCase()} />
           )}
         </div>

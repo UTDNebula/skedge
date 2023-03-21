@@ -20,6 +20,10 @@ interface GradeDistribution {
   series: ApexAxisChartSeries;
 }
 
+const compareArrays = (a, b) => {
+  return JSON.stringify(a) === JSON.stringify(b);
+};
+
 export async function buildProfessorProfiles (payload: ShowCourseTabPayload) {
   const { header, professors } = payload;
   const nebulaCourse = await fetchNebulaCourse(header)
@@ -36,6 +40,12 @@ export async function buildProfessorProfiles (payload: ShowCourseTabPayload) {
   const rmps = await requestProfessorsFromRmp({ professorNames: nebulaProfessors.map(prof => prof?.first_name + " " + prof?.last_name), schoolId: SCHOOL_ID })
   let professorProfiles: ProfessorProfileInterface[] = []
   for (let i = 0; i < professors.length; i++) {
+    const sectionsWithGrades = []
+    for (let j = 0; j < nebulaSections[i]?.length; j++) {
+      const section = nebulaSections[i][j];
+      if (section.grade_distribution.length !== 0 && !compareArrays(section.grade_distribution, Array(14).fill(0)))
+        sectionsWithGrades.push(section)
+    }
     professorProfiles.push({
       name: professors[i],
       profilePicUrl: nebulaProfessors[i]?.image_uri,
@@ -44,7 +54,7 @@ export async function buildProfessorProfiles (payload: ShowCourseTabPayload) {
       diffScore: rmps[i]?.avgDifficulty,
       wtaScore: rmps[i]?.wouldTakeAgainPercent,
       rmpTags: rmps[i]?.teacherRatingTags.sort((a, b) => a.tagCount - b.tagCount).map(tag => tag.tagName),
-      gradeDistributions: nebulaSections[i] ? nebulaSections[i].map(section => ({ name: [nebulaCourse.subject_prefix, nebulaCourse.course_number, section.section_number, section.academic_session.name].join(' '), series: [{name: "Students", data: section.grade_distribution}] })) : [{name: "No Data", series: [{name: "Students", data: []}]}],
+      gradeDistributions: sectionsWithGrades.length > 0 ? sectionsWithGrades.map(section => ({ name: [nebulaCourse.subject_prefix, nebulaCourse.course_number, section.section_number, section.academic_session.name].join(' '), series: [{name: "Students", data: section.grade_distribution}] })) : [{name: "No Data", series: [{name: "Students", data: []}]}],
       ratingsDistribution: rmps[i] ? Object.values(rmps[i].ratingsDistribution).reverse().slice(1) : []
     })
   }

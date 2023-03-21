@@ -1,4 +1,5 @@
 import { scrapeCourseData, CourseHeader } from "~content";
+import { Storage } from "@plasmohq/storage";
 
 export interface ShowCourseTabPayload {
   header: CourseHeader;
@@ -8,6 +9,9 @@ export interface ShowCourseTabPayload {
 // State vars
 let courseTabId: number = null;
 let scrapedCourseData: ShowCourseTabPayload = null;
+
+// for persistent state
+const storage = new Storage();
 
 /** Injects the content script if we hit a course page */
 chrome.webNavigation.onHistoryStateUpdated.addListener(details => {
@@ -34,6 +38,8 @@ chrome.webNavigation.onHistoryStateUpdated.addListener(details => {
     courseTabId = details.tabId
   } else {
     chrome.action.setBadgeText({text: ""});
+    scrapedCourseData = null
+    storage.clear()
   }
 });
 
@@ -44,9 +50,17 @@ chrome.tabs.onActivated.addListener(details => {
     chrome.action.setBadgeBackgroundColor({color: 'green'});
   } else {
     chrome.action.setBadgeText({text: ""});
+    scrapedCourseData = null
+    storage.clear()
   }
 });
 
-export function getScrapedCourseData() {
-  return scrapedCourseData;
+export async function getScrapedCourseData() {
+  if (scrapedCourseData) {
+    await storage.set("scrapedCourseData", scrapedCourseData)
+    return scrapedCourseData;
+  } else {
+    const data = await storage.get("scrapedCourseData")
+    return data
+  }
 }

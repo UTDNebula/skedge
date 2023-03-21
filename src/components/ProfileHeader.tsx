@@ -22,7 +22,7 @@ export const ProfileHeader = ({ name, profilePicUrl, profiles } : { name: string
         </button>
       </div>
       <div className="absolute top-[66px] left-1/2 -translate-x-1/2 rounded-full h-32 w-32 bg-gray-light">
-        <img className="object-cover rounded-full h-32 border-8 border-gray-light" src={profilePicUrl} alt="" />
+        <img className="object-cover rounded-full h-32 border-8 border-gray-light" src={profilePicUrl ? profilePicUrl : "https://profiles.utdallas.edu/img/default.png"} alt="" />
       </div>
     </header>
   )
