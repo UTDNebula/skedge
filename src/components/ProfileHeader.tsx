@@ -1,12 +1,13 @@
 import { TiArrowBack } from "react-icons/ti"
 import { FaExternalLinkAlt } from "react-icons/fa"
 import { NavigateFunction, useNavigate } from "react-router-dom"
+import type { ProfessorProfileInterface } from "~routes/CoursePage";
 
-export const ProfileHeader = ({ name, profilePicUrl } : { name: string, profilePicUrl: string }) => {
+export const ProfileHeader = ({ name, profilePicUrl, profiles } : { name: string, profilePicUrl: string, profiles: ProfessorProfileInterface[] }) => {
   const navigation: NavigateFunction = useNavigate();
 
   const returnToSections = (): void => {
-    navigation(-1)
+    navigation("/", { state: profiles })
   }
 
   return (

@@ -1,15 +1,15 @@
 import { FaUser } from "react-icons/fa"
 import { NavigateFunction, useNavigate } from "react-router-dom"
-import type { ProfessorProfileInterface } from "~routes/about"
+import type { ProfessorProfileInterface } from "~routes/CoursePage"
 import { Card } from "./Card"
 import { MiniGrades } from "./MiniGrades"
 import { MiniScore } from "./MiniScore"
 
-export const MiniProfessor = ({ professorData } : { professorData: ProfessorProfileInterface }) => {
+export const MiniProfessor = ({ professorData, profiles } : { professorData: ProfessorProfileInterface, profiles: ProfessorProfileInterface[] }) => {
   const navigation: NavigateFunction = useNavigate()
 
   const toProfessorProfile = (): void => {
-    navigation("/about", { state: professorData })
+    navigation("/professor", { state: { professorData, profiles } })
   }
   
   return(

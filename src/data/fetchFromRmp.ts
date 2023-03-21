@@ -60,7 +60,7 @@ export interface RmpRequest {
     professorNames: string[],
     schoolId: string
 }
-export function requestProfessorsFromRmp(request: RmpRequest) {
+export function requestProfessorsFromRmp(request: RmpRequest): Promise<RMPInterface[]> {
     return new Promise((resolve, reject) => {
         console.log("Running request professors...")
         const startTime = Date.now();
@@ -87,4 +87,34 @@ export function requestProfessorsFromRmp(request: RmpRequest) {
 
         console.log(Date.now() - startTime);
     })
+}
+
+interface RMPInterface {
+    avgDifficulty: number;
+    avgRating: number;
+    courseCodes: {
+        courseCount: number;
+        courseName: string;
+    }[];
+    department: string;
+    firstName: string;
+    lastName: string;
+    legacyId: number;
+    numRatings: number;
+    ratingsDistribution: { 
+        r1: number; 
+        r2: number; 
+        r3: number; 
+        r4: number; 
+        r5: number;
+        total: number;
+    };
+    school: {
+        id: string;
+    };
+    teacherRatingTags: {
+        tagCount: number;
+        tagName: string;
+    }[];
+    wouldTakeAgainPercent: number;
 }

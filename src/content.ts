@@ -1,4 +1,3 @@
-
 export interface CourseHeader {
   subjectPrefix: string;
   courseNumber: string;
@@ -17,8 +16,8 @@ export const config = {
  */
 export async function scrapeCourseData() {
   
-  let [courseData, professors] = await Promise.all([getCourseInfo(), injectAndGetProfessorNames()]);
-  return {courseData: courseData, professors: professors};
+  let [ header, professors ] = await Promise.all([getCourseInfo(), injectAndGetProfessorNames()]);
+  return { header: header, professors: professors };
   
   /** Gets the first element from the DOM specified by selector */
   function waitForElement(selector: string): Promise<HTMLElement> {

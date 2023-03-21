@@ -1,7 +1,7 @@
 import { scrapeCourseData, CourseHeader } from "~content";
 
 export interface ShowCourseTabPayload {
-  courseData: CourseHeader;
+  header: CourseHeader;
   professors: string[];
 }
 
