@@ -14,12 +14,15 @@ function getProfessorUrls(professorNames: string[], schoolId: string): string[] 
 function getProfessorIds(texts: string[], professorNames: string[]): string[] {
     const professorIds = []
     texts.forEach(text => {
+        let matched = false;
         const regex = /"legacyId":(\d+).*?"firstName":"(\w+)","lastName":"(\w+)"/g;
         for (const match of text.matchAll(regex)) {
             if (professorNames.includes(match[2] + " " + match[3])) {
                 professorIds.push(match[1]);
+                matched = true;
             }
         }
+        if (!matched) professorIds.push(null)
     })
     return professorIds
 }

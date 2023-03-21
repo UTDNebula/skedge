@@ -48,6 +48,20 @@ chrome.tabs.onActivated.addListener(details => {
   if (details.tabId == courseTabId) {
     chrome.action.setBadgeText({text: "!"});
     chrome.action.setBadgeBackgroundColor({color: 'green'});
+    chrome.scripting.executeScript({
+      target: {
+          tabId: details.tabId,
+      },
+      world: "MAIN",
+      // content script injection only works reliably on the prod packaged extension
+      // b/c of the plasmo dev server connections
+      func: scrapeCourseData,
+    }, function (resolve) {
+      if (resolve && resolve[0] && resolve[0].result) {
+        const result: ShowCourseTabPayload = resolve[0].result;
+        scrapedCourseData = result;
+      };
+    });
   } else {
     chrome.action.setBadgeText({text: ""});
     scrapedCourseData = null
