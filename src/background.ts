@@ -1,19 +1,13 @@
-import contentFile from 'url:./content.ts';
-import type { CourseHeader, ShowCourseTabPayload } from "../backgroundInterfaces";
-import ScrapeCourseData from "./content";
-import { redirect } from "react-router-dom";
+import { scrapeCourseData, CourseHeader } from "~content";
 
+export interface ShowCourseTabPayload {
+  courseData: CourseHeader;
+  professors: string[];
+}
+
+// State vars
 let courseTabId: number = null;
 let scrapedCourseData: ShowCourseTabPayload = null;
-
-const messageType = {
-  SHOW_COURSE_TAB: "SHOW_COURSE_TAB",
-  SHOW_PROFESSOR_TAB: "SHOW_PROFESSOR_TAB",
-  REQUEST_PROFESSORS: "REQUEST_PROFESSORS",
-  GET_NEBULA_PROFESSOR: "GET_NEBULA_PROFESSOR",
-  GET_NEBULA_COURSE: "GET_NEBULA_COURSE",
-  GET_NEBULA_SECTIONS: "GET_NEBULA_SECTIONS"
-};
 
 /** Injects the content script if we hit a course page */
 chrome.webNavigation.onHistoryStateUpdated.addListener(details => {
@@ -26,15 +20,12 @@ chrome.webNavigation.onHistoryStateUpdated.addListener(details => {
             tabId: details.tabId,
         },
         world: "MAIN",
-        // below is a gigamega hack from https://github.com/PlasmoHQ/plasmo/issues/150
         // content script injection only works reliably on the prod packaged extension
         // b/c of the plasmo dev server connections
-        func: ScrapeCourseData,
+        func: scrapeCourseData,
     }, function (resolve) {
       if (resolve && resolve[0] && resolve[0].result) {
         const result: ShowCourseTabPayload = resolve[0].result;
-        
-        // Now let's save this scraped value.
         scrapedCourseData = result;
       };
     });
