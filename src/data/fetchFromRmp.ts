@@ -1,5 +1,4 @@
-import fetch from "node-fetch"
-import {HEADERS, PROFESSOR_QUERY} from "~data/fetch";
+import { HEADERS, PROFESSOR_QUERY } from "~data/config";
 
 function getProfessorUrl(professorName: string, schoolId: string): string {
     return `https://www.ratemyprofessors.com/search/teachers?query=${encodeURIComponent(professorName)}&sid=${btoa(`School-${schoolId}`)}`
