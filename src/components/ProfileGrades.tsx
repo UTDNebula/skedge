@@ -12,7 +12,7 @@ export const ProfileGrades = ({ gradeDistributionData } : { gradeDistributionDat
   const [page, setPage] = useState(0);
 
   const prevPage = () => {
-    if (page == 0) {
+    if (page === 0) {
       setPage(gradeDistributionData.length - 1)
     } else {
       setPage(page - 1)
@@ -20,7 +20,7 @@ export const ProfileGrades = ({ gradeDistributionData } : { gradeDistributionDat
   }
 
   const nextPage = () => {
-    if (page == gradeDistributionData.length - 1) {
+    if (page === gradeDistributionData.length - 1) {
       setPage(0)
     } else {
       setPage(page + 1)
