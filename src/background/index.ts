@@ -1,8 +1,10 @@
 import contentFile from 'url:./content.ts';
-import type { CourseHeader, ShowCourseTabPayload } from "./backgroundInterfaces";
+import type { CourseHeader, ShowCourseTabPayload } from "../backgroundInterfaces";
+import ScrapeCourseData from "./content";
 import { redirect } from "react-router-dom";
 
 let courseTabId: number = null;
+let scrapedCourseData: ShowCourseTabPayload = null;
 
 const messageType = {
   SHOW_COURSE_TAB: "SHOW_COURSE_TAB",
@@ -27,7 +29,14 @@ chrome.webNavigation.onHistoryStateUpdated.addListener(details => {
         // below is a gigamega hack from https://github.com/PlasmoHQ/plasmo/issues/150
         // content script injection only works reliably on the prod packaged extension
         // b/c of the plasmo dev server connections
-        files: [contentFile.replace(/chrome-extension:\/\/[a-z]*\/([\w\.\_\-]*)(?:.*)/i, '$1')]
+        func: ScrapeCourseData,
+    }, function (resolve) {
+      if (resolve && resolve[0] && resolve[0].result) {
+        const result: ShowCourseTabPayload = resolve[0].result;
+        
+        // Now let's save this scraped value.
+        scrapedCourseData = result;
+      };
     });
     chrome.action.setBadgeText({text: "!"});
     chrome.action.setBadgeBackgroundColor({color: 'green'});
@@ -47,30 +56,6 @@ chrome.tabs.onActivated.addListener(details => {
   }
 });
 
-// listen for messages from the content script
-chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
-  console.log(request);
-  switch (request.type) {
-      case messageType.SHOW_COURSE_TAB:
-        let payload: ShowCourseTabPayload = request.payload;
-          const { courseData, professors } = payload;
-          console.log("Background has received course data", courseData, professors)
-          
-
-          // FIXME 
-
-
-            // DEAR ADDAM, THIS DOES NOT WORK BECAUSE OF REACT ROUTING THAT WE HAVE
-            // I HAVE SCOURED THE NET FAR AND WIDE AND COULD NOT LOCATE THE ANSWER
-            // :(
-
-            // FIXME
-
-          // chrome.action.setPopup({
-          //     popup: `/test?subjectPrefix=${courseData.subjectPrefix}&courseNumber=${courseData.courseNumber}&professors=${professors.join(",")}`,
-          // });
-          break;
-      default:
-          console.log("Unknown message type");
-  }
-});
+export function getScrapedCourseData() {
+  return scrapedCourseData;
+}
