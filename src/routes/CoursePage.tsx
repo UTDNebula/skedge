@@ -1,12 +1,12 @@
 import { sendToBackground } from "@plasmohq/messaging";
 import { useEffect, useState } from "react";
+import { Rings } from "react-loader-spinner";
 import { useLocation } from "react-router-dom";
 import type { ShowCourseTabPayload } from "~background";
+import { Loading } from "~components/Loading";
 import { MiniProfessor } from "~components/MiniProfessor"
 import type { GradeDistribution } from "~components/ProfileGrades";
 import { buildProfessorProfiles } from "~data/builder";
-import { fetchNebulaProfessor } from "~data/fetch";
-import { requestProfessorsFromRmp } from "~data/fetchFromRmp";
 
 export interface ProfessorProfileInterface {
   name: string;
@@ -76,9 +76,10 @@ export const CoursePage = () => { // TODO: CHANGE INTERFACE
 
   return(
     <div className="w-[450px] p-4">
-      {!loading && 
+      { !loading && 
         profiles.map((item, index) => <div className="mb-4"><MiniProfessor key={index} profiles={profiles} professorData={item} /></div>)
       }
+      { loading && <Loading /> }  
     </div>
   )
 }
