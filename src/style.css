@@ -19,7 +19,7 @@
 
   /* ex. RMP tags */
   h4 {
-    @apply text-sm font-main font-extralight
+    @apply text-sm font-main font-light
   }
   
   /* Subtitles */

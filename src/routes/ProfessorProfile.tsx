@@ -11,7 +11,7 @@ import type { ProfessorProfileInterface } from "./about"
 export const ProfessorProfile = () => {
   const { state }: { state: ProfessorProfileInterface } = useLocation();
   return (
-    <div className="w-[400px] p-4 h-[1000px]">
+    <div className="w-[400px] p-4">
       <ProfileHeader name={state.name} profilePicUrl={state.profilePicUrl} />
       <Card>
         <div className="my-16"></div>  {/* spacer */}
@@ -22,7 +22,6 @@ export const ProfessorProfile = () => {
           )}
         </div>
         <RmpRatings ratingsDistributionData={state.ratingsDistribution}/>
-        <div className="my-2"></div>  {/* spacer */}
         <ProfileGrades gradeDistributionData={state.gradeDistributions} />
         <LinkButton />
       </Card>
