@@ -14,6 +14,11 @@ export const gradeChartOptions: ApexOptions = {
       distributed: true
     }
   },
+  noData: {
+    text: "No grade data found",
+    align: "center",
+    verticalAlign: "middle",
+  },
   dataLabels: {
     enabled: false
   },
@@ -72,6 +77,11 @@ export const ratingsChartOptions: ApexOptions = {
     },
     id: 'ratings-distribution'
   },
+  noData: {
+    text: "No data found",
+    align: "center",
+    verticalAlign: "middle",
+  },
   grid: {
     padding: {
       bottom: -95
@@ -113,6 +123,11 @@ export const miniGradeChartOptions: ApexOptions = {
       fontFamily:  "Inter",
       color:  '#9B9B9B'
     },
+  },
+  noData: {
+    text: "No grade data found",
+    align: "center",
+    verticalAlign: "middle",
   },
   dataLabels: {
     enabled: false

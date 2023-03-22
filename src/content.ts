@@ -1,23 +1,23 @@
+export interface CourseHeader {
+  subjectPrefix: string;
+  courseNumber: string;
+}
+
+// Plasmo CS config export
+export const config = {
+  matches: ["https://utdallas.collegescheduler.com/terms/*/courses/*"]
+}
+
 /**
  * This script runs when we select a course in the Scheduler
  * - It scrapes the page for course data
  * - It scrapes the names of instructors
  * - It injects the instructor names into the section table
  */
-import type { CourseHeader } from "../backgroundInterfaces";
-
-export default async function ScrapeCourseData() {
-  const config = {
-    matches: ["https://utdallas.collegescheduler.com/terms/*/courses/*"]
-  }
+export async function scrapeCourseData() {
   
-  var messageType = {
-    SHOW_COURSE_TAB: 'SHOW_COURSE_TAB',
-    SHOW_PROFESSOR_TAB: 'SHOW_PROFESSOR_TAB',
-  }
-  
-  let [courseData, professors] = await Promise.all([getCourseInfo(), injectAndGetProfessorNames()]);
-  return {courseData: courseData, professors: professors};
+  let [ header, professors ] = await Promise.all([getCourseInfo(), injectAndGetProfessorNames()]);
+  return { header: header, professors: professors };
   
   /** Gets the first element from the DOM specified by selector */
   function waitForElement(selector: string): Promise<HTMLElement> {

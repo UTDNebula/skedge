@@ -6,23 +6,31 @@ import { ProfileGrades } from "~components/ProfileGrades"
 import { ProfileHeader } from "~components/ProfileHeader"
 import { RmpRatings } from "~components/RmpRatings"
 import { RmpTag } from "~components/RmpTag"
-import type { ProfessorProfileInterface } from "./about"
+import type { ProfessorProfileInterface } from "~data/builder"
 
 export const ProfessorProfile = () => {
-  const { state }: { state: ProfessorProfileInterface } = useLocation();
+  const { state } : { state: { professorData: ProfessorProfileInterface, profiles: ProfessorProfileInterface[] } } = useLocation();
+  const { professorData, profiles } = state;
+
+  const compareArrays = (a, b) => {
+    return JSON.stringify(a) === JSON.stringify(b);
+  };
+
   return (
     <div className="w-[400px] p-4">
-      <ProfileHeader name={state.name} profilePicUrl={state.profilePicUrl} />
+      <ProfileHeader name={professorData.name} profilePicUrl={professorData.profilePicUrl} rmpId={professorData.rmpId} profiles={profiles} />
       <Card>
         <div className="my-16"></div>  {/* spacer */}
-        <HorizontalScores rmpScore={state.rmpScore} diffScore={state.diffScore} wtaPercent={state.wtaScore} />
+        <HorizontalScores rmpScore={professorData.rmpScore} diffScore={professorData.diffScore} wtaPercent={professorData.wtaScore} />
         <div className="flex flex-wrap gap-2 my-2 justify-center"> {/* RMP Tag area */}
-          {state.rmpTags.sort((a, b) => b.length - a.length).map((item, index) => 
-            <RmpTag key={index} text={item} />
+          {professorData.rmpTags?.slice(0, 4).map((item: string, index: number) => 
+            <RmpTag key={index} text={item.toUpperCase()} />
           )}
         </div>
-        <RmpRatings ratingsDistributionData={state.ratingsDistribution}/>
-        <ProfileGrades gradeDistributionData={state.gradeDistributions} />
+        { professorData.ratingsDistribution.length > 0 && !compareArrays(professorData.ratingsDistribution, Array(5).fill(0)) &&
+          <RmpRatings ratingsDistributionData={professorData.ratingsDistribution}/>
+        }
+        <ProfileGrades gradeDistributionData={professorData.gradeDistributions} />
         <LinkButton />
       </Card>
     </div>
