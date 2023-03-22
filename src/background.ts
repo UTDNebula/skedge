@@ -27,40 +27,47 @@ chrome.webNavigation.onHistoryStateUpdated.addListener(details => {
         // content script injection only works reliably on the prod packaged extension
         // b/c of the plasmo dev server connections
         func: scrapeCourseData,
-    }, function (resolve) {
+    }, async function (resolve) {
       if (resolve && resolve[0] && resolve[0].result) {
         const result: ShowCourseTabPayload = resolve[0].result;
         scrapedCourseData = result;
+        await storage.set("scrapedCourseData", scrapedCourseData)
       };
     });
     chrome.action.setBadgeText({text: "!"});
     chrome.action.setBadgeBackgroundColor({color: 'green'});
     courseTabId = details.tabId
+    storage.set("courseTabId", courseTabId)
+    storage.set("courseTabUrl", details.url)
   } else {
     chrome.action.setBadgeText({text: ""});
-    scrapedCourseData = null
-    storage.clear()
   }
 });
 
 /** Sets the icon to be active if we're on a course tab */
-chrome.tabs.onActivated.addListener(details => {
-  if (details.tabId == courseTabId) {
+chrome.tabs.onActivated.addListener(async details => {
+  const cachedTabUrl: string = await storage.get("courseTabUrl")
+  const currentTabUrl: string = (await getCurrentTab()).url
+  if (cachedTabUrl === currentTabUrl) {
     chrome.action.setBadgeText({text: "!"});
     chrome.action.setBadgeBackgroundColor({color: 'green'});
   } else {
     chrome.action.setBadgeText({text: ""});
-    scrapedCourseData = null
-    storage.clear()
   }
 });
 
 export async function getScrapedCourseData() {
-  if (scrapedCourseData) {
-    await storage.set("scrapedCourseData", scrapedCourseData)
-    return scrapedCourseData;
-  } else {
-    const data = await storage.get("scrapedCourseData")
-    return data
+  const cachedTabUrl: string = await storage.get("courseTabUrl")
+  const currentTabUrl: string = (await getCurrentTab()).url
+  if (cachedTabUrl === currentTabUrl) {
+    return await storage.get("scrapedCourseData");
   }
+  return null
+}
+
+async function getCurrentTab() {
+  let queryOptions = { active: true, lastFocusedWindow: true };
+  // `tab` will either be a `tabs.Tab` instance or `undefined`.
+  let [tab] = await chrome.tabs.query(queryOptions);
+  return tab;
 }

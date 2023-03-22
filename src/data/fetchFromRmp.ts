@@ -15,9 +15,9 @@ function getProfessorIds(texts: string[], professorNames: string[]): string[] {
     const professorIds = []
     texts.forEach(text => {
         let matched = false;
-        const regex = /"legacyId":(\d+).*?"firstName":"(\w+)","lastName":"(\w+)"/g;
+        const regex = /"legacyId":(\d+).*?"firstName":"(.*?)","lastName":"(.*?)"/g;
         for (const match of text.matchAll(regex)) {
-            if (professorNames.includes(match[2] + " " + match[3])) {
+            if (professorNames.includes(match[2].split(' ')[0] + " " + match[3])) {
                 professorIds.push(match[1]);
                 matched = true;
             }
