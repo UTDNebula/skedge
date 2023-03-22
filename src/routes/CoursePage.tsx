@@ -27,7 +27,6 @@ export const CoursePage = () => { // TODO: CHANGE INTERFACE
       setLoading(true)
       getCourseData().then(payload => {
         buildProfessorProfiles(payload).then(profiles => {
-          console.log(profiles)
           setProfiles(profiles)
         }).finally(() => setLoading(false))
       })

@@ -20,7 +20,7 @@ export const ProfileHeader = ({ name, profilePicUrl, rmpId, profiles } : { name:
         <button onClick={returnToSections} className="justify-center items-center flex">
           <TiArrowBack size={40} color="white" className="p-2 hover:bg-blue-dark-hover rounded-lg transition duration-250 ease-in-out" />
         </button>
-        <h2 className="col-span-3 text-center text-white mx-auto my-auto">{name}</h2>
+        <h2 className="col-span-3 text-center text-white mx-auto my-auto">{name.split(' ').at(0) + " " + name.split(' ').at(-1)}</h2>
         <button className="justify-center items-center flex" onClick={navigativeToRmp}>
           <FaExternalLinkAlt size={40} color="white" className="p-3 hover:bg-blue-dark-hover rounded-lg transition duration-250 ease-in-out" />
         </button>

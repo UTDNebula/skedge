@@ -19,7 +19,7 @@ export const Landing = () => {
     <Card>
       <div className="h-auto">
         <h1>Welcome to sk.edge 👋</h1>
-        <h6 className="my-2">the all-in-one registration tool by students, for students</h6>
+        <h6 className="my-2">your registration assistant by students, for students</h6>
         <img src={skedgeLogo} alt="" className="w-[100px] h-[100px] float-right" />
         <p className="mb-2">Log into <b>Schedule Planner</b> and click <b>Options</b> on a course to get started!</p>
         <p className="mb-2">Got feedback? Let us know <button className="text-purple-dark" onClick={navigateToSurvey}>here</button>!</p>

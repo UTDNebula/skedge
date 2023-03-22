@@ -11,6 +11,11 @@ import type { ProfessorProfileInterface } from "~data/builder"
 export const ProfessorProfile = () => {
   const { state } : { state: { professorData: ProfessorProfileInterface, profiles: ProfessorProfileInterface[] } } = useLocation();
   const { professorData, profiles } = state;
+
+  const compareArrays = (a, b) => {
+    return JSON.stringify(a) === JSON.stringify(b);
+  };
+
   return (
     <div className="w-[400px] p-4">
       <ProfileHeader name={professorData.name} profilePicUrl={professorData.profilePicUrl} rmpId={professorData.rmpId} profiles={profiles} />
@@ -22,7 +27,7 @@ export const ProfessorProfile = () => {
             <RmpTag key={index} text={item.toUpperCase()} />
           )}
         </div>
-        { professorData.ratingsDistribution.length > 0 && 
+        { professorData.ratingsDistribution.length > 0 && !compareArrays(professorData.ratingsDistribution, Array(5).fill(0)) &&
           <RmpRatings ratingsDistributionData={professorData.ratingsDistribution}/>
         }
         <ProfileGrades gradeDistributionData={professorData.gradeDistributions} />

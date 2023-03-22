@@ -2,7 +2,7 @@
   "name": "sk.edge",
   "displayName": "sk.edge",
   "version": "0.0.1",
-  "description": "the all-in-one registration tool by students, for students",
+  "description": "your registration assistant by students, for students",
   "author": "Nebula Labs",
   "packageManager": "npm@8.19.2",
   "scripts": {

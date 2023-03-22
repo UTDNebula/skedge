@@ -37,7 +37,7 @@ export async function buildProfessorProfiles (payload: ShowCourseTabPayload) {
     if (professor?._id === undefined) return null
     return fetchNebulaSections({ courseReference: nebulaCourse._id, professorReference: professor._id })
   }))
-  const rmps = await requestProfessorsFromRmp({ professorNames: nebulaProfessors.map(prof => prof?.first_name + " " + prof?.last_name), schoolId: SCHOOL_ID })
+  const rmps = await requestProfessorsFromRmp({ professorNames: professors.map(prof => prof.split(' ')[0] + " " + prof.split(' ').at(-1)), schoolId: SCHOOL_ID })
   let professorProfiles: ProfessorProfileInterface[] = []
   for (let i = 0; i < professors.length; i++) {
     const sectionsWithGrades = []
@@ -50,9 +50,9 @@ export async function buildProfessorProfiles (payload: ShowCourseTabPayload) {
       name: professors[i],
       profilePicUrl: nebulaProfessors[i]?.image_uri,
       rmpId: rmps[i]?.legacyId,
-      rmpScore: rmps[i]?.avgRating,
-      diffScore: rmps[i]?.avgDifficulty,
-      wtaScore: rmps[i]?.wouldTakeAgainPercent,
+      rmpScore: rmps[i]?.avgRating ? (rmps[i]?.avgRating === 0 ? undefined : rmps[i]?.avgRating) : undefined,
+      diffScore: rmps[i]?.avgDifficulty ? (rmps[i].avgDifficulty === 0 ? undefined : rmps[i]?.avgDifficulty) : undefined,
+      wtaScore: rmps[i]?.wouldTakeAgainPercent ? (rmps[i]?.wouldTakeAgainPercent === -1 ? undefined : rmps[i]?.wouldTakeAgainPercent) : undefined,
       rmpTags: rmps[i]?.teacherRatingTags.sort((a, b) => a.tagCount - b.tagCount).map(tag => tag.tagName),
       gradeDistributions: sectionsWithGrades.length > 0 ? sectionsWithGrades.map(section => ({ name: [nebulaCourse.subject_prefix, nebulaCourse.course_number, section.section_number, section.academic_session.name].join(' '), series: [{name: "Students", data: section.grade_distribution}] })) : [{name: "No Data", series: [{name: "Students", data: []}]}],
       ratingsDistribution: rmps[i] ? Object.values(rmps[i].ratingsDistribution).reverse().slice(1) : []

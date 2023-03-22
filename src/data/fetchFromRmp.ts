@@ -13,11 +13,13 @@ function getProfessorUrls(professorNames: string[], schoolId: string): string[] 
 
 function getProfessorIds(texts: string[], professorNames: string[]): string[] {
     const professorIds = []
+    const lowerCaseProfessorNames = professorNames.map(name => name.toLowerCase())
     texts.forEach(text => {
         let matched = false;
         const regex = /"legacyId":(\d+).*?"firstName":"(.*?)","lastName":"(.*?)"/g;
         for (const match of text.matchAll(regex)) {
-            if (professorNames.includes(match[2].split(' ')[0] + " " + match[3])) {
+            console.log(match[2].split(' ')[0].toLowerCase() + " " + match[3].toLowerCase())
+            if (lowerCaseProfessorNames.includes(match[2].split(' ')[0].toLowerCase() + " " + match[3].toLowerCase())) {
                 professorIds.push(match[1]);
                 matched = true;
             }
@@ -55,6 +57,7 @@ function fetchWithGraphQl(graphQlUrlProps: any[], resolve) {
                     ratings[i] = ratings[i]["data"]["node"];
                 }
             }
+            console.log(ratings)
             resolve(ratings)
         })
 }
@@ -65,8 +68,6 @@ export interface RmpRequest {
 }
 export function requestProfessorsFromRmp(request: RmpRequest): Promise<RMPInterface[]> {
     return new Promise((resolve, reject) => {
-        console.log("Running request professors...")
-        const startTime = Date.now();
 
         // make a list of urls for promises
         const professorUrls = getProfessorUrls(request.professorNames, request.schoolId)
@@ -84,11 +85,8 @@ export function requestProfessorsFromRmp(request: RmpRequest): Promise<RMPInterf
                     fetchWithGraphQl(graphQlUrlProps, resolve)
                 }
             ).catch(error => {
-            console.log(error)
             reject(error);
         });
-
-        console.log(Date.now() - startTime);
     })
 }
 
