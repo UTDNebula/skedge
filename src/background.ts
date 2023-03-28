@@ -23,7 +23,6 @@ chrome.webNavigation.onHistoryStateUpdated.addListener(details => {
         target: {
             tabId: details.tabId,
         },
-        world: "MAIN",
         // content script injection only works reliably on the prod packaged extension
         // b/c of the plasmo dev server connections
         func: scrapeCourseData,

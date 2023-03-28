@@ -46,6 +46,12 @@
       "https://utdallas.collegescheduler.com/terms/*/courses/*",
       "https://www.ratemyprofessors.com/",
       "https://api.utdnebula.com/"
-    ]
+    ],
+    "browser_specific_settings": {
+      "gecko": {
+        "id": "skedge@utdnebula",
+        "strict_min_version": "109.0"
+      }
+    }
   }
 }
