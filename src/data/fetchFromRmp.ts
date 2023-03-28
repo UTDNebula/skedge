@@ -46,48 +46,49 @@ function getGraphQlUrlProps(professorIds: string[]) {
     return graphQlUrlProps
 }
 
-function fetchWithGraphQl(graphQlUrlProps: any[], resolve) {
+async function fetchWithGraphQl(graphQlUrlProps: any[]) {
     const graphqlUrl = "https://www.ratemyprofessors.com/graphql";
-
-    Promise.all(graphQlUrlProps.map(u=>fetch(graphqlUrl, u)))
-        .then(responses => Promise.all(responses.map(res => res.json())))
-        .then(ratings => {
-            for (let i = 0; i < ratings.length; i++) {
-                if (ratings[i] != null && ratings[i].hasOwnProperty("data") && ratings[i]["data"].hasOwnProperty("node")) {
-                    ratings[i] = ratings[i]["data"]["node"];
-                }
+    let ratings: any[];
+    try {
+        let responses = await Promise.all(graphQlUrlProps.map(u=>fetch(graphqlUrl, u)));
+        ratings = await Promise.all(responses.map(res => res.json()));
+        for (let i = 0; i < ratings.length; i++) {
+            if (ratings[i] != null && ratings[i].hasOwnProperty("data") && ratings[i]["data"].hasOwnProperty("node")) {
+                ratings[i] = ratings[i]["data"]["node"];
             }
-            console.log(ratings)
-            resolve(ratings)
-        })
+        }
+        
+    }
+    catch (err) {
+       console.error(err);
+    }
+    return ratings;
 }
 
 export interface RmpRequest {
     professorNames: string[],
     schoolId: string
 }
-export function requestProfessorsFromRmp(request: RmpRequest): Promise<RMPInterface[]> {
-    return new Promise((resolve, reject) => {
+export async function requestProfessorsFromRmp(request: RmpRequest): Promise<RMPInterface[]> {
 
-        // make a list of urls for promises
-        const professorUrls = getProfessorUrls(request.professorNames, request.schoolId)
+    // make a list of urls for promises
+    const professorUrls = getProfessorUrls(request.professorNames, request.schoolId)
+    let professors;
+    // fetch professor ids from each url
+    try {
+        let responses = await Promise.all(professorUrls.map(u=>fetch(u)));
+        let texts = await Promise.all(responses.map(res => res.text()));
+        const professorIds = getProfessorIds(texts, request.professorNames)
 
-        // fetch professor ids from each url
-        Promise.all(professorUrls.map(u=>fetch(u)))
-            .then(responses => Promise.all(responses.map(res => res.text())))
-            .then(texts => {
-                    const professorIds = getProfessorIds(texts, request.professorNames)
+        // create fetch objects for each professor id
+        const graphQlUrlProps = getGraphQlUrlProps(professorIds)
 
-                    // create fetch objects for each professor id
-                    const graphQlUrlProps = getGraphQlUrlProps(professorIds)
-
-                    // fetch professor info by id with graphQL
-                    fetchWithGraphQl(graphQlUrlProps, resolve)
-                }
-            ).catch(error => {
-            reject(error);
-        });
-    })
+        // fetch professor info by id with graphQL
+        professors = await fetchWithGraphQl(graphQlUrlProps);
+    } catch (error) {
+        console.error(error);
+    };
+    return professors;
 }
 
 interface RMPInterface {
