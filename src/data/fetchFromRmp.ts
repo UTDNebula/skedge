@@ -15,16 +15,22 @@ function getProfessorIds(texts: string[], professorNames: string[]): string[] {
     const professorIds = []
     const lowerCaseProfessorNames = professorNames.map(name => name.toLowerCase())
     texts.forEach(text => {
-        let matched = false;
-        const regex = /"legacyId":(\d+).*?"firstName":"(.*?)","lastName":"(.*?)"/g;
-        for (const match of text.matchAll(regex)) {
-            console.log(match[2].split(' ')[0].toLowerCase() + " " + match[3].toLowerCase())
-            if (lowerCaseProfessorNames.includes(match[2].split(' ')[0].toLowerCase() + " " + match[3].toLowerCase())) {
-                professorIds.push(match[1]);
-                matched = true;
+        let pendingMatch = null;
+        const regex = /"legacyId":(\d+).*?"numRatings":(\d+).*?"firstName":"(.*?)","lastName":"(.*?)"/g;
+        let allMatches: string[] = text.match(regex);
+        let highestNumRatings = 0;
+        
+        for (const fullMatch of allMatches) {
+            for (const match of fullMatch.matchAll(regex)) {
+                console.log(match[3].split(' ')[0].toLowerCase() + " " + match[4].toLowerCase() + " ")
+                let numRatings = parseInt(match[2]);
+                if (lowerCaseProfessorNames.includes(match[3].split(' ')[0].toLowerCase() + " " + match[4].toLowerCase()) && numRatings >= highestNumRatings) {
+                    pendingMatch = match[1];
+                }
             }
         }
-        if (!matched) professorIds.push(null)
+        
+        professorIds.push(pendingMatch);
     })
     return professorIds
 }
