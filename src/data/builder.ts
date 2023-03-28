@@ -34,7 +34,7 @@ export async function buildProfessorProfiles (payload: ShowCourseTabPayload) {
     return fetchNebulaProfessor({ firstName: firstName, lastName: lastName})
   }))
   const nebulaSections = await Promise.all(nebulaProfessors.map(professor => {
-    if (professor?._id === undefined) return null
+    if (professor?._id === undefined || !nebulaCourse) return null
     return fetchNebulaSections({ courseReference: nebulaCourse._id, professorReference: professor._id })
   }))
   const rmps = await requestProfessorsFromRmp({ professorNames: professors.map(prof => prof.split(' ')[0] + " " + prof.split(' ').at(-1)), schoolId: SCHOOL_ID })
