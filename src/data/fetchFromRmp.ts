@@ -55,6 +55,57 @@ function getGraphQlUrlProps(professorIds: string[]) {
     return graphQlUrlProps
 }
 
+// Function to group a list of items into groups of a certain size.
+// For example, groupProps([1,2,3,4,5,6,7,8,9], 3) returns [[1,2,3], [4,5,6], [7,8,9]]
+function groupProps(props: any[], maxGroupSize: number): any[] {
+    let groupedProps = [[]];
+    
+    // Iterate all entries in the props list. (Could be an array or an Object)
+    for (const [key, value] of Object.entries(props)) {
+        let lastGroup: any[] = groupedProps[groupedProps.length - 1];
+        if (lastGroup.length < maxGroupSize) {
+            // If there are less than 3 items in the last group, add the current item to the last group.
+            lastGroup.push(value);
+        }
+        else {
+            // Otherwise, make a new group and add the current item to it.
+            groupedProps.push([value]);
+        }
+    };
+    return groupedProps;
+  }
+  
+  export async function fetchWithGraphQl(graphQlUrlProps: any[]) {
+    try {
+        let groupedProps = groupProps(graphQlUrlProps, 3); // Group our fetches into groups of 3.
+        let responses: any[] = [];
+
+        // Here, we iterate through each group of fetches, one at a time.
+        for (let i = 0; i < groupedProps.length; i++) {
+            // Wait for all fetches in the current group to finish.
+            let smallGroup = await Promise.all(groupedProps[i].map(u=>fetch(RMP_GRAPHQL_URL, u)));
+
+            // Now that we have all the responses, we can iterate through them and add them to the responses array.
+            for (let j = 0; j < smallGroup.length; j++) {
+                responses.push(smallGroup[j]);
+            }
+        }
+
+        // We now have all the responses. So, we consider all the responses, and collect the ratings.
+        let ratings: RMPRatingInterface [] = await Promise.all(responses.map(res => res.json()));
+        for (let i = 0; i < ratings.length; i++) {
+            if (ratings[i] != null && ratings[i].hasOwnProperty("data") && ratings[i]["data"].hasOwnProperty("node")) {
+                ratings[i] = ratings[i]["data"]["node"];
+            }
+        }
+        return ratings;
+    }
+    catch (err) {
+       console.error(err);
+       return [];
+    }
+  }
+
 export interface RmpRequest {
     professorNames: string[],
     schoolId: string
@@ -74,7 +125,7 @@ export async function requestProfessorsFromRmp(request: RmpRequest): Promise<RMP
         const graphQlUrlProps = getGraphQlUrlProps(professorIds)
 
         // fetch professor info by id with graphQL
-        let professors = await RMP_GRAPHQL_URL(graphQlUrlProps);
+        let professors = await fetchWithGraphQl(graphQlUrlProps);
         return professors;
     } catch (error) {
         console.error(error);
