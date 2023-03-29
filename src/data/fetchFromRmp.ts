@@ -91,27 +91,7 @@ async function validateResponses(responses: any[]) {
     return responses;
 }
 
-// Function to group a list of items into groups of a certain size.
-// For example, groupProps([1,2,3,4,5,6,7,8,9], 3) returns [[1,2,3], [4,5,6], [7,8,9]]
-function groupProps(props: any[], maxGroupSize: number): any[] {
-    let groupedProps = [[]];
-    
-    // Iterate all entries in the props list. (Could be an array or an Object)
-    for (const [key, value] of Object.entries(props)) {
-        let lastGroup: any[] = groupedProps[groupedProps.length - 1];
-        if (lastGroup.length < maxGroupSize) {
-            // If there are less than 3 items in the last group, add the current item to the last group.
-            lastGroup.push(value);
-        }
-        else {
-            // Otherwise, make a new group and add the current item to it.
-            groupedProps.push([value]);
-        }
-    };
-    return groupedProps;
-  }
-  
-  export async function fetchWithGraphQl(graphQlUrlProps: any[]) {
+export async function fetchWithGraphQl(graphQlUrlProps: any[]) {
     try {
         let responses = await validateResponses(await Promise.all(graphQlUrlProps.map(u=>fetch(RMP_GRAPHQL_URL, u))));
         // We now have all the responses. So, we consider all the responses, and collect the ratings.
@@ -127,7 +107,7 @@ function groupProps(props: any[], maxGroupSize: number): any[] {
        reportError("fetchWithGraphQl",err);
        return [];
     }
-  }
+}
 
 export interface RmpRequest {
     professorNames: string[],
