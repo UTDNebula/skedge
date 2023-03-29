@@ -74,6 +74,23 @@ function fetchRetry(url: string, delay: number, tries: number, fetchOptions) {
     return fetch(url,fetchOptions).catch(onError);
 }
 
+async function validateResponses(responses: any[]) {
+    for (const [key, value] of Object.entries(responses)) {
+        let notOk = value?.status !== 200;
+        if (notOk && value && value.url) {
+            let details = {
+                status: value.status,
+                statusText: value.statusText,
+                redirected: value.redirected,
+                url: value.url
+            }
+            reportError("validateResponses", "Status not OK for fetch request. Details are: "+JSON.stringify(details));
+            responses[key] = await fetchRetry(value?.url, 200, 3, {});
+        }
+    };
+    return responses;
+}
+
 // Function to group a list of items into groups of a certain size.
 // For example, groupProps([1,2,3,4,5,6,7,8,9], 3) returns [[1,2,3], [4,5,6], [7,8,9]]
 function groupProps(props: any[], maxGroupSize: number): any[] {
@@ -96,20 +113,7 @@ function groupProps(props: any[], maxGroupSize: number): any[] {
   
   export async function fetchWithGraphQl(graphQlUrlProps: any[]) {
     try {
-        let groupedProps = groupProps(graphQlUrlProps, 3); // Group our fetches into groups of 3.
-        let responses: any[] = [];
-
-        // Here, we iterate through each group of fetches, one at a time.
-        for (let i = 0; i < groupedProps.length; i++) {
-            // Wait for all fetches in the current group to finish.
-            let smallGroup = await Promise.all(groupedProps[i].map(u=>fetch(RMP_GRAPHQL_URL, u)));
-
-            // Now that we have all the responses, we can iterate through them and add them to the responses array.
-            for (let j = 0; j < smallGroup.length; j++) {
-                responses.push(smallGroup[j]);
-            }
-        }
-
+        let responses = await validateResponses(await Promise.all(graphQlUrlProps.map(u=>fetch(RMP_GRAPHQL_URL, u))));
         // We now have all the responses. So, we consider all the responses, and collect the ratings.
         let ratings: RMPRatingInterface [] = await Promise.all(responses.map(res => res.json()));
         for (let i = 0; i < ratings.length; i++) {
@@ -136,14 +140,8 @@ export async function requestProfessorsFromRmp(request: RmpRequest): Promise<RMP
     
     // fetch professor ids from each url
     try {
-        let responses = await Promise.all(professorUrls.map(u=>(fetch(u))));
-        for (const [key, value] of Object.entries(responses)) {
-            let notOk = value?.status !== 200;
-            if (notOk && value && value.url) {
-                reportError("requestProfessorsFromRmp", "Status not OK for fetch request.");
-                responses[key] = await fetchRetry(value?.url, 200, 3, {});
-            }
-        };
+        let responses = await validateResponses(await Promise.all(professorUrls.map(u=>(fetch(u)))));
+    
         // let responses = await Promise.all(professorUrls.map(u=>fetchRetry(u, 500, 3, {})));
         let texts = await Promise.all(responses.map(res => res.text()));
         const professorIds = getProfessorIds(texts, request.professorNames)
@@ -155,7 +153,7 @@ export async function requestProfessorsFromRmp(request: RmpRequest): Promise<RMP
         let professors = await fetchWithGraphQl(graphQlUrlProps);
         return professors;
     } catch (error) {
-        reportError("requestProfessorsFromRmp", error);\
+        reportError("requestProfessorsFromRmp", error);
         return [];
     };
 }
