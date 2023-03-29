@@ -1,6 +1,10 @@
 import { HEADERS, PROFESSOR_QUERY, RMP_GRAPHQL_URL } from "~data/config";
 import type { RMPRatingInterface } from "~data/interfaces";
 
+function reportError(context, err) {
+    console.error("Error in " + context + ": " + err);
+}
+
 function getProfessorUrl(professorName: string, schoolId: string): string {
     return `https://www.ratemyprofessors.com/search/teachers?query=${encodeURIComponent(professorName)}&sid=${btoa(`School-${schoolId}`)}`
 }
@@ -55,6 +59,21 @@ function getGraphQlUrlProps(professorIds: string[]) {
     return graphQlUrlProps
 }
 
+function wait(delay){
+    return new Promise((resolve) => setTimeout(resolve, delay));
+}
+
+function fetchRetry(url: string, delay: number, tries: number, fetchOptions) {
+    function onError(err){
+        let triesLeft: number = tries - 1;
+        if(!triesLeft){
+            throw err;
+        }
+        return wait(delay).then(() => fetchRetry(url, delay, triesLeft, fetchOptions));
+    }
+    return fetch(url,fetchOptions).catch(onError);
+}
+
 // Function to group a list of items into groups of a certain size.
 // For example, groupProps([1,2,3,4,5,6,7,8,9], 3) returns [[1,2,3], [4,5,6], [7,8,9]]
 function groupProps(props: any[], maxGroupSize: number): any[] {
@@ -101,7 +120,7 @@ function groupProps(props: any[], maxGroupSize: number): any[] {
         return ratings;
     }
     catch (err) {
-       console.error(err);
+       reportError("fetchWithGraphQl",err);
        return [];
     }
   }
@@ -117,7 +136,15 @@ export async function requestProfessorsFromRmp(request: RmpRequest): Promise<RMP
     
     // fetch professor ids from each url
     try {
-        let responses = await Promise.all(professorUrls.map(u=>fetch(u)));
+        let responses = await Promise.all(professorUrls.map(u=>(fetch(u))));
+        for (const [key, value] of Object.entries(responses)) {
+            let notOk = value?.status !== 200;
+            if (notOk && value && value.url) {
+                reportError("requestProfessorsFromRmp", "Status not OK for fetch request.");
+                responses[key] = await fetchRetry(value?.url, 200, 3, {});
+            }
+        };
+        // let responses = await Promise.all(professorUrls.map(u=>fetchRetry(u, 500, 3, {})));
         let texts = await Promise.all(responses.map(res => res.text()));
         const professorIds = getProfessorIds(texts, request.professorNames)
 
@@ -128,7 +155,7 @@ export async function requestProfessorsFromRmp(request: RmpRequest): Promise<RMP
         let professors = await fetchWithGraphQl(graphQlUrlProps);
         return professors;
     } catch (error) {
-        console.error(error);
+        reportError("requestProfessorsFromRmp", error);\
         return [];
     };
 }
