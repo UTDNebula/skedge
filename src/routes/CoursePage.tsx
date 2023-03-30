@@ -17,10 +17,10 @@ async function getCourseData () {
       sendToBackground({
         name: "getScrapeData",
       }).then((response) => {
-        console.log("Got response from background", response)
         if (response) {
           resolve(response);
         } else {
+          // console.error("Response from the background with courseData was null; Displaying course page.")
           throw("Attempted to get course data but failed. Please refresh or try again later.");
         }
       }).catch((err) => {
@@ -52,9 +52,12 @@ export const CoursePage = () => { // TODO: CHANGE INTERFACE
         ).finally(() => setLoading(false))
       }).catch(
         (err) => {
+          // Display welcome page
           setLoading(false);
-          setError(err);
-          setErrorSrc('Issue getting Course Data');
+          
+          // If we want to display error page instead, uncomment below
+          // setError(err);
+          // setErrorSrc('Issue getting Course Data');
         }
       )
     } else {
