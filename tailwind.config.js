@@ -3,6 +3,8 @@ module.exports = {
   content: ["./**/*.tsx"],
   theme: {
     colors: {
+      "red-dark": "#9b2c2c",
+      "red-dark-hover": "#7A2A2A",
       "blue-dark": "#1C2A6D",
       "blue-dark-hover": "#17235C",
       "gray": "#D9D9D9",
@@ -18,4 +20,3 @@ module.exports = {
   },
   plugins: []
 }
-   

@@ -58,5 +58,10 @@ export async function buildProfessorProfiles (payload: ShowCourseTabPayload) {
       ratingsDistribution: rmps[i] ? Object.values(rmps[i].ratingsDistribution).reverse().slice(1) : []
     })
   }
-  return professorProfiles
+  // professorProfiles = [];
+  return new Promise<ProfessorProfileInterface[]>(
+    (resolve, reject) => {
+      if (professorProfiles.length === 0) reject("No professor profiles found")
+      resolve(professorProfiles)
+    });
 }
