@@ -74,7 +74,8 @@ function fetchRetry(url: string, delay: number, tries: number, fetchOptions) {
     return fetch(url,fetchOptions).catch(onError);
 }
 
-async function validateResponses(responses: any[]) {
+// If using orderedFetchOpts, make sure that it is an array and that the index of the fetch options corresponds to the index of the response in the responses array.
+async function validateResponses(responses: any[], orderedFetchOpts: any[]) {
     for (const [key, value] of Object.entries(responses)) {
         let notOk = value?.status !== 200;
         if (notOk && value && value.url) {
@@ -85,7 +86,8 @@ async function validateResponses(responses: any[]) {
                 url: value.url
             }
             reportError("validateResponses", "Status not OK for fetch request. Details are: "+JSON.stringify(details));
-            responses[key] = await fetchRetry(value?.url, 200, 3, {});
+            let fetchOptions = orderedFetchOpts[key] || {}; // If we don't have fetch options, we just use an empty object.
+            responses[key] = await fetchRetry(value?.url, 200, 3, fetchOptions);
         }
     };
     return responses;
@@ -93,7 +95,7 @@ async function validateResponses(responses: any[]) {
 
 export async function fetchWithGraphQl(graphQlUrlProps: any[]) {
     try {
-        let responses = await validateResponses(await Promise.all(graphQlUrlProps.map(u=>fetch(RMP_GRAPHQL_URL, u))));
+        let responses = await validateResponses(await Promise.all(graphQlUrlProps.map(u=>fetch(RMP_GRAPHQL_URL, u))),graphQlUrlProps);
         // We now have all the responses. So, we consider all the responses, and collect the ratings.
         let ratings: RMPRatingInterface [] = await Promise.all(responses.map(res => res.json()));
         for (let i = 0; i < ratings.length; i++) {
@@ -120,9 +122,8 @@ export async function requestProfessorsFromRmp(request: RmpRequest): Promise<RMP
     
     // fetch professor ids from each url
     try {
-        let responses = await validateResponses(await Promise.all(professorUrls.map(u=>(fetch(u)))));
+        let responses = await validateResponses(await Promise.all(professorUrls.map(u=>(fetch(u)))), []);
     
-        // let responses = await Promise.all(professorUrls.map(u=>fetchRetry(u, 500, 3, {})));
         let texts = await Promise.all(responses.map(res => res.text()));
         const professorIds = getProfessorIds(texts, request.professorNames)
 
