@@ -15,10 +15,10 @@ export const config = {
  * - It injects the instructor names into the section table
  */
 export async function scrapeCourseData() {
-  
+
   let [ header, professors ] = await Promise.all([getCourseInfo(), injectAndGetProfessorNames()]);
   return { header: header, professors: professors };
-  
+
   /** Gets the first element from the DOM specified by selector */
   function waitForElement(selector: string): Promise<HTMLElement> {
     return new Promise(resolve => {
@@ -37,26 +37,26 @@ export async function scrapeCourseData() {
       });
     });
   }
-  
+
   /** Gets the course prefix and number from the course page */
   async function getCourseInfo(): Promise<CourseHeader> {
     const course = await waitForElement('h1');
     const courseData = course.innerText.split(" ");
     return { subjectPrefix: courseData[0], courseNumber: courseData[1] };
   }
-  
+
   /** Gets all professor names and then injects them into the section table */
   async function injectAndGetProfessorNames(): Promise<string[]> {
     const courseTable = await waitForElement('table')
     const professors: string[] = [];
     const courseRows = courseTable.querySelectorAll('tbody');
-  
+
     // add Professor header to the table
     const tableHeaders = courseTable.querySelector('thead > tr');
     const newHeader = document.createElement('th');
     newHeader.innerText = 'Instructor(s)';
     tableHeaders.insertBefore(newHeader, tableHeaders.children[7]);
-  
+
     courseRows.forEach(courseRow => {
       // get professor name from course row
       const sectionDetailsButton = courseRow.querySelector<HTMLButtonElement>('tr > td > button');
@@ -73,7 +73,7 @@ export async function scrapeCourseData() {
       });
       // append professor name to the table
       const newTd = document.createElement('td');
-      newTd.innerText = professor;
+      newTd.innerText = professor ? professor : 'No Instructor';
       // this is in case we have multiple instructions per section
       const sectionProfessors = professor.split(",")
       sectionProfessors.forEach(sectionProfessor => {
