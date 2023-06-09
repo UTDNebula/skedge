@@ -1,7 +1,7 @@
 import { HEADERS, PROFESSOR_QUERY } from "~data/config";
 
 function getProfessorUrl(professorName: string, schoolId: string): string {
-    return `https://www.ratemyprofessors.com/search/teachers?query=${encodeURIComponent(professorName)}&sid=${btoa(`School-${schoolId}`)}`
+    return `https://www.ratemyprofessors.com/search/professors/${schoolId}?q=${encodeURIComponent(professorName)}}`
 }
 function getProfessorUrls(professorNames: string[], schoolId: string): string[] {
     const professorUrls = []
