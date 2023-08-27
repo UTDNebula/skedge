@@ -8,7 +8,7 @@ import { Loading } from "~components/Loading";
 import { MiniProfessor } from "~components/MiniProfessor"
 import type { GradeDistribution } from "~components/ProfileGrades";
 import { buildProfessorProfiles, ProfessorProfileInterface } from "~data/builder";
-import { ErrorLanding } from "~components/ErrorLanding";
+import  ErrorPage  from "~components/ErrorPage";
 
 // Example of how to fetch the scraped data from the background script, given that it exists
 async function getCourseData () {
@@ -68,7 +68,7 @@ export const CoursePage = () => { // TODO: CHANGE INTERFACE
 
   return(
     <div className="w-[450px] p-4">
-      { error && <ErrorLanding errSrc={errorSrc} error={error}></ErrorLanding>}
+      { error && <ErrorPage source={errorSrc} error={error}></ErrorPage>}
       { !loading && !error && profiles &&
         profiles.map((item, index) => <div className="mb-4"><MiniProfessor key={index} profiles={profiles} professorData={item} /></div>)
       }
