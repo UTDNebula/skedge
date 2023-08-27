@@ -1,13 +1,15 @@
 import { Card } from "./Card"
 
-type Error = {
-  error: {
-    source: string
-    details: string
-  }
+export type CustomError = {
+  source: string
+  details: Error | string
 }
 
-export default function ErrorPage(props: Error) {
+type ErrorProps = {
+  error: CustomError
+}
+
+export default function ErrorPage(props: ErrorProps) {
   const { error } = props
   return (
     <>
@@ -22,7 +24,7 @@ export default function ErrorPage(props: Error) {
       <Card>
         <div className="grid grid-cols-12">
           <div className="col-span-12">
-            <p>{error.details}</p>
+            <p>{error.details["message"] ?? error.details}</p>
           </div>
         </div>
       </Card>

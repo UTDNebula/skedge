@@ -3,7 +3,7 @@ import { useLocation } from "react-router-dom"
 
 import { sendToBackground } from "@plasmohq/messaging"
 
-import ErrorPage from "~components/ErrorPage"
+import ErrorPage, { CustomError } from "~components/ErrorPage"
 import { Landing } from "~components/Landing"
 import { Loading } from "~components/Loading"
 import { MiniProfessor } from "~components/MiniProfessor"
@@ -17,10 +17,7 @@ export function CoursePage() {
   const { state }: { state: ProfessorProfileInterface[] } = useLocation()
   const [loading, setLoading] = useState(true)
   const [profiles, setProfiles] = useState<ProfessorProfileInterface[]>()
-  const [error, setError] = useState<{
-    details: string
-    source: string
-  }>()
+  const [error, setError] = useState<CustomError>()
   useEffect(() => {
     if (!state) {
       setLoading(true)
