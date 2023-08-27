@@ -11,6 +11,7 @@ type ErrorProps = {
 
 export default function ErrorPage(props: ErrorProps) {
   const { error } = props
+  console.error(error)
   return (
     <>
       <header className="h-10 rounded-t-2xl bg-red-dark py-2 pr-3 pl-[14px] flex">
