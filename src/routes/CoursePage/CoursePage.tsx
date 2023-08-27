@@ -63,12 +63,8 @@ export function CoursePage() {
         !error &&
         profiles &&
         profiles.map((item, index) => (
-          <div className="mb-4">
-            <MiniProfessor
-              key={index}
-              profiles={profiles}
-              professorData={item}
-            />
+          <div className="mb-4" key={index}>
+            <MiniProfessor profiles={profiles} professorData={item} />
           </div>
         ))}
       {loading && !error && <Loading />}
