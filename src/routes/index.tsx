@@ -1,6 +1,6 @@
 import { Route, Routes } from "react-router-dom"
 
-import { CoursePage } from "./CoursePage"
+import CoursePage from "./CoursePage"
 import { ProfessorProfile } from "./ProfessorProfile"
 
 export const Routing = () => (
