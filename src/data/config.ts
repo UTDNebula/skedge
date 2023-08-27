@@ -1,3 +1,4 @@
+import type { RMPRatingInterface } from "~data/interfaces";
 export const HEADERS = {
   "Authorization": "Basic dGVzdDp0ZXN0",
   "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/87.0.4280.88 Safari/537.36",
@@ -18,6 +19,7 @@ export const NEBULA_FETCH_OPTIONS = {
 }
 
 export const SCHOOL_ID = "1273"
+export const RMP_GRAPHQL_URL = "https://www.ratemyprofessors.com/graphql";
 
 function unRegister(key: string) {
   let newVar = "";
@@ -28,4 +30,3 @@ function unRegister(key: string) {
   }
   return newVar;
 }
-
