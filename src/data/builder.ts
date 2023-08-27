@@ -60,8 +60,9 @@ export async function buildProfessorProfiles(payload: ShowCourseTabPayload) {
     const sectionsWithGrades = []
     for (let j = 0; j < nebulaSections[i]?.length; j++) {
       const section = nebulaSections[i][j]
-      if (
-        section.grade_distribution &&
+      if (!section.grade_distribution) {
+        continue
+      } else if (
         section.grade_distribution.length !== 0 &&
         !compareArrays(section.grade_distribution, Array(14).fill(0))
       )
@@ -90,7 +91,7 @@ export async function buildProfessorProfiles(payload: ShowCourseTabPayload) {
         .sort((a, b) => a.tagCount - b.tagCount)
         .map((tag) => tag.tagName),
       gradeDistributions:
-        sectionsWithGrades.length > 0
+        sectionsWithGrades?.length > 0
           ? sectionsWithGrades.map((section) => ({
               name: [
                 nebulaCourse.subject_prefix,
