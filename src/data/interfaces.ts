@@ -73,7 +73,7 @@ export interface SectionInterface {
   attributes: any[];
   core_flags: any[];
   course_reference: string;
-  grade_distribution: number[] | null;
+  grade_distribution: number[];
   instruction_mode: string;
   internal_class_number: string;
   meetings: any[];

@@ -31,7 +31,7 @@ export async function fetchNebulaSections(params: FetchSectionParameters): Promi
     const json = await res.json();
     if(json.data == null) throw new Error("Null data");
     const data: SectionInterface[] = json.data;
-    return data;
+    return data.map((section) => {return {...section, grade_distribution: section.grade_distribution ?? []}}); // needed for builder.ts, which requires grade_distribution.
   } catch(error) {
     return null;
   }
