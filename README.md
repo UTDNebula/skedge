@@ -10,7 +10,16 @@ pnpm install
 # or
 npm install
 ```
+You may get errors afterwards, so run:
 
+```bash
+rm -rf node_modules
+# and
+rm package-lock.json
+# and
+npm audit fix --force
+```
+Ignore the 2 critical severity vulnerabilities.
 
 ## Develpoment server
 Run the following:
