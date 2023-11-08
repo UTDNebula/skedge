@@ -1,8 +1,19 @@
 This is a [Plasmo extension](https://docs.plasmo.com/) project bootstrapped with [`plasmo init`](https://www.npmjs.com/package/plasmo).
 
 ## Getting Started
+First, you'll need to install either of the below package managers.
 
-First, run the development server:
+Run the following:
+
+```bash
+pnpm install
+# or
+npm install
+```
+
+
+## Develpoment server
+Run the following:
 
 ```bash
 pnpm dev
@@ -27,6 +38,8 @@ npm run build
 ```
 
 This should create a production bundle for your extension, ready to be zipped and published to the stores.
+
+For the chrome browser, you'll want to click on the jigsaw button containing your extensions and press manage extensions. Then turn developer mode on and load the package build (should be namde chrom-v3-prod under build).
 
 ## Submit to the webstores
 
