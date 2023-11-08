@@ -1,32 +1,20 @@
 import { Card } from "./Card"
-import { Footer } from "./Footer"
-import skedgeLogo from "data-base64:../../assets/icon.png"
 
-const SURVEY_URL = "https://docs.google.com/forms/d/e/1FAIpQLScGIXzlYgsx1SxHYTTCwRaMNVYNRe6I67RingPRVzcT1tLwSg/viewform?usp=sf_link"
-const GALAXY_URL = "https://www.utdallas.edu/galaxy/"
+export const Landing = (props: { setLandingSlide: (n: number) => void }) => {
 
-export const Landing = () => {
-
-  const navigativeToScheduler = (): void => {
-    window.open(GALAXY_URL, "_blank")
-  }
-
-  const navigateToSurvey = (): void => {
-    window.open(SURVEY_URL, "_blank")
+  const gotoSlide = (): void => {
+    props.setLandingSlide(2)
   }
 
   return(
     <Card>
-      <div className="h-auto">
-        <h1>Welcome to sk.edge 👋</h1>
-        <h6 className="my-2">your registration assistant by students, for students</h6>
-        <img src={skedgeLogo} alt="" className="w-[100px] h-[100px] float-right" />
-        <p className="mb-2">Log into <b>Schedule Planner</b> and click <b>Options</b> on a course to get started!</p>
-        <p className="mb-2">Got feedback? Let us know <button className="text-purple-dark" onClick={navigateToSurvey}>here</button>!</p>
-        <button onClick={navigativeToScheduler} className="text-center flex py-2 px-4 mb-4 bg-blue-dark hover:bg-blue-dark-hover rounded-lg transition duration-250 ease-in-out">
-          <h3 className="text-center text-white">To Galaxy!</h3>
+      <div className="h-auto text-center flex flex-col items-center justify-center">
+        <h1 className = "mt-8">👋Hey There!</h1>
+        <h4 className="m-6">We want to let you know that Sk.edge's B.1 [BETA] version is still in its beta stage and is not yet complete.</h4>
+        <h4 className="m-6">As such, it's important to keep in mind that some features may not be fully fuctional, and there may be occasional bugs that need to be worked out. Thank you!</h4>
+        <button onClick={gotoSlide} className="mt-4 flex py-2 px-8 rounded-full bg-white border-2 border-indigo-600 transition ease-in-out duration-250">
+          <h2 className="text-indigo-600">Got it</h2>
         </button>
-        <Footer />
       </div>
     </Card>
   )
