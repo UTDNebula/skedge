@@ -1,0 +1,8 @@
+.cache
+.husky
+.plasmo
+.vscode
+package.json
+package-lock.json
+build
+assets

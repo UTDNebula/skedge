@@ -39,7 +39,7 @@ export const CoursePage = () => { // TODO: CHANGE INTERFACE
   return(
     <div className="w-[450px] p-4">
       { !loading && profiles &&
-        profiles.map((item, index) => <div className="mb-4"><MiniProfessor key={index} profiles={profiles} professorData={item} /></div>)
+        profiles.map((item, index) => <div className="mb-4" key={index}><MiniProfessor profiles={profiles} professorData={item} /></div>)
       }
       { loading && <Loading /> }
       { !loading && !profiles && <Landing />}
