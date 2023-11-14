@@ -1,5 +1,7 @@
 import { MemoryRouter } from "react-router-dom"
-import { Routing } from "~/routes"
+
+import { Routing } from "~/pages"
+
 import "~/style.css"
 
 function IndexPopup() {
