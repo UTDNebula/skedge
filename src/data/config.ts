@@ -23,7 +23,7 @@ export const SCHOOL_ID = '1273';
 
 function unRegister(key: string) {
   let newVar = '';
-  for (var i = 0; i < key.length; i++) {
+  for (let i = 0; i < key.length; i++) {
     let a = key.charCodeAt(i);
     a = (a * 2 - 8) / 2;
     newVar = newVar.concat(String.fromCharCode(a));

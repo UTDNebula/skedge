@@ -49,7 +49,7 @@ chrome.webNavigation.onHistoryStateUpdated.addListener((details) => {
 });
 
 /** Sets the icon to be active if we're on a course tab */
-chrome.tabs.onActivated.addListener(async (details) => {
+chrome.tabs.onActivated.addListener(async () => {
   const cachedTabUrl: string = await storage.get('courseTabUrl');
   const currentTabUrl: string = (await getCurrentTab()).url;
   if (cachedTabUrl === currentTabUrl) {
@@ -70,8 +70,8 @@ export async function getScrapedCourseData() {
 }
 
 async function getCurrentTab() {
-  let queryOptions = { active: true, lastFocusedWindow: true };
+  const queryOptions = { active: true, lastFocusedWindow: true };
   // `tab` will either be a `tabs.Tab` instance or `undefined`.
-  let [tab] = await chrome.tabs.query(queryOptions);
+  const [tab] = await chrome.tabs.query(queryOptions);
   return tab;
 }

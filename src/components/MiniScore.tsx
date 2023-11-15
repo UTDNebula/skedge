@@ -1,3 +1,5 @@
+import React from 'react';
+
 import { getScoreColor } from '~utils/styling';
 
 interface MiniScoreProps {

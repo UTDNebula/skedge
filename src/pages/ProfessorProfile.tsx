@@ -1,4 +1,6 @@
+import React from 'react';
 import { useLocation } from 'react-router-dom';
+
 import { Card } from '~components/Card';
 import { HorizontalScores } from '~components/HorizontalScores';
 import { LinkButton } from '~components/LinkButton';

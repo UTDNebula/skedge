@@ -55,7 +55,7 @@ export async function buildProfessorProfiles(payload: ShowCourseTabPayload) {
     ),
     schoolId: SCHOOL_ID,
   });
-  let professorProfiles: ProfessorProfileInterface[] = [];
+  const professorProfiles: ProfessorProfileInterface[] = [];
   for (let i = 0; i < professors.length; i++) {
     const sectionsWithGrades = [];
     for (let j = 0; j < nebulaSections[i]?.length; j++) {

@@ -1,6 +1,8 @@
-import { TiArrowBack } from 'react-icons/ti';
+import React from 'react';
 import { FaExternalLinkAlt } from 'react-icons/fa';
+import { TiArrowBack } from 'react-icons/ti';
 import { NavigateFunction, useNavigate } from 'react-router-dom';
+
 import type { ProfessorProfileInterface } from '~data/builder';
 
 export const ProfileHeader = ({

@@ -1,12 +1,11 @@
 import { sendToBackground } from '@plasmohq/messaging';
-import { useEffect, useState } from 'react';
-import { Rings } from 'react-loader-spinner';
+import React, { useEffect, useState } from 'react';
 import { useLocation } from 'react-router-dom';
+
 import type { ShowCourseTabPayload } from '~background';
 import { Landing } from '~components/Landing';
 import { Loading } from '~components/Loading';
 import { MiniProfessor } from '~components/MiniProfessor';
-import type { GradeDistribution } from '~components/ProfileGrades';
 import {
   buildProfessorProfiles,
   ProfessorProfileInterface,

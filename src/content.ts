@@ -15,7 +15,7 @@ export const config = {
  * - It injects the instructor names into the section table
  */
 export async function scrapeCourseData() {
-  let [header, professors] = await Promise.all([
+  const [header, professors] = await Promise.all([
     getCourseInfo(),
     injectAndGetProfessorNames(),
   ]);

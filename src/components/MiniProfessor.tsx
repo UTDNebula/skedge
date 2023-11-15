@@ -1,6 +1,9 @@
+import React from 'react';
 import { FaUser } from 'react-icons/fa';
 import { NavigateFunction, useNavigate } from 'react-router-dom';
+
 import type { ProfessorProfileInterface } from '~data/builder';
+
 import { Card } from './Card';
 import { MiniGrades } from './MiniGrades';
 import { MiniScore } from './MiniScore';

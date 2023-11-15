@@ -1,6 +1,8 @@
-import { useState } from 'react';
+import React from 'react';
 import Chart from 'react-apexcharts';
+
 import { miniGradeChartOptions } from '~utils/styling';
+
 import type { GradeDistribution } from './ProfileGrades';
 
 export const MiniGrades = ({

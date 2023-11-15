@@ -1,8 +1,9 @@
+import '~/style.css';
+
+import React from 'react';
 import { MemoryRouter } from 'react-router-dom';
 
 import { Routing } from '~/pages';
-
-import '~/style.css';
 
 function IndexPopup() {
   return (

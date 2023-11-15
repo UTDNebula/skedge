@@ -1,6 +1,7 @@
+import React, { useState } from 'react';
 import Chart from 'react-apexcharts';
-import { useState } from 'react';
 import { AiFillCaretLeft, AiFillCaretRight } from 'react-icons/ai';
+
 import { gradeChartOptions } from '~utils/styling';
 
 export interface GradeDistribution {

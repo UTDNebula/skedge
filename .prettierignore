@@ -3,6 +3,8 @@
 .plasmo
 .vscode
 .gitignore
+.eslintignore
+.prettierignore
 package.json
 package-lock.json
 pnpm-lock.yaml

@@ -1,6 +1,8 @@
+import skedgeLogo from 'data-base64:../../assets/icon.png';
+import React from 'react';
+
 import { Card } from './Card';
 import { Footer } from './Footer';
-import skedgeLogo from 'data-base64:../../assets/icon.png';
 
 const SURVEY_URL =
   'https://docs.google.com/forms/d/e/1FAIpQLScGIXzlYgsx1SxHYTTCwRaMNVYNRe6I67RingPRVzcT1tLwSg/viewform?usp=sf_link';

@@ -61,7 +61,7 @@ function getGraphQlUrlProps(professorIds: string[]) {
   return graphQlUrlProps;
 }
 
-function fetchWithGraphQl(graphQlUrlProps: any[], resolve) {
+function fetchWithGraphQl(graphQlUrlProps, resolve) {
   const graphqlUrl = 'https://www.ratemyprofessors.com/graphql';
 
   Promise.all(graphQlUrlProps.map((u) => fetch(graphqlUrl, u)))
@@ -70,8 +70,8 @@ function fetchWithGraphQl(graphQlUrlProps: any[], resolve) {
       for (let i = 0; i < ratings.length; i++) {
         if (
           ratings[i] != null &&
-          ratings[i].hasOwnProperty('data') &&
-          ratings[i]['data'].hasOwnProperty('node')
+          Object.hasOwn(ratings[i], 'data') &&
+          Object.hasOwn(ratings[i]['data'], 'node')
         ) {
           ratings[i] = ratings[i]['data']['node'];
         }

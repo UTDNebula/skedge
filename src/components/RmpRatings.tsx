@@ -1,4 +1,6 @@
+import React from 'react';
 import Chart from 'react-apexcharts';
+
 import { ratingsChartOptions } from '~utils/styling';
 
 export const RmpRatings = ({
