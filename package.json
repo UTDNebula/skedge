@@ -29,14 +29,19 @@
     "react-router-dom": "^6.8.2"
   },
   "devDependencies": {
-    "@plasmohq/prettier-plugin-sort-imports": "3.6.0",
     "@types/chrome": "0.0.202",
     "@types/node": "18.11.9",
     "@types/react": "18.0.25",
     "@types/react-dom": "18.0.9",
+    "@typescript-eslint/eslint-plugin": "^6.11.0",
     "autoprefixer": "^10.4.13",
     "eslint": "8.53.0",
     "eslint-config-next": "14.0.2",
+    "eslint-config-prettier": "^9.0.0",
+    "eslint-plugin-jsx-a11y": "^6.8.0",
+    "eslint-plugin-react": "^7.33.2",
+    "eslint-plugin-react-hooks": "^4.6.0",
+    "eslint-plugin-simple-import-sort": "^10.0.0",
     "husky": "^8.0.3",
     "lint-staged": "^15.1.0",
     "postcss": "^8.4.21",
@@ -49,6 +54,46 @@
       "eslint --cache --fix",
       "prettier --write"
     ]
+  },
+  "eslintConfig": {
+    "root": true,
+    "extends": [
+      "next/core-web-vitals",
+      "prettier",
+      "plugin:jsx-a11y/recommended",
+      "eslint:recommended",
+      "plugin:react/recommended",
+      "plugin:react-hooks/recommended",
+      "plugin:@typescript-eslint/recommended"
+    ],
+    "parser": "@typescript-eslint/parser",
+    "plugins": [
+      "simple-import-sort",
+      "@typescript-eslint"
+    ],
+    "rules": {
+      "jsx-a11y/anchor-is-valid": [
+        "error",
+        {
+          "components": [
+            "Link"
+          ],
+          "specialLink": [
+            "hrefLeft",
+            "hrefRight"
+          ],
+          "aspects": [
+            "invalidHref",
+            "preferButton"
+          ]
+        }
+      ],
+      "simple-import-sort/imports": "error",
+      "simple-import-sort/exports": "error",
+      "import/first": "error",
+      "import/newline-after-import": "error",
+      "import/no-duplicates": "error"
+    }
   },
   "manifest": {
     "permissions": [

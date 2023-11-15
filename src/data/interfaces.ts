@@ -1,7 +1,7 @@
 export interface FetchProfessorParameters {
   firstName: string;
   lastName: string;
-};
+}
 
 export interface FetchCourseParameters {
   subjectPrefix: string;
@@ -11,7 +11,7 @@ export interface FetchCourseParameters {
 export interface FetchSectionParameters {
   courseReference: string;
   professorReference: string;
-};
+}
 
 interface Requisites {
   options: any[];
@@ -44,7 +44,7 @@ export interface CourseInterface {
 interface Office {
   building: string;
   room: string;
-  map_uri: string
+  map_uri: string;
 }
 
 export interface ProfessorInterface {
@@ -85,4 +85,4 @@ export interface SectionInterface {
   section_number: string;
   syllabus_uri: string;
   teaching_assistants: any[];
-};
+}

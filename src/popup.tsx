@@ -1,15 +1,15 @@
-import { MemoryRouter } from "react-router-dom"
+import { MemoryRouter } from 'react-router-dom';
 
-import { Routing } from "~/pages"
+import { Routing } from '~/pages';
 
-import "~/style.css"
+import '~/style.css';
 
 function IndexPopup() {
   return (
     <MemoryRouter>
       <Routing />
     </MemoryRouter>
-  )
+  );
 }
 
-export default IndexPopup
+export default IndexPopup;

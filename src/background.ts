@@ -1,5 +1,6 @@
-import { scrapeCourseData, CourseHeader } from "~content";
-import { Storage } from "@plasmohq/storage";
+import { Storage } from '@plasmohq/storage';
+
+import { CourseHeader, scrapeCourseData } from '~content';
 
 export interface ShowCourseTabPayload {
   header: CourseHeader;
@@ -14,54 +15,58 @@ let scrapedCourseData: ShowCourseTabPayload = null;
 const storage = new Storage();
 
 /** Injects the content script if we hit a course page */
-chrome.webNavigation.onHistoryStateUpdated.addListener(details => {
-  if (/^.*:\/\/utdallas\.collegescheduler\.com\/terms\/.*\/courses\/.+$/.test(
-      details.url
-  )) 
-  {
-    chrome.scripting.executeScript({
+chrome.webNavigation.onHistoryStateUpdated.addListener((details) => {
+  if (
+    /^.*:\/\/utdallas\.collegescheduler\.com\/terms\/.*\/courses\/.+$/.test(
+      details.url,
+    )
+  ) {
+    chrome.scripting.executeScript(
+      {
         target: {
-            tabId: details.tabId,
+          tabId: details.tabId,
         },
         // content script injection only works reliably on the prod packaged extension
         // b/c of the plasmo dev server connections
         func: scrapeCourseData,
-    }, async function (resolve) {
-      if (resolve && resolve[0] && resolve[0].result) {
-        const result: ShowCourseTabPayload = resolve[0].result;
-        scrapedCourseData = result;
-        await storage.set("scrapedCourseData", scrapedCourseData)
-      };
-    });
-    chrome.action.setBadgeText({text: "!"});
-    chrome.action.setBadgeBackgroundColor({color: 'green'});
-    courseTabId = details.tabId
-    storage.set("courseTabId", courseTabId)
-    storage.set("courseTabUrl", details.url)
+      },
+      async function (resolve) {
+        if (resolve && resolve[0] && resolve[0].result) {
+          const result: ShowCourseTabPayload = resolve[0].result;
+          scrapedCourseData = result;
+          await storage.set('scrapedCourseData', scrapedCourseData);
+        }
+      },
+    );
+    chrome.action.setBadgeText({ text: '!' });
+    chrome.action.setBadgeBackgroundColor({ color: 'green' });
+    courseTabId = details.tabId;
+    storage.set('courseTabId', courseTabId);
+    storage.set('courseTabUrl', details.url);
   } else {
-    chrome.action.setBadgeText({text: ""});
+    chrome.action.setBadgeText({ text: '' });
   }
 });
 
 /** Sets the icon to be active if we're on a course tab */
-chrome.tabs.onActivated.addListener(async details => {
-  const cachedTabUrl: string = await storage.get("courseTabUrl")
-  const currentTabUrl: string = (await getCurrentTab()).url
+chrome.tabs.onActivated.addListener(async (details) => {
+  const cachedTabUrl: string = await storage.get('courseTabUrl');
+  const currentTabUrl: string = (await getCurrentTab()).url;
   if (cachedTabUrl === currentTabUrl) {
-    chrome.action.setBadgeText({text: "!"});
-    chrome.action.setBadgeBackgroundColor({color: 'green'});
+    chrome.action.setBadgeText({ text: '!' });
+    chrome.action.setBadgeBackgroundColor({ color: 'green' });
   } else {
-    chrome.action.setBadgeText({text: ""});
+    chrome.action.setBadgeText({ text: '' });
   }
 });
 
 export async function getScrapedCourseData() {
-  const cachedTabUrl: string = await storage.get("courseTabUrl")
-  const currentTabUrl: string = (await getCurrentTab()).url
+  const cachedTabUrl: string = await storage.get('courseTabUrl');
+  const currentTabUrl: string = (await getCurrentTab()).url;
   if (cachedTabUrl === currentTabUrl) {
-    return await storage.get("scrapedCourseData");
+    return await storage.get('scrapedCourseData');
   }
-  return null
+  return null;
 }
 
 async function getCurrentTab() {
