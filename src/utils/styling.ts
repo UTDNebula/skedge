@@ -19,7 +19,7 @@ export const gradeChartOptions: ApexOptions = {
     },
   },
   noData: {
-    text: 'No grade data found',
+    text: 'Grade data unavailable for professor',
     align: 'center',
     verticalAlign: 'middle',
   },
@@ -81,7 +81,9 @@ export const gradeChartOptions: ApexOptions = {
     ],
   },
   yaxis: {
-    show: false,
+    labels: {
+      formatter: (value) => Number(value).toFixed(0) + '%',
+    },
   },
 };
 
@@ -123,22 +125,8 @@ export const miniGradeChartOptions: ApexOptions = {
       distributed: true,
     },
   },
-  title: {
-    text: 'Undefined',
-    align: 'center',
-    margin: 0,
-    offsetX: 0,
-    offsetY: 0,
-    floating: true,
-    style: {
-      fontSize: '12px',
-      fontWeight: 'semibold',
-      fontFamily: 'Inter',
-      color: '#9B9B9B',
-    },
-  },
   noData: {
-    text: 'No grade data found',
+    text: 'Grade data unavailable for professor',
     align: 'center',
     verticalAlign: 'middle',
   },
@@ -175,6 +163,7 @@ export const miniGradeChartOptions: ApexOptions = {
       left: 15,
       right: 5,
       bottom: -5,
+      top: -30,
     },
     yaxis: {
       lines: {
@@ -202,5 +191,8 @@ export const miniGradeChartOptions: ApexOptions = {
   },
   yaxis: {
     show: false,
+    labels: {
+      formatter: (value) => Number(value).toFixed(0) + '%',
+    },
   },
 };

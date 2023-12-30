@@ -38,6 +38,7 @@ export const MiniProfessor = ({
           <div className="col-span-4">
             <MiniScore
               name="RMP"
+              title="Overall Quality"
               score={professorData.rmpScore}
               maxScore={5}
               inverted={false}
@@ -45,6 +46,7 @@ export const MiniProfessor = ({
             <div className="my-2"></div>
             <MiniScore
               name="DIFF"
+              title="Level of Difficulty"
               score={professorData.diffScore}
               maxScore={5}
               inverted={true}
@@ -52,15 +54,14 @@ export const MiniProfessor = ({
             <div className="my-2"></div>
             <MiniScore
               name="WTA"
+              title="Would take again"
               score={professorData.wtaScore}
               maxScore={100}
               inverted={false}
             />
           </div>
           <div className="col-span-8 max-h-[124px]">
-            <MiniGrades
-              gradeDistributionData={professorData.gradeDistributions[0]}
-            />
+            <MiniGrades series={professorData.gradeDistribution} />
           </div>
         </div>
       </Card>

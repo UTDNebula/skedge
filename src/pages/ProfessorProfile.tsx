@@ -3,7 +3,7 @@ import { useLocation } from 'react-router-dom';
 
 import { Card } from '~components/Card';
 import { HorizontalScores } from '~components/HorizontalScores';
-import { LinkButton } from '~components/LinkButton';
+import { ProfileFooter } from '~components/ProfileFooter';
 import { ProfileGrades } from '~components/ProfileGrades';
 import { ProfileHeader } from '~components/ProfileHeader';
 import { RmpRatings } from '~components/RmpRatings';
@@ -30,7 +30,6 @@ export const ProfessorProfile = () => {
       <ProfileHeader
         name={professorData.name}
         profilePicUrl={professorData.profilePicUrl}
-        rmpId={professorData.rmpId}
         profiles={profiles}
       />
       <Card>
@@ -55,13 +54,15 @@ export const ProfessorProfile = () => {
             Array(5).fill(0),
           ) && (
             <RmpRatings
-              ratingsDistributionData={professorData.ratingsDistribution}
+              series={professorData.ratingsDistribution}
+              total={professorData.totalRatings}
             />
           )}
         <ProfileGrades
-          gradeDistributionData={professorData.gradeDistributions}
+          series={professorData.gradeDistribution}
+          total={professorData.totalGrades}
         />
-        <LinkButton />
+        <ProfileFooter name={professorData.name} rmpId={professorData.rmpId} />
       </Card>
     </div>
   );

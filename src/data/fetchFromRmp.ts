@@ -1,45 +1,32 @@
 import { HEADERS, PROFESSOR_QUERY } from '~data/config';
 
 function getProfessorUrl(professorName: string, schoolId: string): string {
-  return `https://www.ratemyprofessors.com/search/teachers?query=${encodeURIComponent(
-    professorName,
-  )}&sid=${btoa(`School-${schoolId}`)}`;
-}
-function getProfessorUrls(
-  professorNames: string[],
-  schoolId: string,
-): string[] {
-  const professorUrls = [];
-  for (let i = 0; i < professorNames.length; i++) {
-    professorUrls.push(getProfessorUrl(professorNames[i], schoolId));
-  }
-  return professorUrls;
+  const url = new URL(
+    'https://www.ratemyprofessors.com/search/professors/' + schoolId + '?',
+  ); //UTD
+  url.searchParams.append('q', professorName);
+  return url.href;
 }
 
-function getProfessorIds(texts: string[], professorNames: string[]): string[] {
-  const professorIds = [];
-  const lowerCaseProfessorNames = professorNames.map((name) =>
-    name.toLowerCase(),
-  );
-  texts.forEach((text) => {
-    let matched = false;
-    const regex = /"legacyId":(\d+).*?"firstName":"(.*?)","lastName":"(.*?)"/g;
-    for (const match of text.matchAll(regex)) {
-      console.log(
+function getProfessorId(text: string, professorName: string): string {
+  let professorId = '';
+  const lowerCaseProfessorName = professorName.toLowerCase();
+
+  let matched = false;
+  const regex = /"legacyId":(\d+).*?"firstName":"(.*?)","lastName":"(.*?)"/g;
+  for (const match of text.matchAll(regex)) {
+    if (
+      lowerCaseProfessorName.includes(
         match[2].split(' ')[0].toLowerCase() + ' ' + match[3].toLowerCase(),
-      );
-      if (
-        lowerCaseProfessorNames.includes(
-          match[2].split(' ')[0].toLowerCase() + ' ' + match[3].toLowerCase(),
-        )
-      ) {
-        professorIds.push(match[1]);
-        matched = true;
-      }
+      )
+    ) {
+      professorId = match[1];
+      matched = true;
     }
-    if (!matched) professorIds.push(null);
-  });
-  return professorIds;
+  }
+  if (!matched) professorId = null;
+
+  return professorId;
 }
 
 function getGraphQlUrlProp(professorId: string) {
@@ -53,59 +40,49 @@ function getGraphQlUrlProp(professorId: string) {
     body: JSON.stringify(PROFESSOR_QUERY),
   };
 }
-function getGraphQlUrlProps(professorIds: string[]) {
-  const graphQlUrlProps = [];
-  professorIds.forEach((professorId) => {
-    graphQlUrlProps.push(getGraphQlUrlProp(professorId));
-  });
-  return graphQlUrlProps;
-}
 
-function fetchWithGraphQl(graphQlUrlProps, resolve) {
+function fetchWithGraphQl(graphQlUrlProp, resolve) {
   const graphqlUrl = 'https://www.ratemyprofessors.com/graphql';
 
-  Promise.all(graphQlUrlProps.map((u) => fetch(graphqlUrl, u)))
-    .then((responses) => Promise.all(responses.map((res) => res.json())))
-    .then((ratings) => {
-      for (let i = 0; i < ratings.length; i++) {
-        if (
-          ratings[i] != null &&
-          Object.hasOwn(ratings[i], 'data') &&
-          Object.hasOwn(ratings[i]['data'], 'node')
-        ) {
-          ratings[i] = ratings[i]['data']['node'];
-        }
+  fetch(graphqlUrl, graphQlUrlProp)
+    .then((response) => response.json())
+    .then((rating) => {
+      if (
+        rating != null &&
+        Object.hasOwn(rating, 'data') &&
+        Object.hasOwn(rating['data'], 'node')
+      ) {
+        rating = rating['data']['node'];
       }
-      console.log(ratings);
-      resolve(ratings);
+      resolve(rating);
     });
 }
 
 export interface RmpRequest {
-  professorNames: string[];
+  professorName: string;
   schoolId: string;
 }
-export function requestProfessorsFromRmp(
+export function requestProfessorFromRmp(
   request: RmpRequest,
-): Promise<RMPInterface[]> {
+): Promise<RMPInterface> {
   return new Promise((resolve, reject) => {
     // make a list of urls for promises
-    const professorUrls = getProfessorUrls(
-      request.professorNames,
+    const professorUrl = getProfessorUrl(
+      request.professorName,
       request.schoolId,
     );
 
     // fetch professor ids from each url
-    Promise.all(professorUrls.map((u) => fetch(u)))
-      .then((responses) => Promise.all(responses.map((res) => res.text())))
-      .then((texts) => {
-        const professorIds = getProfessorIds(texts, request.professorNames);
+    fetch(professorUrl)
+      .then((response) => response.text())
+      .then((text) => {
+        const professorId = getProfessorId(text, request.professorName);
 
         // create fetch objects for each professor id
-        const graphQlUrlProps = getGraphQlUrlProps(professorIds);
+        const graphQlUrlProp = getGraphQlUrlProp(professorId);
 
         // fetch professor info by id with graphQL
-        fetchWithGraphQl(graphQlUrlProps, resolve);
+        fetchWithGraphQl(graphQlUrlProp, resolve);
       })
       .catch((error) => {
         reject(error);

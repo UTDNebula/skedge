@@ -105,7 +105,7 @@
     "host_permissions": [
       "https://utdallas.collegescheduler.com/terms/*/courses/*",
       "https://www.ratemyprofessors.com/",
-      "https://api.utdnebula.com/"
+      "https://trends.utdnebula.com/"
     ],
     "browser_specific_settings": {
       "gecko": {
