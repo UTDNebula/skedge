@@ -128,7 +128,7 @@ export async function buildProfessorProfiles(payload: ShowCourseTabPayload) {
       ratingsDistribution: rmps[i]
         ? Object.values(rmps[i].ratingsDistribution).reverse().slice(1)
         : [],
-      totalRatings: rmps[i].ratingsDistribution.total,
+      totalRatings: rmps[i]?.ratingsDistribution?.total ?? 0,
     });
   }
   return professorProfiles;
