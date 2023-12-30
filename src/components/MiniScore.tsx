@@ -26,10 +26,13 @@ export const MiniScore = ({
       </h3>
       {score !== undefined ? (
         <h1
-          style={{ backgroundColor: getScoreColor(score, maxScore, inverted) }}
+          style={{
+            transition: 'background-color 300ms',
+            backgroundColor: getScoreColor(parseInt(score), maxScore, inverted),
+          }}
           className="text-blue-dark text-center py-0.5 rounded-r-xl col-span-7"
         >
-          {name === 'WTA' ? Math.round(score) + '%' : score.toFixed(1)}
+          {score}
         </h1>
       ) : (
         <h1
