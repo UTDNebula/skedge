@@ -8,6 +8,7 @@ interface MiniScoreProps {
   score: number;
   maxScore: number;
   inverted: boolean;
+  className: string;
 }
 
 export const MiniScore = ({
@@ -16,9 +17,10 @@ export const MiniScore = ({
   score,
   maxScore,
   inverted,
+  className,
 }: MiniScoreProps) => {
   return (
-    <div className="grid grid-cols-12" title={title}>
+    <div className={'grid grid-cols-12 ' + className} title={title}>
       <h3 className="bg-blue-dark rounded-l-xl text-white text-center py-1.5 col-span-5">
         {name}
       </h3>

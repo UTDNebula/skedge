@@ -22,7 +22,7 @@ export const RmpRatings = ({
           options={ratingsChartOptions}
           series={series}
           type="donut"
-          height={300}
+          height={'100%'}
         ></Chart>
       </div>
     </div>

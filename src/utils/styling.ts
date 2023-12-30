@@ -52,10 +52,6 @@ export const gradeChartOptions: ApexOptions = {
     id: 'grade-distribution',
   },
   grid: {
-    padding: {
-      left: 20,
-      right: 20,
-    },
     yaxis: {
       lines: {
         show: false,
@@ -99,7 +95,7 @@ export const ratingsChartOptions: ApexOptions = {
     id: 'ratings-distribution',
   },
   noData: {
-    text: 'No data found',
+    text: 'RMP data unavailable for professor',
     align: 'center',
     verticalAlign: 'middle',
   },
@@ -160,10 +156,7 @@ export const miniGradeChartOptions: ApexOptions = {
   },
   grid: {
     padding: {
-      left: 15,
-      right: 5,
-      bottom: -5,
-      top: -30,
+      top: -20,
     },
     yaxis: {
       lines: {

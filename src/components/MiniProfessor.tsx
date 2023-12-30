@@ -34,33 +34,32 @@ export const MiniProfessor = ({
         </button>
       </header>
       <Card>
-        <div className="grid grid-cols-12">
-          <div className="col-span-4">
-            <MiniScore
-              name="RMP"
-              title="Overall Quality"
-              score={professorData.rmpScore}
-              maxScore={5}
-              inverted={false}
-            />
-            <div className="my-2"></div>
-            <MiniScore
-              name="DIFF"
-              title="Level of Difficulty"
-              score={professorData.diffScore}
-              maxScore={5}
-              inverted={true}
-            />
-            <div className="my-2"></div>
-            <MiniScore
-              name="WTA"
-              title="Would take again"
-              score={professorData.wtaScore}
-              maxScore={100}
-              inverted={false}
-            />
-          </div>
-          <div className="col-span-8 max-h-[124px]">
+        <div className="grid grid-cols-12 grid-rows-3 gap-2">
+          <MiniScore
+            name="RMP"
+            title="Overall Quality"
+            score={professorData.rmpScore}
+            maxScore={5}
+            inverted={false}
+            className="col-span-4 row-span-1 col-start-1"
+          />
+          <MiniScore
+            name="DIFF"
+            title="Level of Difficulty"
+            score={professorData.diffScore}
+            maxScore={5}
+            inverted={true}
+            className="col-span-4 row-span-1 row-start-2"
+          />
+          <MiniScore
+            name="WTA"
+            title="Would take again"
+            score={professorData.wtaScore}
+            maxScore={100}
+            inverted={false}
+            className="col-span-4 row-span-1 row-start-3"
+          />
+          <div className="col-span-8 row-span-3 col-start-5 max-h-[124px]">
             <MiniGrades series={professorData.gradeDistribution} />
           </div>
         </div>

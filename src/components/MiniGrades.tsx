@@ -9,7 +9,7 @@ export const MiniGrades = ({ series }: { series: ApexAxisChartSeries }) => {
       options={miniGradeChartOptions}
       series={series}
       type="bar"
-      height={124}
+      height={'100%'}
     ></Chart>
   );
 };

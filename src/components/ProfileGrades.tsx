@@ -22,12 +22,12 @@ export const ProfileGrades = ({
           {'Grades Distribution (' + total + ')'}
         </h2>
       </header>
-      <div className="border-blue-dark border-r-2 border-l-2 border-b-2 rounded-b-2xl">
+      <div className="border-blue-dark border-r-2 border-l-2 border-b-2 rounded-b-2xl pr-2">
         <Chart
           options={gradeChartOptions}
           series={series}
           type="bar"
-          height={150}
+          height={'100%'}
         ></Chart>
       </div>
     </>
