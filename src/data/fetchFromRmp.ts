@@ -1,4 +1,5 @@
 import { HEADERS, PROFESSOR_QUERY } from '~data/config';
+import fetchWithCache, { cacheIndexRmp } from '~data/fetchWithCache';
 
 function getProfessorUrl(professorName: string, schoolId: string): string {
   const url = new URL(
@@ -44,8 +45,7 @@ function getGraphQlUrlProp(professorId: string) {
 function fetchWithGraphQl(graphQlUrlProp, resolve) {
   const graphqlUrl = 'https://www.ratemyprofessors.com/graphql';
 
-  fetch(graphqlUrl, graphQlUrlProp)
-    .then((response) => response.json())
+  fetchWithCache(graphqlUrl, graphQlUrlProp, cacheIndexRmp, 2629800000)
     .then((rating) => {
       if (
         rating != null &&
@@ -55,6 +55,9 @@ function fetchWithGraphQl(graphQlUrlProp, resolve) {
         rating = rating['data']['node'];
       }
       resolve(rating);
+    })
+    .catch((error) => {
+      console.error('RMP', error);
     });
 }
 
@@ -66,19 +69,24 @@ export function requestProfessorFromRmp(
   request: RmpRequest,
 ): Promise<RMPInterface> {
   return new Promise((resolve, reject) => {
-    // make a list of urls for promises
+    // url for promises
     const professorUrl = getProfessorUrl(
       request.professorName,
       request.schoolId,
     );
 
-    // fetch professor ids from each url
-    fetch(professorUrl)
-      .then((response) => response.text())
+    // fetch professor id from url
+    fetchWithCache(
+      professorUrl,
+      { method: 'GET' },
+      cacheIndexRmp,
+      2629800000,
+      true,
+    )
       .then((text) => {
         const professorId = getProfessorId(text, request.professorName);
 
-        // create fetch objects for each professor id
+        // create fetch object for professor id
         const graphQlUrlProp = getGraphQlUrlProp(professorId);
 
         // fetch professor info by id with graphQL

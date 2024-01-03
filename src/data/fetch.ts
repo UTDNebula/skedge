@@ -1,3 +1,8 @@
+import fetchWithCache, {
+  cacheIndexGrades,
+  cacheIndexProfessor,
+} from '~data/fetchWithCache';
+
 interface FetchProfessorParameters {
   profFirst: string;
   profLast: string;
@@ -6,7 +11,7 @@ interface FetchProfessorParameters {
 export async function fetchNebulaProfessor(
   params: FetchProfessorParameters,
 ): Promise<unknown> {
-  return fetch(
+  return fetchWithCache(
     'https://trends.utdnebula.com/api/professor?profFirst=' +
       params.profFirst +
       '&profLast=' +
@@ -17,8 +22,9 @@ export async function fetchNebulaProfessor(
         Accept: 'application/json',
       },
     },
+    cacheIndexProfessor,
+    2629800000,
   )
-    .then((response) => response.json())
     .then((data) => {
       if (data.message !== 'success') {
         //throw new Error(data.message);
@@ -34,7 +40,7 @@ export async function fetchNebulaProfessor(
 export async function fetchNebulaGrades(
   params: FetchProfessorParameters,
 ): Promise<unknown> {
-  return fetch(
+  return fetchWithCache(
     'https://trends.utdnebula.com/api/grades?profFirst=' +
       params.profFirst +
       '&profLast=' +
@@ -45,8 +51,9 @@ export async function fetchNebulaGrades(
         Accept: 'application/json',
       },
     },
+    cacheIndexGrades,
+    2629800000,
   )
-    .then((response) => response.json())
     .then((data) => {
       if (data.message !== 'success') {
         throw new Error(data.message);
@@ -59,6 +66,4 @@ export async function fetchNebulaGrades(
 }
 
 // Test function. Commented out. Uncomment to test.
-// console.log(await fetchNebulaCourse({courseNumber: "4337", subjectPrefix: "CS"}));
-// console.log(await fetchNebulaProfessor({firstName: "Scott", lastName: "Dollinger"}));
-// console.log(await fetchNebulaSections({ courseReference: "623fedfabf28b6d88d6c7742", professorReference: "623fc346b8bc16815e8679a9" }))
+// console.log(await fetchNebulaProfessor({profFirst: "Scott", profLast: "Dollinger"}));
