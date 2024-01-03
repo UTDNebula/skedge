@@ -116,7 +116,7 @@ export async function buildProfessorProfiles(payload: ShowCourseTabPayload) {
           : rmps[i]?.wouldTakeAgainPercent
         : undefined,
       rmpTags: rmps[i]?.teacherRatingTags
-        .sort((a, b) => a.tagCount - b.tagCount)
+        .sort((a, b) => b.tagCount - a.tagCount)
         .map((tag) => tag.tagName),
       gradeDistribution: [
         {
