@@ -91,3 +91,28 @@ export async function scrapeCourseData() {
     return [...new Set(professors)];
   }
 }
+
+export async function listenForTableChange() {
+  const observer = new MutationObserver((mutationsList) => {
+    for (const mutation of mutationsList) {
+      if (
+        mutation.type === 'attributes' &&
+        mutation.attributeName === 'class'
+      ) {
+        if (mutation.target.classList.contains('active')) {
+          console.log(mutation.target.innerText.split(' ')[0]);
+          chrome.runtime.sendMessage('tableChange');
+        }
+      }
+    }
+  });
+  observer.observe(document.body, {
+    attributes: true,
+    subtree: true,
+  });
+  chrome.runtime.onMessage.addListener(function (message) {
+    if (message === 'disconnect') {
+      observer.disconnect();
+    }
+  });
+}
