@@ -85,6 +85,11 @@ export async function scrapeCourseData() {
       });
       const courseRowCells = courseRow.querySelector('tr');
       courseRowCells.insertBefore(newTd, courseRowCells.children[7]);
+      //Increase Disabled Reasons row colspan if necessary
+      const sectionDisabled = courseRow.querySelector('tr:nth-child(3) > td');
+      if (sectionDisabled !== null) {
+        sectionDisabled.colSpan = sectionDisabled.colSpan + 1;
+      }
       // collapse section details
       sectionDetailsButton.click();
     });
@@ -92,7 +97,7 @@ export async function scrapeCourseData() {
   }
 }
 
-export async function listenForTableChange() {
+export function listenForTableChange() {
   const observer = new MutationObserver((mutationsList) => {
     for (const mutation of mutationsList) {
       if (
@@ -100,7 +105,6 @@ export async function listenForTableChange() {
         mutation.attributeName === 'class'
       ) {
         if (mutation.target.classList.contains('active')) {
-          console.log(mutation.target.innerText.split(' ')[0]);
           chrome.runtime.sendMessage('tableChange');
         }
       }

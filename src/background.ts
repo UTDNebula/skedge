@@ -16,7 +16,6 @@ const storage = new Storage();
 
 /** Injects the content script if we hit a course page */
 chrome.webNavigation.onHistoryStateUpdated.addListener((details) => {
-  console.log('hello');
   if (
     /^.*:\/\/utdallas\.collegescheduler\.com\/terms\/.*\/courses\/.+$/.test(
       details.url,
@@ -58,14 +57,11 @@ chrome.webNavigation.onHistoryStateUpdated.addListener((details) => {
 
 chrome.runtime.onMessage.addListener(function (message) {
   if (message === 'tableChange') {
-    console.log('hi');
     chrome.scripting.executeScript(
       {
         target: {
           tabId: courseTabId,
         },
-        // content script injection only works reliably on the prod packaged extension
-        // b/c of the plasmo dev server connections
         func: scrapeCourseData,
       },
       async function (resolve) {
