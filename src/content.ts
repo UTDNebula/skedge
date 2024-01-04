@@ -97,6 +97,7 @@ export async function scrapeCourseData() {
   }
 }
 
+/** This listens for clicks on the buttons that switch between the enabled and disabled professor tabs and reports back to background.ts */
 export function listenForTableChange() {
   const observer = new MutationObserver((mutationsList) => {
     for (const mutation of mutationsList) {
@@ -104,6 +105,7 @@ export function listenForTableChange() {
         mutation.type === 'attributes' &&
         mutation.attributeName === 'class'
       ) {
+        //button corresponding to shown table is given an active class
         if (mutation.target.classList.contains('active')) {
           chrome.runtime.sendMessage('tableChange');
         }
@@ -114,8 +116,9 @@ export function listenForTableChange() {
     attributes: true,
     subtree: true,
   });
+  //remove observer when ordered by backgroud.ts to avoid duplicates
   chrome.runtime.onMessage.addListener(function (message) {
-    if (message === 'disconnect') {
+    if (message === 'disconnectObserver') {
       observer.disconnect();
     }
   });

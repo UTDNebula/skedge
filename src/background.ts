@@ -21,6 +21,7 @@ chrome.webNavigation.onHistoryStateUpdated.addListener((details) => {
       details.url,
     )
   ) {
+    //Scrape data
     chrome.scripting.executeScript(
       {
         target: {
@@ -38,13 +39,15 @@ chrome.webNavigation.onHistoryStateUpdated.addListener((details) => {
         }
       },
     );
-    chrome.tabs.sendMessage(details.tabId, 'disconnect');
+    //Listen for table change to rescrape data
+    chrome.tabs.sendMessage(details.tabId, 'disconnectObserver');
     chrome.scripting.executeScript({
       target: {
         tabId: details.tabId,
       },
       func: listenForTableChange,
     });
+    //Store tab info
     chrome.action.setBadgeText({ text: '!' });
     chrome.action.setBadgeBackgroundColor({ color: 'green' });
     courseTabId = details.tabId;
@@ -55,6 +58,7 @@ chrome.webNavigation.onHistoryStateUpdated.addListener((details) => {
   }
 });
 
+/** Rescrape data on table change */
 chrome.runtime.onMessage.addListener(function (message) {
   if (message === 'tableChange') {
     chrome.scripting.executeScript(
