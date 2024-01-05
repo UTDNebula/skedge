@@ -3,6 +3,7 @@ module.exports = {
   content: ['./**/*.tsx'],
   theme: {
     colors: {
+      //TODO: phase out these colors with the ones below, causes an error to remove now
       'blue-dark': '#1C2A6D',
       'blue-dark-hover': '#17235C',
       gray: '#D9D9D9',
@@ -11,6 +12,41 @@ module.exports = {
       white: '#FFFFFF',
       'purple-dark': '#939FDB',
       'purple-light': '#D0D3EA',
+    },
+    extend: {
+      colors: {
+        haiti: '#090b2c', // brand black
+        persimmon: {
+          50: '#ffe5de',
+          100: '#ffcabd',
+          200: '#ffb09d',
+          300: '#ff947e',
+          400: '#ff7760',
+          500: '#ff5743', // brand accent, danger
+          600: '#d14a39',
+          700: '#a43d2e',
+          800: '#793025',
+          900: '#51231b',
+        },
+        royal: '#573dff', // brand secondary (dark)
+        cornflower: {
+          50: '#eae4ff',
+          100: '#d3caff', // ~periwinkle
+          200: '#bcb0fe',
+          300: '#a297fd',
+          400: '#857efc',
+          500: '#6266fa', // brand primary
+          600: '#5455cc',
+          700: '#45449f', // ~royal
+          800: '#363475',
+          900: '#28254d',
+        },
+        periwinkle: '#c2c8ff', // brand secondary (light)
+        shade: '#101828', // drop shadow color from shipfaster ui
+      },
+      fontFamily: {
+        kallisto: ['Kallisto', 'Roboto', 'sans-serif'],
+      },
     },
     fontFamily: {
       main: ['Inter', 'sans-serif'],

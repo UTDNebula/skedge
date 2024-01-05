@@ -20,7 +20,7 @@ export const Landing = () => {
   return (
     <Card>
       <div className="h-auto">
-        <h1>Welcome to sk.edge 👋</h1>
+        <h1 className="font-kallisto">Welcome to sk.edge 👋</h1>
         <h6 className="my-2">
           your registration assistant by students, for students
         </h6>

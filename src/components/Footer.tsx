@@ -1,4 +1,4 @@
-import nebulaLogo from 'data-base64:../../assets/nebula-logo.svg';
+import nebulaLogo from 'data-base64:../../assets/icon-black.svg';
 import React from 'react';
 
 export const Footer = () => {
@@ -10,12 +10,12 @@ export const Footer = () => {
           href="https://www.utdnebula.com/"
           target="_blank"
           rel="noreferrer"
-          className="w-[25px] h-[25px]"
+          className="w-8 h-8"
         >
           <img
             src={nebulaLogo}
             alt="Nebula Labs Logo"
-            className="w-[25px] h-[25px] hover:cursor-pointer"
+            className="w-8 h-8 hover:cursor-pointer"
           ></img>
         </a>
       </div>
