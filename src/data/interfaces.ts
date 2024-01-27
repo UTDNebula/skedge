@@ -95,3 +95,35 @@ export interface SectionInterface {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   teaching_assistants: any[];
 }
+
+export interface CourseCodeInterface {
+  courseCount: number;
+  courseName: string;
+}
+export interface RatingsDistributionInterface {
+  r1: number;
+  r2: number;
+  r3: number;
+  r4: number;
+  r5: number;
+  total: number;
+}
+export interface TeacherRatingTag {
+  tagCount: number;
+  tagName: string;
+}
+
+export interface RMPRatingInterface {
+  avgDifficulty: number;
+  avgRating: number;
+  courseCodes: CourseCodeInterface[];
+  department: string;
+  firstName: string;
+  lastName: string;
+  legacyId: number;
+  numRatings: number;
+  ratingsDistribution: RatingsDistributionInterface;
+  school: { id: string };
+  teacherRatingTags: TeacherRatingTag[];
+  wouldTakeAgainPercent: number;
+}
