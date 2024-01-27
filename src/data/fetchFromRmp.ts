@@ -1,5 +1,9 @@
-import { HEADERS, PROFESSOR_QUERY } from '~data/config';
+import { HEADERS, PROFESSOR_QUERY, RMP_GRAPHQL_URL } from '~data/config';
 import fetchWithCache, { cacheIndexRmp } from '~data/fetchWithCache';
+
+function reportError(context, err) {
+  console.error('Error in ' + context + ': ' + err);
+}
 
 function getProfessorUrl(professorName: string, schoolId: string): string {
   const url = new URL(
@@ -10,24 +14,37 @@ function getProfessorUrl(professorName: string, schoolId: string): string {
 }
 
 function getProfessorId(text: string, professorName: string): string {
-  let professorId = '';
   const lowerCaseProfessorName = professorName.toLowerCase();
 
-  let matched = false;
-  const regex = /"legacyId":(\d+).*?"firstName":"(.*?)","lastName":"(.*?)"/g;
-  for (const match of text.matchAll(regex)) {
-    if (
-      lowerCaseProfessorName.includes(
-        match[2].split(' ')[0].toLowerCase() + ' ' + match[3].toLowerCase(),
-      )
-    ) {
-      professorId = match[1];
-      matched = true;
+  let pendingMatch = null;
+  const regex =
+    /"legacyId":(\d+).*?"numRatings":(\d+).*?"firstName":"(.*?)","lastName":"(.*?)"/g;
+  const allMatches: string[] = text.match(regex);
+  const highestNumRatings = 0;
+
+  if (allMatches) {
+    for (const fullMatch of allMatches) {
+      for (const match of fullMatch.matchAll(regex)) {
+        console.log(
+          match[3].split(' ')[0].toLowerCase() +
+            ' ' +
+            match[4].toLowerCase() +
+            ' ',
+        );
+        const numRatings = parseInt(match[2]);
+        if (
+          lowerCaseProfessorName.includes(
+            match[3].split(' ')[0].toLowerCase() + ' ' + match[4].toLowerCase(),
+          ) &&
+          numRatings >= highestNumRatings
+        ) {
+          pendingMatch = match[1];
+        }
+      }
     }
   }
-  if (!matched) professorId = null;
 
-  return professorId;
+  return pendingMatch;
 }
 
 function getGraphQlUrlProp(professorId: string) {
@@ -42,23 +59,68 @@ function getGraphQlUrlProp(professorId: string) {
   };
 }
 
-function fetchWithGraphQl(graphQlUrlProp, resolve) {
-  const graphqlUrl = 'https://www.ratemyprofessors.com/graphql';
+function wait(delay) {
+  return new Promise((resolve) => setTimeout(resolve, delay));
+}
 
-  fetchWithCache(graphqlUrl, graphQlUrlProp, cacheIndexRmp, 2629800000)
-    .then((rating) => {
-      if (
-        rating != null &&
-        Object.hasOwn(rating, 'data') &&
-        Object.hasOwn(rating['data'], 'node')
-      ) {
-        rating = rating['data']['node'];
-      }
-      resolve(rating);
-    })
-    .catch((error) => {
-      console.error('RMP', error);
-    });
+function fetchRetry(url: string, delay: number, tries: number, fetchOptions) {
+  function onError(err) {
+    const triesLeft: number = tries - 1;
+    if (!triesLeft) {
+      throw err;
+    }
+    return wait(delay).then(() =>
+      fetchRetry(url, delay, triesLeft, fetchOptions),
+    );
+  }
+  return fetchWithCache(url, fetchOptions, cacheIndexRmp, 2629800000).catch(
+    onError,
+  );
+}
+
+async function validateResponse(response, fetchOptions) {
+  const notOk = response?.status !== 200;
+  if (notOk && response && response.url) {
+    const details = {
+      status: response.status,
+      statusText: response.statusText,
+      redirected: response.redirected,
+      url: response.url,
+    };
+    reportError(
+      'validateResponse',
+      'Status not OK for fetch request. Details are: ' +
+        JSON.stringify(details),
+    );
+    // If we don't have fetch options, we just use an empty object.
+    response = await fetchRetry(response?.url, 200, 3, fetchOptions || {});
+  }
+  return response;
+}
+
+function fetchWithGraphQl(graphQlUrlProp, resolve) {
+  try {
+    fetchWithCache(
+      RMP_GRAPHQL_URL,
+      graphQlUrlProp,
+      cacheIndexRmp,
+      2629800000,
+    ).then((response) =>
+      validateResponse(response, graphQlUrlProp).then((rating) => {
+        if (
+          rating != null &&
+          Object.hasOwn(rating, 'data') &&
+          Object.hasOwn(rating['data'], 'node')
+        ) {
+          rating = rating['data']['node'];
+        }
+        resolve(rating);
+      }),
+    );
+  } catch (err) {
+    reportError('fetchWithGraphQl', err);
+    resolve(null); ///
+  }
 }
 
 export interface RmpRequest {
@@ -93,6 +155,7 @@ export function requestProfessorFromRmp(
         fetchWithGraphQl(graphQlUrlProp, resolve);
       })
       .catch((error) => {
+        reportError('requestProfessorFromRmp', error);
         reject(error);
       });
   });
