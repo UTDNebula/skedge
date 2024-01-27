@@ -20,6 +20,7 @@ export const NEBULA_FETCH_OPTIONS = {
 };
 
 export const SCHOOL_ID = '1273';
+export const RMP_GRAPHQL_URL = 'https://www.ratemyprofessors.com/graphql';
 
 function unRegister(key: string) {
   let newVar = '';

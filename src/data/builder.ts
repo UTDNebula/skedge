@@ -42,7 +42,7 @@ export async function buildProfessorProfiles(payload: ShowCourseTabPayload) {
   );
   const nebulaSections = await Promise.all(
     nebulaProfessors.map((professor) => {
-      if (professor?._id === undefined) return null;
+      if (professor?._id === undefined || !nebulaCourse) return null;
       return fetchNebulaSections({
         courseReference: nebulaCourse._id,
         professorReference: professor._id,
@@ -61,6 +61,7 @@ export async function buildProfessorProfiles(payload: ShowCourseTabPayload) {
     for (let j = 0; j < nebulaSections[i]?.length; j++) {
       const section = nebulaSections[i][j];
       if (
+        section.grade_distribution &&
         section.grade_distribution.length !== 0 &&
         !compareArrays(section.grade_distribution, Array(14).fill(0))
       )
