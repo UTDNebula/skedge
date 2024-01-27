@@ -85,12 +85,12 @@ async function validateResponse(response, fetchOptions) {
       url: response.url,
     };
     reportError(
-      'validateResponses',
+      'validateResponse',
       'Status not OK for fetch request. Details are: ' +
         JSON.stringify(details),
     );
     // If we don't have fetch options, we just use an empty object.
-    responses = await fetchRetry(response?.url, 200, 3, fetchOptions || {});
+    response = await fetchRetry(response?.url, 200, 3, fetchOptions || {});
   }
   return response;
 }
