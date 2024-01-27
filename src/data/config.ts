@@ -12,3 +12,4 @@ export const PROFESSOR_QUERY = {
 };
 
 export const SCHOOL_ID = '1273';
+export const RMP_GRAPHQL_URL = 'https://www.ratemyprofessors.com/graphql';
