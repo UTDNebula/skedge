@@ -29,8 +29,8 @@ function getProfessorIds(texts: string[], professorNames: string[]): string[] {
     let pendingMatch = null;
     const regex =
       /"legacyId":(\d+).*?"numRatings":(\d+).*?"firstName":"(.*?)","lastName":"(.*?)"/g;
-    let allMatches: string[] = text.match(regex);
-    let highestNumRatings = 0;
+    const allMatches: string[] = text.match(regex);
+    const highestNumRatings = 0;
 
     if (allMatches) {
       for (const fullMatch of allMatches) {
@@ -41,7 +41,7 @@ function getProfessorIds(texts: string[], professorNames: string[]): string[] {
               match[4].toLowerCase() +
               ' ',
           );
-          let numRatings = parseInt(match[2]);
+          const numRatings = parseInt(match[2]);
           if (
             lowerCaseProfessorNames.includes(
               match[3].split(' ')[0].toLowerCase() +
@@ -86,7 +86,7 @@ function wait(delay) {
 
 function fetchRetry(url: string, delay: number, tries: number, fetchOptions) {
   function onError(err) {
-    let triesLeft: number = tries - 1;
+    const triesLeft: number = tries - 1;
     if (!triesLeft) {
       throw err;
     }
@@ -98,11 +98,11 @@ function fetchRetry(url: string, delay: number, tries: number, fetchOptions) {
 }
 
 // If using orderedFetchOpts, make sure that it is an array and that the index of the fetch options corresponds to the index of the response in the responses array.
-async function validateResponses(responses: any[], orderedFetchOpts: any[]) {
+async function validateResponses(responses, orderedFetchOpts) {
   for (const [key, value] of Object.entries(responses)) {
-    let notOk = value?.status !== 200;
+    const notOk = value?.status !== 200;
     if (notOk && value && value.url) {
-      let details = {
+      const details = {
         status: value.status,
         statusText: value.statusText,
         redirected: value.redirected,
@@ -113,28 +113,28 @@ async function validateResponses(responses: any[], orderedFetchOpts: any[]) {
         'Status not OK for fetch request. Details are: ' +
           JSON.stringify(details),
       );
-      let fetchOptions = orderedFetchOpts[key] || {}; // If we don't have fetch options, we just use an empty object.
+      const fetchOptions = orderedFetchOpts[key] || {}; // If we don't have fetch options, we just use an empty object.
       responses[key] = await fetchRetry(value?.url, 200, 3, fetchOptions);
     }
   }
   return responses;
 }
 
-export async function fetchWithGraphQl(graphQlUrlProps: any[]) {
+export async function fetchWithGraphQl(graphQlUrlProps) {
   try {
-    let responses = await validateResponses(
+    const responses = await validateResponses(
       await Promise.all(graphQlUrlProps.map((u) => fetch(RMP_GRAPHQL_URL, u))),
       graphQlUrlProps,
     );
     // We now have all the responses. So, we consider all the responses, and collect the ratings.
-    let ratings: RMPRatingInterface[] = await Promise.all(
+    const ratings: RMPRatingInterface[] = await Promise.all(
       responses.map((res) => res.json()),
     );
     for (let i = 0; i < ratings.length; i++) {
       if (
         ratings[i] != null &&
-        ratings[i].hasOwnProperty('data') &&
-        ratings[i]['data'].hasOwnProperty('node')
+        Object.prototype.hasOwnProperty.call(ratings[i], 'data') &&
+        Object.prototype.hasOwnProperty.call(ratings[i]['data'], 'node')
       ) {
         ratings[i] = ratings[i]['data']['node'];
       }
@@ -162,19 +162,19 @@ export async function requestProfessorsFromRmp(
 
   // fetch professor ids from each url
   try {
-    let responses = await validateResponses(
+    const responses = await validateResponses(
       await Promise.all(professorUrls.map((u) => fetch(u))),
       [],
     );
 
-    let texts = await Promise.all(responses.map((res) => res.text()));
+    const texts = await Promise.all(responses.map((res) => res.text()));
     const professorIds = getProfessorIds(texts, request.professorNames);
 
     // create fetch objects for each professor id
     const graphQlUrlProps = getGraphQlUrlProps(professorIds);
 
     // fetch professor info by id with graphQL
-    let professors = await fetchWithGraphQl(graphQlUrlProps);
+    const professors = await fetchWithGraphQl(graphQlUrlProps);
     return professors;
   } catch (error) {
     reportError('requestProfessorsFromRmp', error);

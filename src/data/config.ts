@@ -1,4 +1,3 @@
-import type { RMPRatingInterface } from '~data/interfaces';
 export const HEADERS = {
   Authorization: 'Basic dGVzdDp0ZXN0',
   'User-Agent':
