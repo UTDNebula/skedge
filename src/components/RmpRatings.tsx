@@ -1,15 +1,28 @@
-import Chart from "react-apexcharts"
-import { ratingsChartOptions } from "~utils/styling";
+import React from 'react';
+import Chart from 'react-apexcharts';
 
-export const RmpRatings = ({ ratingsDistributionData } : { ratingsDistributionData: number[] }) => {
+import { ratingsChartOptions } from '~utils/styling';
+
+export const RmpRatings = ({
+  ratingsDistributionData,
+}: {
+  ratingsDistributionData: number[];
+}) => {
   return (
     <div className="my-2">
       <header className="bg-blue-dark rounded-t-2xl flex">
-        <h2 className="flex-auto text-center text-white mx-auto py-2">Ratings Distribution</h2>
+        <h2 className="flex-auto text-center text-white mx-auto py-2">
+          Ratings Distribution
+        </h2>
       </header>
       <div className="border-blue-dark border-r-2 border-l-2 border-b-2 rounded-b-2xl">
-        <Chart options={ratingsChartOptions} series={ratingsDistributionData} type="donut" height={300}></Chart>
+        <Chart
+          options={ratingsChartOptions}
+          series={ratingsDistributionData}
+          type="donut"
+          height={300}
+        ></Chart>
       </div>
     </div>
-  )
-}
+  );
+};

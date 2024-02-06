@@ -1,11 +1,23 @@
-import { NEBULA_FETCH_OPTIONS } from "~data/config";
-import type { CourseInterface, FetchCourseParameters, FetchProfessorParameters, FetchSectionParameters, ProfessorInterface, SectionInterface } from "~data/interfaces";
+import { NEBULA_FETCH_OPTIONS } from '~data/config';
+import type {
+  CourseInterface,
+  FetchCourseParameters,
+  FetchProfessorParameters,
+  FetchSectionParameters,
+  ProfessorInterface,
+  SectionInterface,
+} from '~data/interfaces';
 
-export async function fetchNebulaCourse(params: FetchCourseParameters): Promise<CourseInterface> | null {
+export async function fetchNebulaCourse(
+  params: FetchCourseParameters,
+): Promise<CourseInterface> | null {
   try {
-    const res = await fetch(`https://api.utdnebula.com/course?course_number=${params.courseNumber}&subject_prefix=${params.subjectPrefix}`, NEBULA_FETCH_OPTIONS);
+    const res = await fetch(
+      `https://api.utdnebula.com/course?course_number=${params.courseNumber}&subject_prefix=${params.subjectPrefix}`,
+      NEBULA_FETCH_OPTIONS,
+    );
     const json = await res.json();
-    if (json.data == null) throw new Error("Null data");
+    if (json.data == null) throw new Error('Null data');
     const data: CourseInterface = json.data[0];
     return data;
   } catch (error) {
@@ -13,11 +25,16 @@ export async function fetchNebulaCourse(params: FetchCourseParameters): Promise<
   }
 }
 
-export async function fetchNebulaProfessor(params: FetchProfessorParameters): Promise<ProfessorInterface> | null {
+export async function fetchNebulaProfessor(
+  params: FetchProfessorParameters,
+): Promise<ProfessorInterface> | null {
   try {
-    const res = await fetch(`https://api.utdnebula.com/professor?first_name=${params.firstName}&last_name=${params.lastName}`, NEBULA_FETCH_OPTIONS);
+    const res = await fetch(
+      `https://api.utdnebula.com/professor?first_name=${params.firstName}&last_name=${params.lastName}`,
+      NEBULA_FETCH_OPTIONS,
+    );
     const json = await res.json();
-    if (json.data == null) throw new Error("Null data");
+    if (json.data == null) throw new Error('Null data');
     const data: ProfessorInterface = json.data[0];
     return data;
   } catch (error) {
@@ -25,14 +42,19 @@ export async function fetchNebulaProfessor(params: FetchProfessorParameters): Pr
   }
 }
 
-export async function fetchNebulaSections(params: FetchSectionParameters): Promise<SectionInterface[]> | null {
+export async function fetchNebulaSections(
+  params: FetchSectionParameters,
+): Promise<SectionInterface[]> | null {
   try {
-    const res = await fetch(`https://api.utdnebula.com/section?course_reference=${params.courseReference}&professors=${params.professorReference}`, NEBULA_FETCH_OPTIONS);
+    const res = await fetch(
+      `https://api.utdnebula.com/section?course_reference=${params.courseReference}&professors=${params.professorReference}`,
+      NEBULA_FETCH_OPTIONS,
+    );
     const json = await res.json();
-    if(json.data == null) throw new Error("Null data");
+    if (json.data == null) throw new Error('Null data');
     const data: SectionInterface[] = json.data;
     return data;
-  } catch(error) {
+  } catch (error) {
     return null;
   }
 }
