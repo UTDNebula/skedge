@@ -1,0 +1,10 @@
+.cache
+.husky
+.next
+.plasmo
+.vscode
+package.json
+package-lock.json
+pnpm-lock.yaml
+build
+assets
