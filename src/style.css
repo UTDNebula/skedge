@@ -1,34 +1,36 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;500;600;700;800;900&display=swap');
 
 @layer base {
+
   /* For big scores, numbers */
   h1 {
-    @apply text-2xl font-main font-bold;
+    @apply text-2xl font-main font-bold
   }
 
   /* For card title, profile name, etc. */
   h2 {
-    @apply text-xl font-main font-semibold;
+    @apply text-xl font-main font-semibold
   }
 
   /* Smaller headings */
   h3 {
-    @apply text-base font-main font-semibold;
+    @apply text-base font-main font-semibold
   }
 
   /* ex. RMP tags */
   h4 {
-    @apply text-sm font-main font-light;
+    @apply text-sm font-main font-light
   }
-
+  
   /* Subtitles */
   h6 {
-    @apply text-xs font-main font-medium text-gray-dark;
+    @apply text-xs font-main font-medium text-gray-dark
   }
 
   p {
-    @apply text-base font-main font-normal;
+    @apply text-base font-main font-normal
   }
+
 }
 
 @tailwind base;

@@ -40,7 +40,3 @@ keys.json
 
 # typescript
 .tsbuildinfo
-
-# lint cache
-.eslintcache
-*.cache
