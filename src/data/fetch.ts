@@ -1,62 +1,61 @@
-import { NEBULA_FETCH_OPTIONS } from '~data/config';
-import type {
-  CourseInterface,
-  FetchCourseParameters,
-  FetchProfessorParameters,
-  FetchSectionParameters,
-  ProfessorInterface,
-  SectionInterface,
-} from '~data/interfaces';
-
-export async function fetchNebulaCourse(
-  params: FetchCourseParameters,
-): Promise<CourseInterface> | null {
-  try {
-    const res = await fetch(
-      `https://api.utdnebula.com/course?course_number=${params.courseNumber}&subject_prefix=${params.subjectPrefix}`,
-      NEBULA_FETCH_OPTIONS,
-    );
-    const json = await res.json();
-    if (json.data == null) throw new Error('Null data');
-    const data: CourseInterface = json.data[0];
-    return data;
-  } catch (error) {
-    return null;
-  }
+interface FetchProfessorParameters {
+  profFirst: string;
+  profLast: string;
 }
 
 export async function fetchNebulaProfessor(
   params: FetchProfessorParameters,
-): Promise<ProfessorInterface> | null {
-  try {
-    const res = await fetch(
-      `https://api.utdnebula.com/professor?first_name=${params.firstName}&last_name=${params.lastName}`,
-      NEBULA_FETCH_OPTIONS,
-    );
-    const json = await res.json();
-    if (json.data == null) throw new Error('Null data');
-    const data: ProfessorInterface = json.data[0];
-    return data;
-  } catch (error) {
-    return null;
-  }
+): Promise<unknown> {
+  return fetch(
+    'https://trends.utdnebula.com/api/professor?profFirst=' +
+      params.profFirst +
+      '&profLast=' +
+      params.profLast,
+    {
+      method: 'GET',
+      headers: {
+        Accept: 'application/json',
+      },
+    },
+  )
+    .then((response) => response.json())
+    .then((data) => {
+      if (data.message !== 'success') {
+        //throw new Error(data.message);
+        return null;
+      }
+      return data.data;
+    })
+    .catch((error) => {
+      console.error('Nebula API', error);
+    });
 }
 
-export async function fetchNebulaSections(
-  params: FetchSectionParameters,
-): Promise<SectionInterface[]> | null {
-  try {
-    const res = await fetch(
-      `https://api.utdnebula.com/section?course_reference=${params.courseReference}&professors=${params.professorReference}`,
-      NEBULA_FETCH_OPTIONS,
-    );
-    const json = await res.json();
-    if (json.data == null) throw new Error('Null data');
-    const data: SectionInterface[] = json.data;
-    return data;
-  } catch (error) {
-    return null;
-  }
+export async function fetchNebulaGrades(
+  params: FetchProfessorParameters,
+): Promise<unknown> {
+  return fetch(
+    'https://trends.utdnebula.com/api/grades?profFirst=' +
+      params.profFirst +
+      '&profLast=' +
+      params.profLast,
+    {
+      method: 'GET',
+      headers: {
+        Accept: 'application/json',
+      },
+    },
+  )
+    .then((response) => response.json())
+    .then((data) => {
+      if (data.message !== 'success') {
+        throw new Error(data.message);
+      }
+      return data.data;
+    })
+    .catch((error) => {
+      console.error('Nebula API', error);
+    });
 }
 
 // Test function. Commented out. Uncomment to test.

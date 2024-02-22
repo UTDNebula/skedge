@@ -3,23 +3,13 @@ import Chart from 'react-apexcharts';
 
 import { miniGradeChartOptions } from '~utils/styling';
 
-import type { GradeDistribution } from './ProfileGrades';
-
-export const MiniGrades = ({
-  gradeDistributionData,
-}: {
-  gradeDistributionData: GradeDistribution;
-}) => {
-  const config = JSON.parse(JSON.stringify(miniGradeChartOptions));
-  config.title.text = gradeDistributionData.name;
+export const MiniGrades = ({ series }: { series: ApexAxisChartSeries }) => {
   return (
-    <>
-      <Chart
-        options={config}
-        series={gradeDistributionData.series}
-        type="bar"
-        height={124}
-      ></Chart>
-    </>
+    <Chart
+      options={miniGradeChartOptions}
+      series={series}
+      type="bar"
+      height={'100%'}
+    ></Chart>
   );
 };

@@ -11,23 +11,5 @@ export const PROFESSOR_QUERY = {
   variables: {},
 };
 
-export const NEBULA_FETCH_OPTIONS = {
-  method: 'GET',
-  headers: {
-    'x-api-key': unRegister('EM~eW}G<}4qx41fp{H=I]OZ5MF6T:1x{<GF:~v<'),
-    Accept: 'application/json',
-  },
-};
-
 export const SCHOOL_ID = '1273';
 export const RMP_GRAPHQL_URL = 'https://www.ratemyprofessors.com/graphql';
-
-function unRegister(key: string) {
-  let newVar = '';
-  for (let i = 0; i < key.length; i++) {
-    let a = key.charCodeAt(i);
-    a = (a * 2 - 8) / 2;
-    newVar = newVar.concat(String.fromCharCode(a));
-  }
-  return newVar;
-}
