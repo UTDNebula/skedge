@@ -43,7 +43,7 @@ export const ProfessorProfile = () => {
           {' '}
           {/* RMP Tag area */}
           {professorData.rmpTags
-            ?.slice(0, 4)
+            ?.slice(0, 5)
             .map((item: string, index: number) => (
               <RmpTag key={index} text={item.toUpperCase()} />
             ))}
