@@ -1,4 +1,4 @@
-import type { ShowCourseTabPayload } from '~background';
+import { CourseHeader } from '~content';
 import { requestProfessorFromRmp } from '~data/fetchFromRmp';
 
 import { SCHOOL_ID } from './config';
@@ -14,6 +14,7 @@ export interface ProfessorProfileInterface {
   rmpTags: string[];
   gradeDistributions: GradeDistribution[];
   ratingsDistribution: number[];
+  loading: boolean;
 }
 
 interface GradeDistribution {
@@ -21,115 +22,82 @@ interface GradeDistribution {
   series: ApexAxisChartSeries;
 }
 
-function combineAndNormalizeGrades(gradeData) {
-  const totalGrades = [];
+export async function buildProfessorProfile(
+  header: CourseHeader,
+  professor: string,
+): ProfessorProfileInterface {
+  const parts = professor.split(' ');
+  const professorSplit = {
+    profFirst: parts[0],
+    profLast: parts[parts.length - 1],
+  };
 
-  //combine academic sections
-  gradeData = gradeData.map((professor) =>
-    professor === null
-      ? null
-      : professor.reduce(
-          (accumulator, academicSession) => {
-            return accumulator.map(
-              (value, index) =>
-                value + academicSession.grade_distribution[index] ?? 0,
-            );
-          },
-          [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-        ),
+  let nebulaProfessor, nebulaGrades, rmp;
+
+  const nebulaProfessorsPromise = fetchNebulaProfessor(professorSplit).then(
+    (result) => (nebulaProfessor = result),
   );
 
-  //divide by total
-  gradeData = gradeData.map((professor) => {
-    if (professor === null) {
-      totalGrades.push(0);
-      return null;
-    }
-    const total = professor.reduce(
+  const nebulaGradesPromise = fetchNebulaGrades(professorSplit).then(
+    (result) => (nebulaGrades = result),
+  );
+
+  const rmpsPromise = requestProfessorFromRmp({
+    professorName: professorSplit.profFirst + ' ' + professorSplit.profLast,
+    schoolId: SCHOOL_ID,
+  }).then((result) => (rmp = result));
+
+  await Promise.all([
+    nebulaProfessorsPromise,
+    nebulaGradesPromise,
+    rmpsPromise,
+  ]);
+
+  let totalGrades = 0;
+  if (nebulaGrades !== null) {
+    //combine academic sections
+    nebulaGrades = nebulaGrades.reduce(
+      (accumulator, academicSession) => {
+        return accumulator.map(
+          (value, index) =>
+            value + academicSession.grade_distribution[index] ?? 0,
+        );
+      },
+      [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    );
+
+    //divide by total
+    totalGrades = nebulaGrades.reduce(
       (accumulator, grade) => grade + accumulator,
       0,
     );
-    totalGrades.push(total);
-    return professor.map((grade) => (grade / total) * 100);
-  });
-
-  return [totalGrades, gradeData];
-}
-
-export async function buildProfessorProfiles(payload: ShowCourseTabPayload) {
-  let { professors } = payload;
-  professors = professors.map((prof) => {
-    const parts = prof.split(' ');
-    return {
-      profFirst: parts[0],
-      profLast: parts[parts.length - 1],
-    };
-  });
-
-  let nebulaProfessors, nebulaGrades, rmps;
-
-  const nebulaProfessorsPromises = Promise.all(
-    professors.map(fetchNebulaProfessor),
-  ).then((result) => (nebulaProfessors = result));
-
-  const nebulaGradesPromises = Promise.all(
-    professors.map(fetchNebulaGrades),
-  ).then((result) => (nebulaGrades = result));
-
-  const rmpsPromises = Promise.all(
-    professors.map((prof) =>
-      requestProfessorFromRmp({
-        professorName: prof.profFirst + ' ' + prof.profLast,
-        schoolId: SCHOOL_ID,
-      }),
-    ),
-  ).then((result) => (rmps = result));
-
-  await Promise.all([
-    nebulaProfessorsPromises,
-    nebulaGradesPromises,
-    rmpsPromises,
-  ]);
-
-  let totalGrades = [];
-  [totalGrades, nebulaGrades] = combineAndNormalizeGrades(nebulaGrades);
-
-  const professorProfiles: ProfessorProfileInterface[] = [];
-  for (let i = 0; i < professors.length; i++) {
-    professorProfiles.push({
-      name: professors[i].profFirst + ' ' + professors[i].profLast,
-      profilePicUrl: nebulaProfessors[i]?.image_uri,
-      rmpId: rmps[i]?.legacyId,
-      rmpScore: rmps[i]?.avgRating
-        ? rmps[i]?.avgRating === 0
-          ? undefined
-          : rmps[i]?.avgRating
-        : undefined,
-      diffScore: rmps[i]?.avgDifficulty
-        ? rmps[i].avgDifficulty === 0
-          ? undefined
-          : rmps[i]?.avgDifficulty
-        : undefined,
-      wtaScore: rmps[i]?.wouldTakeAgainPercent
-        ? rmps[i]?.wouldTakeAgainPercent === -1
-          ? undefined
-          : rmps[i]?.wouldTakeAgainPercent
-        : undefined,
-      rmpTags: rmps[i]?.teacherRatingTags
-        .sort((a, b) => b.tagCount - a.tagCount)
-        .map((tag) => tag.tagName),
-      gradeDistribution: [
-        {
-          name: professors[i].profFirst + ' ' + professors[i].profLast,
-          data: nebulaGrades[i] ?? [],
-        },
-      ],
-      totalGrades: totalGrades[i],
-      ratingsDistribution: rmps[i]
-        ? Object.values(rmps[i].ratingsDistribution).reverse().slice(1)
-        : [],
-      totalRatings: rmps[i]?.ratingsDistribution?.total ?? 0,
-    });
+    nebulaGrades = nebulaGrades.map((grade) => (grade / totalGrades) * 100);
   }
-  return professorProfiles;
+
+  return {
+    name: professor,
+    profilePicUrl: nebulaProfessor?.image_uri,
+    rmpId: rmp?.legacyId,
+    rmpScore: rmp?.avgRating !== 0 ? rmp?.avgRating : undefined,
+    diffScore: rmp?.avgDifficulty !== 0 ? rmp?.avgDifficulty : undefined,
+    wtaScore:
+      rmp?.wouldTakeAgainPercent !== -1
+        ? rmp?.wouldTakeAgainPercent
+        : undefined,
+    rmpTags: rmp?.teacherRatingTags
+      .sort((a, b) => b.tagCount - a.tagCount)
+      .map((tag) => tag.tagName),
+    gradeDistribution: [
+      {
+        name: professor,
+        data: nebulaGrades ?? [],
+      },
+    ],
+    totalGrades: totalGrades,
+    ratingsDistribution: rmp
+      ? Object.values(rmp.ratingsDistribution).reverse().slice(1)
+      : [],
+    totalRatings: rmp?.ratingsDistribution?.total ?? 0,
+    loading: false,
+  };
 }

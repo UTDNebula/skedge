@@ -100,7 +100,8 @@
       "storage",
       "scripting",
       "webNavigation",
-      "tabs"
+      "tabs",
+      "nativeMessaging"
     ],
     "host_permissions": [
       "https://utdallas.collegescheduler.com/terms/*/courses/*",

@@ -1,4 +1,5 @@
 import { HEADERS, PROFESSOR_QUERY, RMP_GRAPHQL_URL } from '~data/config';
+import fetchWithCache, { cacheIndexRmp } from '~data/fetchWithCache';
 
 function reportError(context, err) {
   console.error('Error in ' + context + ': ' + err);
@@ -72,7 +73,9 @@ function fetchRetry(url: string, delay: number, tries: number, fetchOptions) {
       fetchRetry(url, delay, triesLeft, fetchOptions),
     );
   }
-  return fetch(url, fetchOptions).catch(onError);
+  return fetchWithCache(url, fetchOptions, cacheIndexRmp, 2629800000).catch(
+    onError,
+  );
 }
 
 async function validateResponse(response, fetchOptions) {
@@ -97,19 +100,22 @@ async function validateResponse(response, fetchOptions) {
 
 function fetchWithGraphQl(graphQlUrlProp, resolve) {
   try {
-    fetch(RMP_GRAPHQL_URL, graphQlUrlProp).then((response) =>
-      validateResponse(response, graphQlUrlProp)
-        .then((response) => response.json())
-        .then((rating) => {
-          if (
-            rating != null &&
-            Object.hasOwn(rating, 'data') &&
-            Object.hasOwn(rating['data'], 'node')
-          ) {
-            rating = rating['data']['node'];
-          }
-          resolve(rating);
-        }),
+    fetchWithCache(
+      RMP_GRAPHQL_URL,
+      graphQlUrlProp,
+      cacheIndexRmp,
+      2629800000,
+    ).then((response) =>
+      validateResponse(response, graphQlUrlProp).then((rating) => {
+        if (
+          rating != null &&
+          Object.hasOwn(rating, 'data') &&
+          Object.hasOwn(rating['data'], 'node')
+        ) {
+          rating = rating['data']['node'];
+        }
+        resolve(rating);
+      }),
     );
   } catch (err) {
     reportError('fetchWithGraphQl', err);
@@ -125,19 +131,24 @@ export function requestProfessorFromRmp(
   request: RmpRequest,
 ): Promise<RMPInterface> {
   return new Promise((resolve, reject) => {
-    // make a list of urls for promises
+    // url for promises
     const professorUrl = getProfessorUrl(
       request.professorName,
       request.schoolId,
     );
 
-    // fetch professor ids from each url
-    fetch(professorUrl)
-      .then((response) => response.text())
+    // fetch professor id from url
+    fetchWithCache(
+      professorUrl,
+      { method: 'GET' },
+      cacheIndexRmp,
+      2629800000,
+      true,
+    )
       .then((text) => {
         const professorId = getProfessorId(text, request.professorName);
 
-        // create fetch objects for each professor id
+        // create fetch object for professor id
         const graphQlUrlProp = getGraphQlUrlProp(professorId);
 
         // fetch professor info by id with graphQL
