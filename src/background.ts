@@ -1,6 +1,6 @@
 import { Storage } from '@plasmohq/storage';
 
-import { CourseHeader, scrapeCourseData } from '~content';
+import { CourseHeader, listenForTableChange, scrapeCourseData } from '~content';
 
 export interface ShowCourseTabPayload {
   header: CourseHeader;
@@ -21,6 +21,7 @@ chrome.webNavigation.onHistoryStateUpdated.addListener((details) => {
       details.url,
     )
   ) {
+    //Scrape data
     chrome.scripting.executeScript(
       {
         target: {
@@ -38,6 +39,15 @@ chrome.webNavigation.onHistoryStateUpdated.addListener((details) => {
         }
       },
     );
+    //Listen for table change to rescrape data
+    chrome.tabs.sendMessage(details.tabId, 'disconnectObserver');
+    chrome.scripting.executeScript({
+      target: {
+        tabId: details.tabId,
+      },
+      func: listenForTableChange,
+    });
+    //Store tab info
     chrome.action.setBadgeText({ text: '!' });
     chrome.action.setBadgeBackgroundColor({ color: 'green' });
     courseTabId = details.tabId;
@@ -45,6 +55,27 @@ chrome.webNavigation.onHistoryStateUpdated.addListener((details) => {
     storage.set('courseTabUrl', details.url);
   } else {
     chrome.action.setBadgeText({ text: '' });
+  }
+});
+
+/** Rescrape data on table change */
+chrome.runtime.onMessage.addListener(function (message) {
+  if (message === 'tableChange') {
+    chrome.scripting.executeScript(
+      {
+        target: {
+          tabId: courseTabId,
+        },
+        func: scrapeCourseData,
+      },
+      async function (resolve) {
+        if (resolve && resolve[0] && resolve[0].result) {
+          const result: ShowCourseTabPayload = resolve[0].result;
+          scrapedCourseData = result;
+          await storage.set('scrapedCourseData', scrapedCourseData);
+        }
+      },
+    );
   }
 });
 

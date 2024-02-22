@@ -85,9 +85,41 @@ export async function scrapeCourseData() {
       });
       const courseRowCells = courseRow.querySelector('tr');
       courseRowCells.insertBefore(newTd, courseRowCells.children[7]);
+      //Increase Disabled Reasons row colspan if necessary
+      const sectionDisabled = courseRow.querySelector('tr:nth-child(3) > td');
+      if (sectionDisabled !== null) {
+        sectionDisabled.colSpan = sectionDisabled.colSpan + 1;
+      }
       // collapse section details
       sectionDetailsButton.click();
     });
     return [...new Set(professors)];
   }
+}
+
+/** This listens for clicks on the buttons that switch between the enabled and disabled professor tabs and reports back to background.ts */
+export function listenForTableChange() {
+  const observer = new MutationObserver((mutationsList) => {
+    for (const mutation of mutationsList) {
+      if (
+        mutation.type === 'attributes' &&
+        mutation.attributeName === 'class'
+      ) {
+        //button corresponding to shown table is given an active class
+        if (mutation.target.classList.contains('active')) {
+          chrome.runtime.sendMessage('tableChange');
+        }
+      }
+    }
+  });
+  observer.observe(document.body, {
+    attributes: true,
+    subtree: true,
+  });
+  //remove observer when ordered by backgroud.ts to avoid duplicates
+  chrome.runtime.onMessage.addListener(function (message) {
+    if (message === 'disconnectObserver') {
+      observer.disconnect();
+    }
+  });
 }
