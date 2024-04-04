@@ -11,6 +11,10 @@ interface FetchProfessorParameters {
 export async function fetchNebulaProfessor(
   params: FetchProfessorParameters,
 ): Promise<unknown> {
+  console.log('https://trends.utdnebula.com/api/professor?profFirst=' +
+      params.profFirst +
+      '&profLast=' +
+      params.profLast)
   return fetchWithCache(
     'https://trends.utdnebula.com/api/professor?profFirst=' +
       params.profFirst +
@@ -26,6 +30,7 @@ export async function fetchNebulaProfessor(
     2629800000,
   )
     .then((data) => {
+      console.log('data', data);
       if (data.message !== 'success') {
         //throw new Error(data.message);
         return null;
