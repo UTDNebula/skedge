@@ -6,7 +6,7 @@
   "author": "Nebula Labs",
   "packageManager": "npm@8.19.2",
   "scripts": {
-    "dev": "plasmo dev",
+    "dev": "plasmo dev --target=firefox-mv3",
     "build": "plasmo build",
     "package": "plasmo package",
     "format": "prettier --write .",

@@ -14,15 +14,17 @@ let scrapedCourseData: ShowCourseTabPayload = null;
 // for persistent state
 const storage = new Storage();
 
+const realBrowser = process.env.PLASMO_BROWSER === 'chrome' ? chrome : browser;
+
 /** Injects the content script if we hit a course page */
-chrome.webNavigation.onHistoryStateUpdated.addListener((details) => {
+realBrowser.webNavigation.onHistoryStateUpdated.addListener((details) => {
   if (
     /^.*:\/\/utdallas\.collegescheduler\.com\/terms\/.*\/courses\/.+$/.test(
       details.url,
     )
   ) {
     //Scrape data
-    chrome.scripting.executeScript(
+    realBrowser.scripting.executeScript(
       {
         target: {
           tabId: details.tabId,
@@ -40,28 +42,28 @@ chrome.webNavigation.onHistoryStateUpdated.addListener((details) => {
       },
     );
     //Listen for table change to rescrape data
-    chrome.tabs.sendMessage(details.tabId, 'disconnectObserver');
-    chrome.scripting.executeScript({
+    realBrowser.tabs.sendMessage(details.tabId, 'disconnectObserver');
+    realBrowser.scripting.executeScript({
       target: {
         tabId: details.tabId,
       },
       func: listenForTableChange,
     });
     //Store tab info
-    chrome.action.setBadgeText({ text: '!' });
-    chrome.action.setBadgeBackgroundColor({ color: 'green' });
+    realBrowser.action.setBadgeText({ text: '!' });
+    realBrowser.action.setBadgeBackgroundColor({ color: 'green' });
     courseTabId = details.tabId;
     storage.set('courseTabId', courseTabId);
     storage.set('courseTabUrl', details.url);
   } else {
-    chrome.action.setBadgeText({ text: '' });
+    realBrowser.action.setBadgeText({ text: '' });
   }
 });
 
 /** Rescrape data on table change */
-chrome.runtime.onMessage.addListener(function (message) {
+realBrowser.runtime.onMessage.addListener(function (message) {
   if (message === 'tableChange') {
-    chrome.scripting.executeScript(
+    realBrowser.scripting.executeScript(
       {
         target: {
           tabId: courseTabId,
@@ -80,14 +82,14 @@ chrome.runtime.onMessage.addListener(function (message) {
 });
 
 /** Sets the icon to be active if we're on a course tab */
-chrome.tabs.onActivated.addListener(async () => {
+realBrowser.tabs.onActivated.addListener(async () => {
   const cachedTabUrl: string = await storage.get('courseTabUrl');
   const currentTabUrl: string = (await getCurrentTab()).url;
   if (cachedTabUrl === currentTabUrl) {
-    chrome.action.setBadgeText({ text: '!' });
-    chrome.action.setBadgeBackgroundColor({ color: 'green' });
+    realBrowser.action.setBadgeText({ text: '!' });
+    realBrowser.action.setBadgeBackgroundColor({ color: 'green' });
   } else {
-    chrome.action.setBadgeText({ text: '' });
+    realBrowser.action.setBadgeText({ text: '' });
   }
 });
 
@@ -103,6 +105,6 @@ export async function getScrapedCourseData() {
 async function getCurrentTab() {
   const queryOptions = { active: true, lastFocusedWindow: true };
   // `tab` will either be a `tabs.Tab` instance or `undefined`.
-  const [tab] = await chrome.tabs.query(queryOptions);
+  const [tab] = await realBrowser.tabs.query(queryOptions);
   return tab;
 }

@@ -44,6 +44,7 @@ export async function scrapeCourseData() {
   async function getCourseInfo(): Promise<CourseHeader> {
     const course = await waitForElement('h1');
     const courseData = course.innerText.split(' ');
+    console.log({ subjectPrefix: courseData[0], courseNumber: courseData[1] });
     return { subjectPrefix: courseData[0], courseNumber: courseData[1] };
   }
 
@@ -93,10 +94,12 @@ export async function scrapeCourseData() {
       // collapse section details
       sectionDetailsButton.click();
     });
+    console.log([...new Set(professors)]);
     return [...new Set(professors)];
   }
 }
 
+const realBrowser = process.env.PLASMO_BROWSER === 'chrome' ? chrome : browser;
 /** This listens for clicks on the buttons that switch between the enabled and disabled professor tabs and reports back to background.ts */
 export function listenForTableChange() {
   const observer = new MutationObserver((mutationsList) => {
@@ -107,7 +110,7 @@ export function listenForTableChange() {
       ) {
         //button corresponding to shown table is given an active class
         if (mutation.target.classList.contains('active')) {
-          chrome.runtime.sendMessage('tableChange');
+          realBrowser.runtime.sendMessage('tableChange');
         }
       }
     }
@@ -117,7 +120,7 @@ export function listenForTableChange() {
     subtree: true,
   });
   //remove observer when ordered by backgroud.ts to avoid duplicates
-  chrome.runtime.onMessage.addListener(function (message) {
+  realBrowser.runtime.onMessage.addListener(function (message) {
     if (message === 'disconnectObserver') {
       observer.disconnect();
     }
