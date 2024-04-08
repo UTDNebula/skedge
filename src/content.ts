@@ -1,11 +1,14 @@
+import type { PlasmoCSConfig } from 'plasmo';
+
 export interface CourseHeader {
   subjectPrefix: string;
   courseNumber: string;
 }
 
 // Plasmo CS config export
-export const config = {
+export const config: PlasmoCSConfig = {
   matches: ['https://utdallas.collegescheduler.com/terms/*/courses/*'],
+  world: 'MAIN',
 };
 
 /**
