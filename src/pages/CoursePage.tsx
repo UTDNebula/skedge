@@ -7,7 +7,7 @@ import { Landing } from '~components/Landing';
 import { MiniProfessor } from '~components/MiniProfessor';
 import {
   buildProfessorProfile,
-  ProfessorProfileInterface,
+  type ProfessorProfileInterface,
 } from '~data/builder';
 
 // Example of how to fetch the scraped data from the background script, given that it exists
