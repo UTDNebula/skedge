@@ -15,7 +15,7 @@ export const SCHOOL_ID = '1273';
 export const RMP_GRAPHQL_URL = 'https://www.ratemyprofessors.com/graphql';
 
 export const neededOrigins = [
-  'https://utdallas.collegescheduler.com/terms/*/courses/*',
-  'https://www.ratemyprofessors.com/',
-  'https://trends.utdnebula.com/',
+  'https://utdallas.collegescheduler.com/*',
+  'https://www.ratemyprofessors.com/*',
+  'https://trends.utdnebula.com/*',
 ];

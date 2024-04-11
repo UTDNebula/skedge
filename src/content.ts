@@ -47,7 +47,6 @@ export async function scrapeCourseData() {
   async function getCourseInfo(): Promise<CourseHeader> {
     const course = await waitForElement('h1');
     const courseData = course.innerText.split(' ');
-    console.log({ subjectPrefix: courseData[0], courseNumber: courseData[1] });
     return { subjectPrefix: courseData[0], courseNumber: courseData[1] };
   }
 
@@ -97,7 +96,6 @@ export async function scrapeCourseData() {
       // collapse section details
       sectionDetailsButton.click();
     });
-    console.log([...new Set(professors)]);
     return [...new Set(professors)];
   }
 }

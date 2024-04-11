@@ -28,7 +28,6 @@ export const CoursePage = () => {
     if (!state) {
       setOnCoursebook(true);
       getCourseData().then((payload) => {
-        console.log(payload);
         if (payload === null) {
           setOnCoursebook(false);
         } else {
