@@ -1,6 +1,7 @@
 import { Storage } from '@plasmohq/storage';
 
 import { CourseHeader, listenForTableChange, scrapeCourseData } from '~content';
+import { neededOrigins } from '~data/config';
 
 export interface ShowCourseTabPayload {
   header: CourseHeader;
@@ -90,6 +91,28 @@ realBrowser.tabs.onActivated.addListener(async () => {
     realBrowser.action.setBadgeBackgroundColor({ color: 'green' });
   } else {
     realBrowser.action.setBadgeText({ text: '' });
+  }
+});
+
+realBrowser.runtime.onInstalled.addListener(async () => {
+  console.log('hey from install listener');
+  const currentPermissions: { permissions: string[]; origins: string[] } =
+    await realBrowser.permissions.getAll();
+  console.log(`current permissions: ${currentPermissions.origins}`);
+  if (
+    neededOrigins.filter(
+      (origin) => !currentPermissions.origins.includes(origin),
+    ).length !== 0
+  ) {
+    console.log('opening permission request');
+    const popupURL = await realBrowser.runtime.getURL('tabs/permissions.html');
+    console.log(popupURL);
+    realBrowser.windows.create({
+      url: popupURL,
+      type: 'popup',
+      width: 550,
+      height: 250,
+    });
   }
 });
 
