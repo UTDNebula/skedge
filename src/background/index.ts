@@ -16,19 +16,6 @@ const storage = new Storage();
 
 const realBrowser = process.env.PLASMO_BROWSER === 'chrome' ? chrome : browser;
 
-const neededOrigins = [
-  'https://utdallas.collegescheduler.com/terms/*/courses/*',
-  'https://www.ratemyprofessors.com/',
-  'https://trends.utdnebula.com/',
-];
-realBrowser.permissions.getAll().then((perms) => {
-  const currOrigins = perms.origins as string[];
-  const origins = neededOrigins.filter(
-    (origin) => !currOrigins.includes(origin),
-  );
-  realBrowser.permissions.request({ origins });
-});
-
 /** Injects the content script if we hit a course page */
 realBrowser.webNavigation.onHistoryStateUpdated.addListener((details) => {
   if (
