@@ -1,3 +1,5 @@
+import '~/style.css';
+
 import React, { useState } from 'react';
 
 import { neededOrigins } from '~data/config';
@@ -9,12 +11,13 @@ function PermissionsPls() {
 
   return (
     <div>
-      <h1>Skedge needs permissions to run</h1>
+      <h1 className="">Sk.edge needs permissions to run</h1>
       <p>
         We need access to Schedule Planner and the sources we get our data from.
       </p>
-      <p>Please click the button below to grant permissions.</p>
+      <h2>Please click the button below to grant permissions.</h2>
       <button
+        className="p-2 bg-blue-dark text-white rounded-lg"
         onClick={async () => {
           const response = await realBrowser.permissions.request({
             origins: neededOrigins,
@@ -26,7 +29,12 @@ function PermissionsPls() {
       >
         Request permissions
       </button>
-      {granted && <p>Thank you!</p>}
+      {granted && (
+        <p>
+          Thank you!
+          <br /> You can close this window now.
+        </p>
+      )}
     </div>
   );
 }
