@@ -11,7 +11,7 @@ function PermissionsPls() {
 
   return (
     <div>
-      <h1 className="">Sk.edge needs permissions to run</h1>
+      <h1>Sk.edge needs permissions to run</h1>
       <p>
         We need access to Schedule Planner and the sources we get our data from.
       </p>

@@ -95,18 +95,14 @@ realBrowser.tabs.onActivated.addListener(async () => {
 });
 
 realBrowser.runtime.onInstalled.addListener(async () => {
-  console.log('hey from install listener');
   const currentPermissions: { permissions: string[]; origins: string[] } =
     await realBrowser.permissions.getAll();
-  console.log(`current permissions: ${currentPermissions.origins}`);
   if (
     neededOrigins.filter(
       (origin) => !currentPermissions.origins.includes(origin),
     ).length !== 0
   ) {
-    console.log('opening permission request');
     const popupURL = await realBrowser.runtime.getURL('tabs/permissions.html');
-    console.log(popupURL);
     realBrowser.windows.create({
       url: popupURL,
       type: 'popup',
