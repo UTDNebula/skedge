@@ -80,7 +80,7 @@ export async function scrapeCourseData() {
       });
       // append professor name to the table
       const newTd = document.createElement('td');
-      newTd.innerText = professor;
+      newTd.innerText = professor ?? 'No Instructor';
       // this is in case we have multiple instructions per section
       const sectionProfessors = professor.split(',');
       sectionProfessors.forEach((sectionProfessor) => {
