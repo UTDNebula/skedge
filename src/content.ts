@@ -1,11 +1,14 @@
+import type { PlasmoCSConfig } from 'plasmo';
+
 export interface CourseHeader {
   subjectPrefix: string;
   courseNumber: string;
 }
 
 // Plasmo CS config export
-export const config = {
+export const config: PlasmoCSConfig = {
   matches: ['https://utdallas.collegescheduler.com/terms/*/courses/*'],
+  world: 'MAIN',
 };
 
 /**
@@ -97,6 +100,7 @@ export async function scrapeCourseData() {
   }
 }
 
+const realBrowser = process.env.PLASMO_BROWSER === 'chrome' ? chrome : browser;
 /** This listens for clicks on the buttons that switch between the enabled and disabled professor tabs and reports back to background.ts */
 export function listenForTableChange() {
   const observer = new MutationObserver((mutationsList) => {
@@ -107,7 +111,7 @@ export function listenForTableChange() {
       ) {
         //button corresponding to shown table is given an active class
         if (mutation.target.classList.contains('active')) {
-          chrome.runtime.sendMessage('tableChange');
+          realBrowser.runtime.sendMessage('tableChange');
         }
       }
     }
@@ -117,7 +121,7 @@ export function listenForTableChange() {
     subtree: true,
   });
   //remove observer when ordered by backgroud.ts to avoid duplicates
-  chrome.runtime.onMessage.addListener(function (message) {
+  realBrowser.runtime.onMessage.addListener(function (message) {
     if (message === 'disconnectObserver') {
       observer.disconnect();
     }
