@@ -1,14 +1,35 @@
-import { useState } from "react";
-import Chart from "react-apexcharts"
-import { miniGradeChartOptions } from "~utils/styling";
-import type { GradeDistribution } from "./ProfileGrades"
+import React from 'react';
+import Chart from 'react-apexcharts';
+import { Rings } from 'react-loader-spinner';
 
-export const MiniGrades = ({ gradeDistributionData } : { gradeDistributionData: GradeDistribution }) => {
-  const config = JSON.parse(JSON.stringify(miniGradeChartOptions))
-  config.title.text = gradeDistributionData.name;
+import { miniGradeChartOptions } from '~utils/styling';
+
+export const MiniGrades = ({
+  series,
+  loading,
+}: {
+  series: ApexAxisChartSeries;
+  loading: boolean;
+}) => {
+  if (loading) {
+    return (
+      <Rings
+        height="100%"
+        width="100%"
+        color="#1C2A6D"
+        radius="6"
+        wrapperClass="block mx-auto w-full h-full"
+        visible={true}
+        ariaLabel="rings-loading"
+      />
+    );
+  }
   return (
-    <>
-      <Chart options={config} series={gradeDistributionData.series} type="bar" height={124}></Chart>
-    </>
-  )
-}
+    <Chart
+      options={miniGradeChartOptions}
+      series={series}
+      type="bar"
+      height={'100%'}
+    ></Chart>
+  );
+};

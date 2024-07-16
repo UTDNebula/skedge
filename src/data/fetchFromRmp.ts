@@ -1,121 +1,192 @@
-import { HEADERS, PROFESSOR_QUERY } from "~data/config";
+import { HEADERS, PROFESSOR_QUERY, RMP_GRAPHQL_URL } from '~data/config';
+import fetchWithCache, { cacheIndexRmp } from '~data/fetchWithCache';
+
+function reportError(context, err) {
+  console.error('Error in ' + context + ': ' + err);
+}
 
 function getProfessorUrl(professorName: string, schoolId: string): string {
-    return `https://www.ratemyprofessors.com/search/teachers?query=${encodeURIComponent(professorName)}&sid=${btoa(`School-${schoolId}`)}`
-}
-function getProfessorUrls(professorNames: string[], schoolId: string): string[] {
-    const professorUrls = []
-    for (let i = 0; i < professorNames.length; i++) {
-        professorUrls.push(getProfessorUrl(professorNames[i], schoolId))
-    }
-    return professorUrls
+  const url = new URL(
+    'https://www.ratemyprofessors.com/search/professors/' + schoolId + '?',
+  ); //UTD
+  url.searchParams.append('q', professorName);
+  return url.href;
 }
 
-function getProfessorIds(texts: string[], professorNames: string[]): string[] {
-    const professorIds = []
-    const lowerCaseProfessorNames = professorNames.map(name => name.toLowerCase())
-    texts.forEach(text => {
-        let matched = false;
-        const regex = /"legacyId":(\d+).*?"firstName":"(.*?)","lastName":"(.*?)"/g;
-        for (const match of text.matchAll(regex)) {
-            console.log(match[2].split(' ')[0].toLowerCase() + " " + match[3].toLowerCase())
-            if (lowerCaseProfessorNames.includes(match[2].split(' ')[0].toLowerCase() + " " + match[3].toLowerCase())) {
-                professorIds.push(match[1]);
-                matched = true;
-            }
+function getProfessorId(text: string, professorName: string): string {
+  const lowerCaseProfessorName = professorName.toLowerCase();
+
+  let pendingMatch = null;
+  const regex =
+    /"legacyId":(\d+).*?"numRatings":(\d+).*?"firstName":"(.*?)","lastName":"(.*?)"/g;
+  const allMatches: string[] = text.match(regex);
+  const highestNumRatings = 0;
+
+  if (allMatches) {
+    for (const fullMatch of allMatches) {
+      for (const match of fullMatch.matchAll(regex)) {
+        console.log(
+          match[3].split(' ')[0].toLowerCase() +
+            ' ' +
+            match[4].toLowerCase() +
+            ' ',
+        );
+        const numRatings = parseInt(match[2]);
+        if (
+          lowerCaseProfessorName.includes(
+            match[3].split(' ')[0].toLowerCase() + ' ' + match[4].toLowerCase(),
+          ) &&
+          numRatings >= highestNumRatings
+        ) {
+          pendingMatch = match[1];
         }
-        if (!matched) professorIds.push(null)
-    })
-    return professorIds
+      }
+    }
+  }
+
+  return pendingMatch;
 }
 
 function getGraphQlUrlProp(professorId: string) {
-    HEADERS["Referer"] = `https://www.ratemyprofessors.com/ShowRatings.jsp?tid=${professorId}`
-    PROFESSOR_QUERY["variables"]["id"] = btoa(`Teacher-${professorId}`)
-    return {
-        method: "POST",
-        headers: HEADERS,
-        body: JSON.stringify(PROFESSOR_QUERY)
+  HEADERS[
+    'Referer'
+  ] = `https://www.ratemyprofessors.com/ShowRatings.jsp?tid=${professorId}`;
+  PROFESSOR_QUERY['variables']['id'] = btoa(`Teacher-${professorId}`);
+  return {
+    method: 'POST',
+    headers: HEADERS,
+    body: JSON.stringify(PROFESSOR_QUERY),
+  };
+}
+
+function wait(delay) {
+  return new Promise((resolve) => setTimeout(resolve, delay));
+}
+
+function fetchRetry(url: string, delay: number, tries: number, fetchOptions) {
+  function onError(err) {
+    const triesLeft: number = tries - 1;
+    if (!triesLeft) {
+      throw err;
     }
-}
-function getGraphQlUrlProps(professorIds: string[]) {
-    const graphQlUrlProps = []
-    professorIds.forEach(professorId => {
-        graphQlUrlProps.push(getGraphQlUrlProp(professorId))
-    })
-    return graphQlUrlProps
+    return wait(delay).then(() =>
+      fetchRetry(url, delay, triesLeft, fetchOptions),
+    );
+  }
+  return fetchWithCache(url, fetchOptions, cacheIndexRmp, 2629800000).catch(
+    onError,
+  );
 }
 
-function fetchWithGraphQl(graphQlUrlProps: any[], resolve) {
-    const graphqlUrl = "https://www.ratemyprofessors.com/graphql";
+async function validateResponse(response, fetchOptions) {
+  const notOk = response?.status !== 200;
+  if (notOk && response && response.url) {
+    const details = {
+      status: response.status,
+      statusText: response.statusText,
+      redirected: response.redirected,
+      url: response.url,
+    };
+    reportError(
+      'validateResponse',
+      'Status not OK for fetch request. Details are: ' +
+        JSON.stringify(details),
+    );
+    // If we don't have fetch options, we just use an empty object.
+    response = await fetchRetry(response?.url, 200, 3, fetchOptions || {});
+  }
+  return response;
+}
 
-    Promise.all(graphQlUrlProps.map(u=>fetch(graphqlUrl, u)))
-        .then(responses => Promise.all(responses.map(res => res.json())))
-        .then(ratings => {
-            for (let i = 0; i < ratings.length; i++) {
-                if (ratings[i] != null && ratings[i].hasOwnProperty("data") && ratings[i]["data"].hasOwnProperty("node")) {
-                    ratings[i] = ratings[i]["data"]["node"];
-                }
-            }
-            console.log(ratings)
-            resolve(ratings)
-        })
+function fetchWithGraphQl(graphQlUrlProp, resolve) {
+  try {
+    fetchWithCache(
+      RMP_GRAPHQL_URL,
+      graphQlUrlProp,
+      cacheIndexRmp,
+      2629800000,
+    ).then((response) =>
+      validateResponse(response, graphQlUrlProp).then((rating) => {
+        if (
+          rating != null &&
+          Object.hasOwn(rating, 'data') &&
+          Object.hasOwn(rating['data'], 'node')
+        ) {
+          rating = rating['data']['node'];
+        }
+        resolve(rating);
+      }),
+    );
+  } catch (err) {
+    reportError('fetchWithGraphQl', err);
+    resolve(null); ///
+  }
 }
 
 export interface RmpRequest {
-    professorNames: string[],
-    schoolId: string
+  professorName: string;
+  schoolId: string;
 }
-export function requestProfessorsFromRmp(request: RmpRequest): Promise<RMPInterface[]> {
-    return new Promise((resolve, reject) => {
+export function requestProfessorFromRmp(
+  request: RmpRequest,
+): Promise<RMPInterface> {
+  return new Promise((resolve, reject) => {
+    // url for promises
+    const professorUrl = getProfessorUrl(
+      request.professorName,
+      request.schoolId,
+    );
 
-        // make a list of urls for promises
-        const professorUrls = getProfessorUrls(request.professorNames, request.schoolId)
+    // fetch professor id from url
+    fetchWithCache(
+      professorUrl,
+      { method: 'GET' },
+      cacheIndexRmp,
+      2629800000,
+      true,
+    )
+      .then((text) => {
+        const professorId = getProfessorId(text, request.professorName);
 
-        // fetch professor ids from each url
-        Promise.all(professorUrls.map(u=>fetch(u)))
-            .then(responses => Promise.all(responses.map(res => res.text())))
-            .then(texts => {
-                    const professorIds = getProfessorIds(texts, request.professorNames)
+        // create fetch object for professor id
+        const graphQlUrlProp = getGraphQlUrlProp(professorId);
 
-                    // create fetch objects for each professor id
-                    const graphQlUrlProps = getGraphQlUrlProps(professorIds)
-
-                    // fetch professor info by id with graphQL
-                    fetchWithGraphQl(graphQlUrlProps, resolve)
-                }
-            ).catch(error => {
-            reject(error);
-        });
-    })
+        // fetch professor info by id with graphQL
+        fetchWithGraphQl(graphQlUrlProp, resolve);
+      })
+      .catch((error) => {
+        reportError('requestProfessorFromRmp', error);
+        reject(error);
+      });
+  });
 }
 
 interface RMPInterface {
-    avgDifficulty: number;
-    avgRating: number;
-    courseCodes: {
-        courseCount: number;
-        courseName: string;
-    }[];
-    department: string;
-    firstName: string;
-    lastName: string;
-    legacyId: number;
-    numRatings: number;
-    ratingsDistribution: { 
-        r1: number; 
-        r2: number; 
-        r3: number; 
-        r4: number; 
-        r5: number;
-        total: number;
-    };
-    school: {
-        id: string;
-    };
-    teacherRatingTags: {
-        tagCount: number;
-        tagName: string;
-    }[];
-    wouldTakeAgainPercent: number;
+  avgDifficulty: number;
+  avgRating: number;
+  courseCodes: {
+    courseCount: number;
+    courseName: string;
+  }[];
+  department: string;
+  firstName: string;
+  lastName: string;
+  legacyId: number;
+  numRatings: number;
+  ratingsDistribution: {
+    r1: number;
+    r2: number;
+    r3: number;
+    r4: number;
+    r5: number;
+    total: number;
+  };
+  school: {
+    id: string;
+  };
+  teacherRatingTags: {
+    tagCount: number;
+    tagName: string;
+  }[];
+  wouldTakeAgainPercent: number;
 }

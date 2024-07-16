@@ -1,7 +1,9 @@
+//TODO: Fix these any types
+
 export interface FetchProfessorParameters {
   firstName: string;
   lastName: string;
-};
+}
 
 export interface FetchCourseParameters {
   subjectPrefix: string;
@@ -11,9 +13,10 @@ export interface FetchCourseParameters {
 export interface FetchSectionParameters {
   courseReference: string;
   professorReference: string;
-};
+}
 
 interface Requisites {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   options: any[];
   required: number;
   type: string;
@@ -44,7 +47,7 @@ export interface CourseInterface {
 interface Office {
   building: string;
   room: string;
-  map_uri: string
+  map_uri: string;
 }
 
 export interface ProfessorInterface {
@@ -55,6 +58,7 @@ export interface ProfessorInterface {
   image_uri: string;
   last_name: string;
   office: Office;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   office_hours: any[];
   phone_number: string;
   profile_uri: string;
@@ -70,19 +74,56 @@ export interface SectionInterface {
     name: string;
     start_date: string;
   };
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   attributes: any[];
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   core_flags: any[];
   course_reference: string;
   grade_distribution: number[];
   instruction_mode: string;
   internal_class_number: string;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   meetings: any[];
   professors: string[];
   section_corequisites: {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     options: any[];
     type: string;
   };
   section_number: string;
   syllabus_uri: string;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   teaching_assistants: any[];
-};
+}
+
+export interface CourseCodeInterface {
+  courseCount: number;
+  courseName: string;
+}
+export interface RatingsDistributionInterface {
+  r1: number;
+  r2: number;
+  r3: number;
+  r4: number;
+  r5: number;
+  total: number;
+}
+export interface TeacherRatingTag {
+  tagCount: number;
+  tagName: string;
+}
+
+export interface RMPRatingInterface {
+  avgDifficulty: number;
+  avgRating: number;
+  courseCodes: CourseCodeInterface[];
+  department: string;
+  firstName: string;
+  lastName: string;
+  legacyId: number;
+  numRatings: number;
+  ratingsDistribution: RatingsDistributionInterface;
+  school: { id: string };
+  teacherRatingTags: TeacherRatingTag[];
+  wouldTakeAgainPercent: number;
+}
