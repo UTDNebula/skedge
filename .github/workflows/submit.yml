@@ -23,7 +23,7 @@ jobs:
         run: npm ci
 
       - name: Build and package extension
-        run: npm build --target=chrome-mv3 --zip && npm build --target=firefox-mv3 --zip
+        run: npm run build --target=chrome-mv3 --zip && npm run build --target=firefox-mv3 --zip
 
       - name: Publish extension
         uses: PlasmoHQ/bpp@v3
