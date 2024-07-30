@@ -14,20 +14,16 @@ jobs:
       - name: Check out Git repository
         uses: actions/checkout@v3
 
-      - name: Set up pNPM
-        uses: pnpm/action-setup@v3
-        with:
-          version: latest
-          run_install: true
-
       - name: Set up Node.js
         uses: actions/setup-node@v3
         with:
           node-version: 18
-          cache: 'pnpm'
+
+      - name: Install packages
+        run: npm ci
 
       - name: Build and package extension
-        run: pnpm build --target=chrome-mv3 --zip && pnpm build --target=firefox-mv3 --zip
+        run: npm build --target=chrome-mv3 --zip && npm build --target=firefox-mv3 --zip
 
       - name: Publish extension
         uses: PlasmoHQ/bpp@v3
