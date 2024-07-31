@@ -1,9 +1,13 @@
 name: 'Submit to Web Store'
 
 #Documentation for secrets: https://github.com/PlasmoHQ/bms/blob/main/tokens.md
+#There is already an existing google cloud console project that the chrome keys were generated from
+#The secrets are linked to my gotyhill@gmail.com email since it is a developer account and has access on both chrome and firefox
 
 on:
   workflow_dispatch:
+#This could run on each push to main but it would only work like once a day for chrome
+#Chrome won't allow submitting another package when one is in review
 
 jobs:
   main:
