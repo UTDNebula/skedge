@@ -1,7 +1,7 @@
 import { CourseHeader } from '~content';
 import { requestProfessorFromRmp } from '~data/fetchFromRmp';
 
-import { SCHOOL_ID } from './config';
+import { SCHOOL_ID, SCHOOL_NAME } from './config';
 import { fetchNebulaGrades, fetchNebulaProfessor } from './fetch';
 
 export interface ProfessorProfileInterface {
@@ -43,9 +43,18 @@ export async function buildProfessorProfile(
   );
 
   const rmpsPromise = requestProfessorFromRmp({
-    professorName: professorSplit.profFirst + ' ' + professorSplit.profLast,
+    profFirst: professorSplit.profFirst,
+    profLast: professorSplit.profLast,
     schoolId: SCHOOL_ID,
-  }).then((result) => (rmp = result));
+    schoolName: SCHOOL_NAME,
+  })
+    .then((result) => {
+      console.log(result);
+      if (result.message === 'success') {
+        rmp = result.data;
+      }
+    })
+    .catch((error) => console.error(error.message));
 
   await Promise.all([
     nebulaProfessorsPromise,
