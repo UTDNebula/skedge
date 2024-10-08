@@ -13,8 +13,7 @@
     "format": "prettier --write .",
     "format:check": "prettier --check .",
     "lint": "next lint --fix",
-    "lint:check": "next lint",
-    "prepare": "husky install"
+    "lint:check": "next lint"
   },
   "dependencies": {
     "@plasmohq/messaging": "^0.1.6",
