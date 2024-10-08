@@ -44,8 +44,8 @@ export const MiniProfessor = ({
               professorData.loading
                 ? '...'
                 : typeof professorData.rmpScore !== 'undefined'
-                ? professorData.rmpScore.toFixed(1)
-                : undefined
+                  ? professorData.rmpScore.toFixed(1)
+                  : undefined
             }
             maxScore={5}
             inverted={false}
@@ -58,8 +58,8 @@ export const MiniProfessor = ({
               professorData.loading
                 ? '...'
                 : typeof professorData.diffScore !== 'undefined'
-                ? professorData.diffScore.toFixed(1)
-                : undefined
+                  ? professorData.diffScore.toFixed(1)
+                  : undefined
             }
             maxScore={5}
             inverted={true}
@@ -72,8 +72,8 @@ export const MiniProfessor = ({
               professorData.loading
                 ? '...'
                 : typeof professorData.wtaScore !== 'undefined'
-                ? Math.round(professorData.wtaScore) + '%'
-                : undefined
+                  ? Math.round(professorData.wtaScore) + '%'
+                  : undefined
             }
             maxScore={100}
             inverted={false}
