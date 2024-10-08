@@ -43,18 +43,10 @@
     "eslint-plugin-react": "^7.33.2",
     "eslint-plugin-react-hooks": "^4.6.0",
     "eslint-plugin-simple-import-sort": "^10.0.0",
-    "husky": "^8.0.3",
-    "lint-staged": "^15.1.0",
     "postcss": "^8.4.21",
     "prettier": "2.7.1",
     "tailwindcss": "^3.2.7",
     "typescript": "^5.2.2"
-  },
-  "lint-staged": {
-    "*": [
-      "eslint --cache --fix",
-      "prettier --write ./**/*.{tsx,ts,js}"
-    ]
   },
   "eslintConfig": {
     "root": true,
