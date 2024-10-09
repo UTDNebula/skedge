@@ -10,7 +10,7 @@ export const ProfileFooter = ({
   return (
     <footer className="mt-2 flex justify-center gap-2">
       <a
-        className="border-blue-dark border-2 rounded-full p-2 hover:bg-blue-dark hover:text-white transition"
+        className="border-cornflower-600 border-2 rounded-full p-2 hover:bg-cornflower-600 hover:text-white transition"
         href={'https://www.ratemyprofessors.com/professor/' + rmpId}
         target="_blank"
         rel="noreferrer"
@@ -18,7 +18,7 @@ export const ProfileFooter = ({
         Open Rate My Professors
       </a>
       <a
-        className="border-blue-dark border-2 rounded-full p-2 hover:bg-blue-dark hover:text-white transition"
+        className="border-cornflower-600 border-2 rounded-full p-2 hover:bg-cornflower-600 hover:text-white transition"
         href={
           'https://trends.utdnebula.com/dashboard?searchTerms=' +
           name.split(' ')[0] +

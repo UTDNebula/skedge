@@ -23,14 +23,14 @@ export const MiniProfessor = ({
 
   return (
     <>
-      <header className="h-10 rounded-t-2xl bg-blue-dark py-2 pr-3 pl-[14px] flex">
+      <header className="h-10 rounded-t-2xl bg-cornflower-600 py-2 pr-3 pl-[14px] flex">
         <h3 className="text-white">{professorData.name}</h3>
         {!professorData.loading && (
           <button onClick={toProfessorProfile} className="ml-auto">
             <FaUser
               size={24}
               color="white"
-              className="px-1.5 hover:bg-blue-dark-hover rounded-lg transition duration-250 ease-in-out"
+              className="px-1.5 hover:bg-cornflower-500 rounded-lg transition duration-250 ease-in-out"
             />
           </button>
         )}
@@ -44,8 +44,8 @@ export const MiniProfessor = ({
               professorData.loading
                 ? '...'
                 : typeof professorData.rmpScore !== 'undefined'
-                ? professorData.rmpScore.toFixed(1)
-                : undefined
+                  ? professorData.rmpScore.toFixed(1)
+                  : undefined
             }
             maxScore={5}
             inverted={false}
@@ -58,8 +58,8 @@ export const MiniProfessor = ({
               professorData.loading
                 ? '...'
                 : typeof professorData.diffScore !== 'undefined'
-                ? professorData.diffScore.toFixed(1)
-                : undefined
+                  ? professorData.diffScore.toFixed(1)
+                  : undefined
             }
             maxScore={5}
             inverted={true}
@@ -72,8 +72,8 @@ export const MiniProfessor = ({
               professorData.loading
                 ? '...'
                 : typeof professorData.wtaScore !== 'undefined'
-                ? Math.round(professorData.wtaScore) + '%'
-                : undefined
+                  ? Math.round(professorData.wtaScore) + '%'
+                  : undefined
             }
             maxScore={100}
             inverted={false}

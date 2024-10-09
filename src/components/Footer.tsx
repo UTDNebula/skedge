@@ -1,24 +1,19 @@
-import nebulaLogo from 'data-base64:../../assets/icon-black.svg';
 import React from 'react';
 
 export const Footer = () => {
   return (
-    <div className="rounded-b-2xl p-2 bg-gray-light -mb-4 -ml-4 -mr-4">
-      <div className="flex items-center justify-center">
-        <h4 className="pr-2">Powered by Nebula Labs</h4>
+    <div className="rounded-b-2xl p-2 bg-slate-200 -mb-4 -ml-4 -mr-4 flex items-center justify-center">
+      <p className="text-sm font-semibold text-cornflower-600 tracking-wider">
+        POWERED BY{' '}
         <a
           href="https://www.utdnebula.com/"
           target="_blank"
           rel="noreferrer"
-          className="w-8 h-8"
+          className="underline decoration-transparent hover:decoration-inherit transition"
         >
-          <img
-            src={nebulaLogo}
-            alt="Nebula Labs Logo"
-            className="w-8 h-8 hover:cursor-pointer"
-          ></img>
+          NEBULA LABS
         </a>
-      </div>
+      </p>
     </div>
   );
 };

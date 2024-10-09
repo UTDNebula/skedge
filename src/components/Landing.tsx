@@ -1,4 +1,4 @@
-import skedgeLogo from 'data-base64:../../assets/icon.png';
+import logo from 'data-base64:../../assets/icon-black.svg';
 import React from 'react';
 
 import { Card } from './Card';
@@ -20,13 +20,13 @@ export const Landing = () => {
   return (
     <Card>
       <div className="h-auto">
-        <h1 className="font-kallisto">Welcome to sk.edge 👋</h1>
+        <h1 className="font-kallisto">Welcome to Skedge 👋</h1>
         <h6 className="my-2">
           your registration assistant by students, for students
         </h6>
         <img
-          src={skedgeLogo}
-          alt=""
+          src={logo}
+          alt="logo"
           className="w-[100px] h-[100px] float-right"
         />
         <p className="mb-2">
@@ -35,14 +35,17 @@ export const Landing = () => {
         </p>
         <p className="mb-2">
           Got feedback? Let us know{' '}
-          <button className="text-purple-dark" onClick={navigateToSurvey}>
+          <button
+            className="underline text-blue-600 hover:text-blue-800 visited:text-purple-600"
+            onClick={navigateToSurvey}
+          >
             here
           </button>
           !
         </p>
         <button
           onClick={navigativeToScheduler}
-          className="text-center flex py-2 px-4 mb-4 bg-blue-dark hover:bg-blue-dark-hover rounded-lg transition duration-250 ease-in-out"
+          className="text-center flex py-2 px-4 mb-4 bg-cornflower-600 hover:bg-cornflower-500 rounded-lg transition duration-250 ease-in-out"
         >
           <h3 className="text-center text-white">To Galaxy!</h3>
         </button>

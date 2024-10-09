@@ -23,7 +23,7 @@
 
   /* Subtitles */
   h6 {
-    @apply text-xs font-main font-medium text-gray-dark;
+    @apply text-xs font-main font-medium text-slate-400;
   }
 
   p {

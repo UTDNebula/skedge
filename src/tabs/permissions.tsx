@@ -11,13 +11,13 @@ function PermissionsPls() {
 
   return (
     <div>
-      <h1>Sk.edge needs permissions to run</h1>
+      <h1>Skedge needs permissions to run</h1>
       <p>
         We need access to Schedule Planner and the sources we get our data from.
       </p>
       <h2>Please click the button below to grant permissions.</h2>
       <button
-        className="p-2 bg-blue-dark text-white rounded-lg"
+        className="p-2 bg-cornflower-600 text-white rounded-lg"
         onClick={async () => {
           const response = await realBrowser.permissions.request({
             origins: neededOrigins,

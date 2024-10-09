@@ -1,6 +1,6 @@
 {
-  "name": "sk.edge",
-  "displayName": "sk.edge",
+  "name": "Skedge",
+  "displayName": "Skedge",
   "version": "0.0.6",
   "description": "your registration assistant by students, for students",
   "author": "Nebula Labs",
@@ -93,7 +93,8 @@
       "simple-import-sort/exports": "error",
       "import/first": "error",
       "import/newline-after-import": "error",
-      "import/no-duplicates": "error"
+      "import/no-duplicates": "error",
+      "@next/next/no-img-element": "off"
     }
   },
   "manifest": {

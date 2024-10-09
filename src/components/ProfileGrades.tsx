@@ -17,12 +17,12 @@ export const ProfileGrades = ({
 }) => {
   return (
     <>
-      <header className="bg-blue-dark rounded-t-2xl flex">
+      <header className="bg-cornflower-600 rounded-t-2xl flex">
         <h2 className="flex-auto text-center text-white mx-auto py-2">
           {'Grades Distribution (' + total + ')'}
         </h2>
       </header>
-      <div className="border-blue-dark border-r-2 border-l-2 border-b-2 rounded-b-2xl pr-2">
+      <div className="border-cornflower-600 border-r-2 border-l-2 border-b-2 rounded-b-2xl pr-2">
         <Chart
           options={gradeChartOptions}
           series={series}
