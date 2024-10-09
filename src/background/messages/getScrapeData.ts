@@ -1,6 +1,6 @@
 import type { PlasmoMessaging } from '@plasmohq/messaging';
 
-import { getScrapedCourseData } from '../../background';
+import { getScrapedCourseData } from '..';
 
 const handler: PlasmoMessaging.MessageHandler = async (req, res) => {
   const data = await getScrapedCourseData();

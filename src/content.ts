@@ -1,11 +1,14 @@
+import type { PlasmoCSConfig } from 'plasmo';
+
 export interface CourseHeader {
   subjectPrefix: string;
   courseNumber: string;
 }
 
 // Plasmo CS config export
-export const config = {
+export const config: PlasmoCSConfig = {
   matches: ['https://utdallas.collegescheduler.com/terms/*/courses/*'],
+  world: 'MAIN',
 };
 
 /**
@@ -77,7 +80,7 @@ export async function scrapeCourseData() {
       });
       // append professor name to the table
       const newTd = document.createElement('td');
-      newTd.innerText = professor;
+      newTd.innerText = professor ?? 'No Instructor';
       // this is in case we have multiple instructions per section
       const sectionProfessors = professor.split(',');
       sectionProfessors.forEach((sectionProfessor) => {
@@ -85,9 +88,42 @@ export async function scrapeCourseData() {
       });
       const courseRowCells = courseRow.querySelector('tr');
       courseRowCells.insertBefore(newTd, courseRowCells.children[7]);
+      //Increase Disabled Reasons row colspan if necessary
+      const sectionDisabled = courseRow.querySelector('tr:nth-child(3) > td');
+      if (sectionDisabled !== null) {
+        sectionDisabled.colSpan = sectionDisabled.colSpan + 1;
+      }
       // collapse section details
       sectionDetailsButton.click();
     });
     return [...new Set(professors)];
   }
+}
+
+const realBrowser = process.env.PLASMO_BROWSER === 'chrome' ? chrome : browser;
+/** This listens for clicks on the buttons that switch between the enabled and disabled professor tabs and reports back to background.ts */
+export function listenForTableChange() {
+  const observer = new MutationObserver((mutationsList) => {
+    for (const mutation of mutationsList) {
+      if (
+        mutation.type === 'attributes' &&
+        mutation.attributeName === 'class'
+      ) {
+        //button corresponding to shown table is given an active class
+        if (mutation.target.classList.contains('active')) {
+          realBrowser.runtime.sendMessage('tableChange');
+        }
+      }
+    }
+  });
+  observer.observe(document.body, {
+    attributes: true,
+    subtree: true,
+  });
+  //remove observer when ordered by backgroud.ts to avoid duplicates
+  realBrowser.runtime.onMessage.addListener(function (message) {
+    if (message === 'disconnectObserver') {
+      observer.disconnect();
+    }
+  });
 }
