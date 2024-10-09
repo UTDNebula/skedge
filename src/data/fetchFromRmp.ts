@@ -48,8 +48,9 @@ function getProfessorId(text: string, professorName: string): string {
 }
 
 function getGraphQlUrlProp(professorId: string) {
-  HEADERS['Referer'] =
-    `https://www.ratemyprofessors.com/ShowRatings.jsp?tid=${professorId}`;
+  HEADERS[
+    'Referer'
+  ] = `https://www.ratemyprofessors.com/ShowRatings.jsp?tid=${professorId}`;
   PROFESSOR_QUERY['variables']['id'] = btoa(`Teacher-${professorId}`);
   return {
     method: 'POST',
