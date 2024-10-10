@@ -1,3 +1,4 @@
+import { Button } from '@mui/material';
 import { Storage } from '@plasmohq/storage';
 import gradient from 'data-base64:../../assets/gradient.png';
 import tutorial1 from 'data-base64:../../assets/tutorial1.png';
@@ -68,7 +69,13 @@ const storage = new Storage({
 export const Landing = () => {
   const [page, setPage] = useState(0);
   useEffect(() => {
-    storage.get(STORAGE_KEY).then((item) => setPage(item));
+    storage.get(STORAGE_KEY).then((item) => {
+      if (typeof item !== 'undefined') {
+        setPage(item);
+      } else {
+        setPage(0);
+      }
+    });
     storage.watch({
       [STORAGE_KEY]: (c) => {
         setPage(c.newValue);
@@ -115,12 +122,15 @@ export const Landing = () => {
               Explore and compare past grades, professor ratings, and reviews to
               find the perfect class.
             </p>
-            <button
-              className="font-main text-base text-white px-6 py-2 rounded bg-royal hover:bg-royalDark transition"
+            <Button
+              variant="contained"
+              disableElevation
+              size="large"
+              className="normal-case bg-royal hover:bg-royalDark"
               onClick={() => storage.set(STORAGE_KEY, 1)}
             >
               Get Started
-            </button>
+            </Button>
           </div>
         </div>
       );

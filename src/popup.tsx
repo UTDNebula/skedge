@@ -1,7 +1,10 @@
 import '~/style.css';
+import tailwindConfig from '../tailwind.config.js';
 
 import React from 'react';
 import { MemoryRouter } from 'react-router-dom';
+import { useMediaQuery } from '@mui/material';
+import { createTheme, ThemeProvider } from '@mui/material/styles';
 
 import { Routing } from '~/pages';
 import { neededOrigins } from '~data/config';
@@ -27,10 +30,33 @@ async function checkPermissions() {
 checkPermissions();
 
 function IndexPopup() {
+  const prefersDarkMode = useMediaQuery('(prefers-color-scheme: dark)');
+  const muiTheme = createTheme({
+    palette: {
+      mode: prefersDarkMode ? 'dark' : 'light',
+      //copied from tailwind.config.js
+      primary: {
+        main: tailwindConfig.theme.extend.colors.royal,
+      },
+      secondary: {
+        main: tailwindConfig.theme.extend.colors.royal,
+        light: tailwindConfig.theme.extend.colors.periwinkle,
+      },
+      error: {
+        main: tailwindConfig.theme.extend.colors.persimmon['500'],
+      },
+    },
+    typography: {
+      fontFamily: 'inherit',
+    },
+  });
+
   return (
+    <ThemeProvider theme={muiTheme}>
     <MemoryRouter>
       <Routing />
     </MemoryRouter>
+    </ThemeProvider>
   );
 }
 
