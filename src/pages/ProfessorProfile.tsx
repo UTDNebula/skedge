@@ -26,7 +26,7 @@ export const ProfessorProfile = () => {
   };
 
   return (
-    <div className="w-[400px] p-4">
+    <div className="w-[400px] h-[600px] p-4 text-haiti dark:text-white dark:bg-black">
       <ProfileHeader
         name={professorData.name}
         profilePicUrl={professorData.profilePicUrl}

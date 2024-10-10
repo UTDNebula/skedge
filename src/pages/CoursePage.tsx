@@ -60,14 +60,18 @@ export const CoursePage = () => {
   }, []);
 
   return (
-    <div className="w-[450px] p-4">
-      {onCoursebook &&
-        profiles.map((item, index) => (
-          <div className="mb-4" key={index}>
-            <MiniProfessor profiles={profiles} professorData={item} />
-          </div>
-        ))}
-      {!onCoursebook && <Landing />}
+    <div className="w-[400px] h-[600px] text-haiti dark:text-white">
+      {onCoursebook ? (
+        <div className="p-0 dark:bg-black">
+          {profiles.map((item, index) => (
+            <div className="mb-4" key={index}>
+              <MiniProfessor profiles={profiles} professorData={item} />
+            </div>
+          ))}
+        </div>
+      ) : (
+        <Landing />
+      )}
     </div>
   );
 };

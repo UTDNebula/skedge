@@ -19,8 +19,8 @@ async function checkPermissions() {
     realBrowser.windows.create({
       url: popupURL,
       type: 'popup',
-      width: 550,
-      height: 250,
+      width: 400,
+      height: 600,
     });
   }
 }
