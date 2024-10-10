@@ -1,5 +1,6 @@
+import PersonIcon from '@mui/icons-material/Person';
+import { IconButton } from '@mui/material';
 import React from 'react';
-import { FaUser } from 'react-icons/fa';
 import { NavigateFunction, useNavigate } from 'react-router-dom';
 
 import type { ProfessorProfileInterface } from '~data/builder';
@@ -26,13 +27,13 @@ export const MiniProfessor = ({
       <header className="h-10 rounded-t-2xl bg-cornflower-600 py-2 pr-3 pl-[14px] flex">
         <h3 className="text-white">{professorData.name}</h3>
         {!professorData.loading && (
-          <button onClick={toProfessorProfile} className="ml-auto">
-            <FaUser
-              size={24}
-              color="white"
-              className="px-1.5 hover:bg-cornflower-500 rounded-lg transition duration-250 ease-in-out"
-            />
-          </button>
+          <IconButton
+            aria-label="open profile"
+            className="ml-auto"
+            onClick={toProfessorProfile}
+          >
+            <PersonIcon />
+          </IconButton>
         )}
       </header>
       <Card>

@@ -1,5 +1,6 @@
+import ArrowBackIcon from '@mui/icons-material/ArrowBack';
+import { IconButton } from '@mui/material';
 import React from 'react';
-import { TiArrowBack } from 'react-icons/ti';
 import { NavigateFunction, useNavigate } from 'react-router-dom';
 
 import type { ProfessorProfileInterface } from '~data/builder';
@@ -22,16 +23,9 @@ export const ProfileHeader = ({
   return (
     <header className="relative rounded-t-2xl bg-cornflower-600 h-32">
       <div className="translate-y-[18px] grid grid-cols-5">
-        <button
-          onClick={returnToSections}
-          className="justify-center items-center flex"
-        >
-          <TiArrowBack
-            size={40}
-            color="white"
-            className="p-2 hover:bg-cornflower-500 rounded-lg transition duration-250 ease-in-out"
-          />
-        </button>
+        <IconButton aria-label="back" onClick={returnToSections}>
+          <ArrowBackIcon />
+        </IconButton>
         <h2 className="col-span-3 text-center text-white mx-auto my-auto">
           {name.split(' ').at(0) + ' ' + name.split(' ').at(-1)}
         </h2>

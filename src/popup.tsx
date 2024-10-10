@@ -1,13 +1,14 @@
 import '~/style.css';
-import tailwindConfig from '../tailwind.config.js';
 
-import React from 'react';
-import { MemoryRouter } from 'react-router-dom';
 import { useMediaQuery } from '@mui/material';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
+import React from 'react';
+import { MemoryRouter } from 'react-router-dom';
 
 import { Routing } from '~/pages';
 import { neededOrigins } from '~data/config';
+
+import tailwindConfig from '../tailwind.config.js';
 
 const realBrowser = process.env.PLASMO_BROWSER === 'chrome' ? chrome : browser;
 async function checkPermissions() {
@@ -53,9 +54,9 @@ function IndexPopup() {
 
   return (
     <ThemeProvider theme={muiTheme}>
-    <MemoryRouter>
-      <Routing />
-    </MemoryRouter>
+      <MemoryRouter>
+        <Routing />
+      </MemoryRouter>
     </ThemeProvider>
   );
 }
