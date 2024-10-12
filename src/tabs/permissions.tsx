@@ -1,5 +1,6 @@
 import '~/style.css';
 
+import { Button } from '@mui/material';
 import React, { useState } from 'react';
 
 import { neededOrigins } from '~data/config';
@@ -10,14 +11,19 @@ function PermissionsPls() {
   const [granted, setGranted] = useState(false);
 
   return (
-    <div>
-      <h1>Skedge needs permissions to run</h1>
-      <p>
+    <div className="p-2">
+      <h1 className="text-xl mb-2">Skedge needs permissions to run</h1>
+      <p className="text-sm mb-6">
         We need access to Schedule Planner and the sources we get our data from.
       </p>
-      <h2>Please click the button below to grant permissions.</h2>
-      <button
-        className="p-2 bg-cornflower-600 text-white rounded-lg"
+      <h2 className="text-lg mb-2">
+        Please click the button below to grant permissions.
+      </h2>
+      <Button
+        variant="contained"
+        disableElevation
+        size="large"
+        className="normal-case bg-royal hover:bg-royalDark"
         onClick={async () => {
           const response = await realBrowser.permissions.request({
             origins: neededOrigins,
@@ -27,10 +33,10 @@ function PermissionsPls() {
           }
         }}
       >
-        Request permissions
-      </button>
+        Grant permissions
+      </Button>
       {granted && (
-        <p>
+        <p className="text-sm">
           Thank you!
           <br /> You can close this window now.
         </p>

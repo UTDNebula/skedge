@@ -96,7 +96,7 @@ export async function scrapeCourseData() {
       // collapse section details
       sectionDetailsButton.click();
     });
-    return [...new Set(professors)];
+    return professors;
   }
 }
 

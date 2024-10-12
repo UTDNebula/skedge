@@ -68,7 +68,7 @@ const storage = new Storage({
   area: 'local',
 });
 
-export const Landing = () => {
+const Landing = () => {
   const [page, setPage] = useState(0);
   useEffect(() => {
     storage.get(STORAGE_KEY).then((item) => {
@@ -157,3 +157,5 @@ export const Landing = () => {
       );
   }
 };
+
+export default Landing;

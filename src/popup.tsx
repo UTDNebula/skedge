@@ -3,9 +3,8 @@ import '~/style.css';
 import { useMediaQuery } from '@mui/material';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import React from 'react';
-import { MemoryRouter } from 'react-router-dom';
 
-import { Routing } from '~/pages';
+import Index from '~/pages';
 import { neededOrigins } from '~data/config';
 
 import tailwindConfig from '../tailwind.config.js';
@@ -54,9 +53,7 @@ function IndexPopup() {
 
   return (
     <ThemeProvider theme={muiTheme}>
-      <MemoryRouter>
-        <Routing />
-      </MemoryRouter>
+      <Index />
     </ThemeProvider>
   );
 }
