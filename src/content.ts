@@ -59,7 +59,15 @@ export async function scrapeCourseData() {
     // add Professor header to the table
     const tableHeaders = courseTable.querySelector('thead > tr');
     const newHeader = document.createElement('th');
-    newHeader.innerText = 'Instructor(s)';
+    const line1 = document.createElement('div');
+    line1.innerText = 'Instructor(s)';
+    newHeader.append(line1);
+    // add Skedge reminder
+    const line2 = document.createElement('div');
+    line2.style.fontWeight = 'normal';
+    line2.style.paddingTop = '0.5rem';
+    line2.innerText = 'From Skedge';
+    newHeader.append(line2);
     tableHeaders.insertBefore(newHeader, tableHeaders.children[7]);
 
     courseRows.forEach((courseRow) => {
