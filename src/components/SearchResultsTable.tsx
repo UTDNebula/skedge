@@ -265,7 +265,7 @@ const SearchResultsTable = ({
   //Sort
   let sortedResults = results;
   if (orderBy !== 'none') {
-    sortedResults = results.sort((a, b) => {
+    sortedResults = [...results].sort((a, b) => {
       if (orderBy === 'gpa') {
         let aGrades = grades[searchQueryLabel(a)];
         let bGrades = grades[searchQueryLabel(b)];
