@@ -5,8 +5,7 @@ const storage = new Storage({
 });
 
 //Increment these to reset cache on next deployment
-export const cacheIndexProfessor = 0;
-export const cacheIndexGrades = 0;
+export const cacheIndexNebula = 0;
 export const cacheIndexRmp = 0;
 
 function getCache(key: string, cacheIndex: number) {

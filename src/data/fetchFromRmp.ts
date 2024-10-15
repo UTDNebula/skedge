@@ -160,7 +160,7 @@ export function requestProfessorFromRmp(
   });
 }
 
-interface RMPInterface {
+export type RMPInterface = {
   avgDifficulty: number;
   avgRating: number;
   courseCodes: {
@@ -188,4 +188,4 @@ interface RMPInterface {
     tagName: string;
   }[];
   wouldTakeAgainPercent: number;
-}
+};
