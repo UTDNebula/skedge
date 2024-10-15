@@ -1,5 +1,6 @@
 import gradient from 'data-base64:../../assets/gradient.png';
 import React from 'react';
+
 import { TRENDS_URL } from '~data/config';
 
 /**

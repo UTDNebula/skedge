@@ -4,6 +4,7 @@ import React, { useEffect, useState } from 'react';
 
 import SingleGradesInfo from '~components/SingleGradesInfo';
 import SingleProfInfo from '~components/SingleProfInfo';
+import { TRENDS_URL } from '~data/config';
 import type { RMPInterface } from '~data/fetchFromRmp';
 import fetchWithCache, {
   cacheIndexNebula,
@@ -12,7 +13,6 @@ import fetchWithCache, {
 import type { GenericFetchedData, GradesType } from '~pages/CoursePage';
 import type SearchQuery from '~utils/SearchQuery';
 import { searchQueryLabel } from '~utils/SearchQuery';
-import { TRENDS_URL } from '~data/config';
 
 const fallbackSrc = 'https://profiles.utdallas.edu/img/default.png';
 

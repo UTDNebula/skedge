@@ -7,6 +7,7 @@ import Landing from '~components/Landing';
 import ProfessorOverview from '~components/ProfessorOverview';
 import SearchResultsTable from '~components/SearchResultsTable';
 import TopMenu from '~components/TopMenu';
+import { TRENDS_URL } from '~data/config';
 import type { RMPInterface } from '~data/fetchFromRmp';
 import fetchWithCache, {
   cacheIndexNebula,
@@ -19,7 +20,6 @@ import {
   searchQueryEqual,
   searchQueryLabel,
 } from '~utils/SearchQuery';
-import { TRENDS_URL } from '~data/config';
 
 type GenericFetchedDataError<T> = {
   state: 'error';

@@ -2,6 +2,7 @@ import { Skeleton } from '@mui/material';
 import React from 'react';
 
 import BarGraph from '~components/BarGraph';
+import { TRENDS_URL } from '~data/config';
 import type { GenericFetchedData, GradesType } from '~pages/CoursePage';
 import type SearchQuery from '~utils/SearchQuery';
 import {
@@ -9,7 +10,6 @@ import {
   convertToProfOnly,
   searchQueryLabel,
 } from '~utils/SearchQuery';
-import { TRENDS_URL } from '~data/config';
 
 function convertNumbersToPercents(distribution: GradesType): number[] {
   const total = distribution.total;

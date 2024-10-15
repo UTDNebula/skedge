@@ -1,8 +1,7 @@
 import React from 'react';
 
-import SingleGradesInfo from '~components/SingleGradesInfo';
-import { searchQueryLabel } from '~utils/SearchQuery';
 import { TRENDS_URL } from '~data/config';
+import { searchQueryLabel } from '~utils/SearchQuery';
 
 const gpaToLetterGrade = (gpa: number): string => {
   if (gpa >= 4.0) return 'A';
