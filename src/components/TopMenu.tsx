@@ -1,5 +1,6 @@
 import gradient from 'data-base64:../../assets/gradient.png';
 import React from 'react';
+import { TRENDS_URL } from '~data/config';
 
 /**
  * This is a component to hold Skedge branding
@@ -17,7 +18,7 @@ export function TopMenu() {
       <h2 className="text-sm font-normal font-kallisto">
         FROM{' '}
         <a
-          href="https://trends.utdnebula.com/"
+          href={TRENDS_URL}
           target="_blank"
           className="underline decoration-transparent hover:decoration-inherit transition"
           rel="noreferrer"

@@ -5,6 +5,7 @@ import gradient from 'data-base64:../../assets/gradient.png';
 import tutorial1 from 'data-base64:../../assets/tutorial1.png';
 import tutorial2 from 'data-base64:../../assets/tutorial2.png';
 import React, { useEffect, useState } from 'react';
+import { TRENDS_URL } from '~data/config';
 
 const STORAGE_KEY = 'page';
 
@@ -112,7 +113,7 @@ const Landing = () => {
             <h3 className="text-sm font-semibold font-kallisto mb-6">
               FROM{' '}
               <a
-                href="https://trends.utdnebula.com/"
+                href={TRENDS_URL}
                 target="_blank"
                 className="underline decoration-transparent hover:decoration-inherit transition"
                 rel="noreferrer"

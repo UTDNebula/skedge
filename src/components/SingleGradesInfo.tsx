@@ -9,6 +9,7 @@ import {
   convertToProfOnly,
   searchQueryLabel,
 } from '~utils/SearchQuery';
+import { TRENDS_URL } from '~data/config';
 
 function convertNumbersToPercents(distribution: GradesType): number[] {
   const total = distribution.total;
@@ -45,7 +46,7 @@ function SingleGradesInfo({ title, course, grades }: Props) {
 
   const percents = convertNumbersToPercents(grades.data);
 
-  let trendsLink = 'https://trends.utdnebula.com/dashboard?searchTerms=';
+  let trendsLink = TRENDS_URL + 'dashboard?searchTerms=';
   const courseOnly = convertToCourseOnly(course);
   const profOnly = convertToProfOnly(course);
   const courseValid = Object.keys(courseOnly).length !== 0;

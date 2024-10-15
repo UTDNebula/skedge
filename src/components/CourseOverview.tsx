@@ -2,6 +2,7 @@ import React from 'react';
 
 import SingleGradesInfo from '~components/SingleGradesInfo';
 import { searchQueryLabel } from '~utils/SearchQuery';
+import { TRENDS_URL } from '~data/config';
 
 const gpaToLetterGrade = (gpa: number): string => {
   if (gpa >= 4.0) return 'A';
@@ -30,7 +31,11 @@ const CourseOverview = ({ course, grades }: CourseOverviewProps) => {
         </p>
       )}
       <a
-        href={'https://trends.utdnebula.com/dashboard?searchTerms=' + encodeURIComponent(searchQueryLabel(course))}
+        href={
+          TRENDS_URL +
+          'dashboard?searchTerms=' +
+          encodeURIComponent(searchQueryLabel(course))
+        }
         target="_blank"
         className="underline text-blue-600 hover:text-blue-800 visited:text-purple-600 text-center"
         rel="noreferrer"

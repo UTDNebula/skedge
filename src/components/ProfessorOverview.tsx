@@ -12,6 +12,7 @@ import fetchWithCache, {
 import type { GenericFetchedData, GradesType } from '~pages/CoursePage';
 import type SearchQuery from '~utils/SearchQuery';
 import { searchQueryLabel } from '~utils/SearchQuery';
+import { TRENDS_URL } from '~data/config';
 
 const fallbackSrc = 'https://profiles.utdallas.edu/img/default.png';
 
@@ -55,7 +56,8 @@ const ProfessorOverview = ({
   useEffect(() => {
     setProfData({ state: 'loading' });
     fetchWithCache(
-      'https://trends.utdnebula.com/api/professor?profFirst=' +
+      TRENDS_URL +
+        'api/professor?profFirst=' +
         encodeURIComponent(String(professor.profFirst)) +
         '&profLast=' +
         encodeURIComponent(String(professor.profLast)),

@@ -19,6 +19,7 @@ import {
   searchQueryEqual,
   searchQueryLabel,
 } from '~utils/SearchQuery';
+import { TRENDS_URL } from '~data/config';
 
 type GenericFetchedDataError<T> = {
   state: 'error';
@@ -88,7 +89,8 @@ export type GradesType = {
 //Fetch grades by academic session from nebula api
 function fetchGradesData(course: SearchQuery): Promise<GradesType> {
   return fetchWithCache(
-    'https://trends.utdnebula.com/api/grades?' +
+    TRENDS_URL +
+      'api/grades?' +
       Object.keys(course)
         .map(
           (key) =>
@@ -122,7 +124,8 @@ function fetchGradesData(course: SearchQuery): Promise<GradesType> {
 //Fetch RMP data from RMP
 function fetchRmpData(professor: SearchQuery): Promise<RMPInterface> {
   return fetchWithCache(
-    'https://trends.utdnebula.com/api/ratemyprofessorScraper?profFirst=' +
+    TRENDS_URL +
+      'api/ratemyprofessorScraper?profFirst=' +
       encodeURIComponent(String(professor.profFirst)) +
       '&profLast=' +
       encodeURIComponent(String(professor.profLast)),
