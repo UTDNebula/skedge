@@ -5,8 +5,11 @@ const storage = new Storage({
 });
 
 //Increment these to reset cache on next deployment
-export const cacheIndexNebula = 0;
-export const cacheIndexRmp = 0;
+export const cacheIndexProfessor = 0;
+export const cacheIndexGrades = 0;
+export const cacheIndexRmp = 1;
+
+export const expireTime = 604800; //1 week
 
 function getCache(key: string, cacheIndex: number) {
   return new Promise((resolve, reject) => {
