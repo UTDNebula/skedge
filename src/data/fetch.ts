@@ -1,6 +1,7 @@
 import fetchWithCache, {
   cacheIndexGrades,
   cacheIndexProfessor,
+  expireTime,
 } from '~data/fetchWithCache';
 
 interface FetchProfessorParameters {
@@ -23,7 +24,7 @@ export async function fetchNebulaProfessor(
       },
     },
     cacheIndexProfessor,
-    2629800000,
+    expireTime,
   )
     .then((data) => {
       if (data.message !== 'success') {
@@ -52,7 +53,7 @@ export async function fetchNebulaGrades(
       },
     },
     cacheIndexGrades,
-    2629800000,
+    expireTime,
   )
     .then((data) => {
       if (data.message !== 'success') {
