@@ -14,20 +14,49 @@ function getGraphQlUrlProp(name: string, schoolID: string) {
   };
 }
 
-export interface RmpRequest {
-  profFirst: string;
-  profLast: string;
-  schoolId: string;
-  schoolName: string;
-}
-export function requestProfessorFromRmp({
-  profFirst,
-  profLast,
-  schoolId,
-  schoolName,
-}: RmpRequest): Promise<RMPInterface> {
-  profFirst = profFirst.split(' ')[0];
-  const name = profFirst + ' ' + profLast;
+export type RMPInterface = {
+  avgDifficulty: number;
+  avgRating: number;
+  courseCodes: {
+    courseCount: number;
+    courseName: string;
+  }[];
+  department: string;
+  firstName: string;
+  lastName: string;
+  legacyId: number;
+  numRatings: number;
+  ratingsDistribution: {
+    r1: number;
+    r2: number;
+    r3: number;
+    r4: number;
+    r5: number;
+    total: number;
+  };
+  school: {
+    id: string;
+  };
+  teacherRatingTags: {
+    tagCount: number;
+    tagName: string;
+  }[];
+  wouldTakeAgainPercent: number;
+};
+
+type Data = {
+  message: string;
+  data?: RMPInterface;
+};
+
+export default function fetchFromRmp(
+  profFirst: string,
+  profLast: string,
+  schoolId: string,
+  schoolName: string,
+): Promise<Data> {
+  const singleProfFirst = profFirst.split(' ')[0];
+  const name = singleProfFirst + ' ' + profLast;
   // create fetch object for professor
   const graphQlUrlProp = getGraphQlUrlProp(name, schoolId);
   return new Promise((resolve, reject) => {
@@ -74,33 +103,3 @@ export function requestProfessorFromRmp({
       });
   });
 }
-
-export type RMPInterface = {
-  avgDifficulty: number;
-  avgRating: number;
-  courseCodes: {
-    courseCount: number;
-    courseName: string;
-  }[];
-  department: string;
-  firstName: string;
-  lastName: string;
-  legacyId: number;
-  numRatings: number;
-  ratingsDistribution: {
-    r1: number;
-    r2: number;
-    r3: number;
-    r4: number;
-    r5: number;
-    total: number;
-  };
-  school: {
-    id: string;
-  };
-  teacherRatingTags: {
-    tagCount: number;
-    tagName: string;
-  }[];
-  wouldTakeAgainPercent: number;
-};

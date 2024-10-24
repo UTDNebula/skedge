@@ -7,11 +7,10 @@ import Landing from '~components/Landing';
 import ProfessorOverview from '~components/ProfessorOverview';
 import SearchResultsTable from '~components/SearchResultsTable';
 import TopMenu from '~components/TopMenu';
-import { TRENDS_URL } from '~data/config';
-import type { RMPInterface } from '~data/fetchFromRmp';
+import { SCHOOL_ID, SCHOOL_NAME, TRENDS_URL } from '~data/config';
+import fetchFromRmp, { type RMPInterface } from '~data/fetchFromRmp';
 import fetchWithCache, {
   cacheIndexNebula,
-  cacheIndexRmp,
   expireTime,
 } from '~data/fetchWithCache';
 import type SearchQuery from '~utils/SearchQuery';
@@ -123,23 +122,14 @@ function fetchGradesData(course: SearchQuery): Promise<GradesType> {
 
 //Fetch RMP data from RMP
 function fetchRmpData(professor: SearchQuery): Promise<RMPInterface> {
-  return fetchWithCache(
-    TRENDS_URL +
-      'api/ratemyprofessorScraper?profFirst=' +
-      encodeURIComponent(String(professor.profFirst)) +
-      '&profLast=' +
-      encodeURIComponent(String(professor.profLast)),
-    {
-      method: 'GET',
-      headers: {
-        Accept: 'application/json',
-      },
-    },
-    cacheIndexRmp,
-    expireTime,
+  return fetchFromRmp(
+    professor.profFirst,
+    professor.profLast,
+    SCHOOL_ID,
+    SCHOOL_NAME,
   ).then((response) => {
     if (response.message !== 'success') {
-      throw new Error(response.message);
+      throw new Error(response);
     }
     return response.data;
   });
@@ -265,7 +255,10 @@ const Index = () => {
       .catch((error) => {
         //Set loading status to error
         addToRmp(searchQueryLabel(professor), { state: 'error' });
-        console.error('RMP data for ' + searchQueryLabel(professor), error);
+        console.error(
+          'RMP data for ' + searchQueryLabel(professor),
+          error.message,
+        );
       });
   }
 
