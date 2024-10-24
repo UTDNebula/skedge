@@ -57,8 +57,10 @@ export const SCHOOL_NAME = 'The University of Texas at Dallas';
 
 export const RMP_GRAPHQL_URL = 'https://www.ratemyprofessors.com/graphql';
 
+export const TRENDS_URL = 'https://trends.utdnebula.com/';
+
 export const neededOrigins = [
   'https://utdallas.collegescheduler.com/*',
   'https://www.ratemyprofessors.com/*',
-  'https://trends.utdnebula.com/*',
+  TRENDS_URL + '*',
 ];
