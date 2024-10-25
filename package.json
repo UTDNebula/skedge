@@ -8,7 +8,7 @@
   "scripts": {
     "dev:chrome": "plasmo dev --target=chrome-mv3",
     "dev:firefox": "plasmo dev --target=firefox-mv3",
-    "build-check": "tsc --noEmit",
+    "type-check": "tsc --noEmit",
     "build:chrome": "tsc --noEmit && plasmo build --target=chrome-mv3 --zip",
     "build:firefox": "tsc --noEmit && plasmo build --target=firefox-mv3 --zip",
     "format": "prettier --write .",
@@ -23,6 +23,7 @@
     "@mui/material": "^5.15.5",
     "@plasmohq/messaging": "^0.6.2",
     "@plasmohq/storage": "^1.12.0",
+    "@types/firefox-webext-browser": "^120.0.4",
     "apexcharts": "^3.54.0",
     "next": "^14.2.15",
     "plasmo": "^0.89.3",

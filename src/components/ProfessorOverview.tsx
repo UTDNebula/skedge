@@ -69,7 +69,7 @@ const ProfessorOverview = ({
       cacheIndexProfessor,
       expireTime,
     )
-      .then((response) => {
+      .then((response: { message: string; data: ProfessorInterface }) => {
         if (response.message !== 'success') {
           throw new Error(response.message);
         }

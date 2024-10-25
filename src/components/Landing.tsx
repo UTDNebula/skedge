@@ -75,7 +75,7 @@ const Landing = () => {
   useEffect(() => {
     storage.get(STORAGE_KEY).then((item) => {
       if (typeof item !== 'undefined') {
-        setPage(item);
+        setPage(Number(item));
       } else {
         setPage(0);
       }

@@ -97,7 +97,9 @@ export async function scrapeCourseData() {
       const courseRowCells = courseRow.querySelector('tr');
       courseRowCells.insertBefore(newTd, courseRowCells.children[7]);
       //Increase Disabled Reasons row colspan if necessary
-      const sectionDisabled = courseRow.querySelector('tr:nth-child(3) > td');
+      const sectionDisabled = courseRow.querySelector(
+        'tr:nth-child(3) > td',
+      ) as HTMLTableCellElement | null;
       if (sectionDisabled !== null) {
         sectionDisabled.colSpan = sectionDisabled.colSpan + 1;
       }
@@ -118,7 +120,8 @@ export function listenForTableChange() {
         mutation.attributeName === 'class'
       ) {
         //button corresponding to shown table is given an active class
-        if (mutation.target.classList.contains('active')) {
+        if ((mutation.target as Element).classList.contains('active')) {
+          // @ts-ignore:next-line
           realBrowser.runtime.sendMessage('tableChange');
         }
       }

@@ -19,5 +19,5 @@ jobs:
       - name: Install packages
         run: npm install
 
-      - name: Run build check
-        run: npm run build-check
+      - name: Run type check
+        run: npm run type-check

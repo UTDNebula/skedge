@@ -50,6 +50,18 @@ type Data = {
   data?: RMPInterface;
 };
 
+type RmpResponse = {
+  data: {
+    newSearch: {
+      teachers: {
+        edges: {
+          node: RMPInterface;
+        }[];
+      };
+    };
+  };
+};
+
 export default function fetchFromRmp(
   profFirst: string,
   profLast: string,
@@ -63,7 +75,7 @@ export default function fetchFromRmp(
   return new Promise((resolve, reject) => {
     // fetch professor info by name with graphQL
     fetchWithCache(RMP_GRAPHQL_URL, graphQlUrlProp, cacheIndexRmp, expireTime)
-      .then((response) => {
+      .then((response: RmpResponse) => {
         if (
           response == null ||
           !Object.hasOwn(response, 'data') ||

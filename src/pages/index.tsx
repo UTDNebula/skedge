@@ -106,7 +106,7 @@ function fetchGradesData(course: SearchQuery): Promise<GradesType> {
     },
     cacheIndexGrades,
     expireTime,
-  ).then((response) => {
+  ).then((response: { message: string; data: GradesData }) => {
     if (response.message !== 'success') {
       throw new Error(response.message);
     }
@@ -141,6 +141,8 @@ function fetchRmpData(professor: SearchQuery): Promise<RMPInterface> {
 // Example of how to fetch the scraped data from the background script, given that it exists
 async function getCourseData() {
   const response: ShowCourseTabPayload = await sendToBackground({
+    // See https://docs.plasmo.com/framework/messaging#3-generate-static-types
+    // @ts-ignore:next-line
     name: 'getScrapeData',
   });
   return response;

@@ -2,6 +2,7 @@ import '~/style.css';
 
 import { useMediaQuery } from '@mui/material';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
+import resolveConfig from 'tailwindcss/resolveConfig';
 import React from 'react';
 
 import Index from '~/pages';
@@ -11,9 +12,10 @@ import tailwindConfig from '../tailwind.config.js';
 
 const realBrowser = process.env.PLASMO_BROWSER === 'chrome' ? chrome : browser;
 async function checkPermissions() {
-  const currentPermissions: { permissions: string[]; origins: string[] } =
+  const currentPermissions: { origins?: string[] } =
     await realBrowser.permissions.getAll();
   if (
+    typeof currentPermissions.origins === 'undefined' ||
     neededOrigins.filter(
       (origin) => !currentPermissions.origins.includes(origin),
     ).length !== 0
@@ -29,6 +31,8 @@ async function checkPermissions() {
 }
 checkPermissions();
 
+const fullConfig = resolveConfig(tailwindConfig);
+
 function IndexPopup() {
   const prefersDarkMode = useMediaQuery('(prefers-color-scheme: dark)');
   const muiTheme = createTheme({
@@ -36,14 +40,14 @@ function IndexPopup() {
       mode: prefersDarkMode ? 'dark' : 'light',
       //copied from tailwind.config.js
       primary: {
-        main: tailwindConfig.theme.extend.colors.royal,
+        main: fullConfig.theme.colors.royal,
       },
       secondary: {
-        main: tailwindConfig.theme.extend.colors.royal,
-        light: tailwindConfig.theme.extend.colors.periwinkle,
+        main: fullConfig.theme.colors.royal,
+        light: fullConfig.theme.colors.periwinkle,
       },
       error: {
-        main: tailwindConfig.theme.extend.colors.persimmon['500'],
+        main: fullConfig.theme.colors.persimmon['500'],
       },
     },
     typography: {
