@@ -7,12 +7,11 @@ import SingleProfInfo from '~components/SingleProfInfo';
 import { TRENDS_URL } from '~data/config';
 import type { RMPInterface } from '~data/fetchFromRmp';
 import fetchWithCache, {
-  cacheIndexNebula,
+  cacheIndexProfessor,
   expireTime,
 } from '~data/fetchWithCache';
-import type { GenericFetchedData, GradesType } from '~pages/CoursePage';
-import type SearchQuery from '~utils/SearchQuery';
-import { searchQueryLabel } from '~utils/SearchQuery';
+import type { GenericFetchedData, GradesType } from '~pages';
+import { type SearchQuery, searchQueryLabel } from '~utils/SearchQuery';
 
 const fallbackSrc = 'https://profiles.utdallas.edu/img/default.png';
 
@@ -38,7 +37,7 @@ type ProfessorOverviewProps = {
   professor: SearchQuery;
   grades: GenericFetchedData<GradesType>;
   rmp: GenericFetchedData<RMPInterface>;
-  setPage: (arg0: SearchQuery) => void;
+  setPage: (arg0: 'landing' | 'list' | SearchQuery) => void;
 };
 
 const ProfessorOverview = ({
@@ -67,7 +66,7 @@ const ProfessorOverview = ({
           Accept: 'application/json',
         },
       },
-      cacheIndexNebula,
+      cacheIndexProfessor,
       expireTime,
     )
       .then((response) => {

@@ -1,10 +1,9 @@
-type SearchQuery = {
+export type SearchQuery = {
   prefix?: string;
   number?: string;
   profFirst?: string;
   profLast?: string;
 };
-export default SearchQuery;
 
 export type Professor = {
   profFirst: string;
@@ -48,9 +47,6 @@ export function searchQueryLabel(query: SearchQuery): string {
   if (typeof query.number !== 'undefined') {
     result += ' ' + query.number;
   }
-  if (typeof query.sectionNumber !== 'undefined') {
-    result += '.' + query.sectionNumber;
-  }
   if (
     typeof query.profFirst !== 'undefined' &&
     typeof query.profLast !== 'undefined'
@@ -74,9 +70,6 @@ export function searchQueryEqual(
     return false;
   }
   if (query1.number !== query2.number) {
-    return false;
-  }
-  if (query1.sectionNumber !== query2.sectionNumber) {
     return false;
   }
   return true;

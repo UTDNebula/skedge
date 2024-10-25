@@ -36,6 +36,7 @@ export type RMPInterface = {
   };
   school: {
     id: string;
+    name: string;
   };
   teacherRatingTags: {
     tagCount: number;
@@ -54,7 +55,7 @@ export default function fetchFromRmp(
   profLast: string,
   schoolId: string,
   schoolName: string,
-): Promise<Data> {
+): Promise<Data | string> {
   const singleProfFirst = profFirst.split(' ')[0];
   const name = singleProfFirst + ' ' + profLast;
   // create fetch object for professor
@@ -70,7 +71,7 @@ export default function fetchFromRmp(
           !Object.hasOwn(response.data.newSearch, 'teachers') ||
           !Object.hasOwn(response.data.newSearch.teachers, 'edges')
         ) {
-          reject({ message: 'Data for professor not found' });
+          reject('Data for professor not found');
           return;
         }
         //Remove profs not at UTD and with bad name match
@@ -81,7 +82,7 @@ export default function fetchFromRmp(
             prof.node.lastName.includes(profLast),
         );
         if (professors.length === 0) {
-          reject({ message: 'Data for professor not found' });
+          reject('Data for professor not found');
           return;
         }
         //Pick prof instance with most ratings
@@ -99,7 +100,7 @@ export default function fetchFromRmp(
         });
       })
       .catch((error) => {
-        reject({ message: error.message });
+        reject(error.message);
       });
   });
 }

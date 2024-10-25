@@ -1,6 +1,10 @@
 import { Storage } from '@plasmohq/storage';
 
-import { CourseHeader, listenForTableChange, scrapeCourseData } from '~content';
+import {
+  type CourseHeader,
+  listenForTableChange,
+  scrapeCourseData,
+} from '~content';
 import { neededOrigins } from '~data/config';
 
 export interface ShowCourseTabPayload {

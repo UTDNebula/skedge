@@ -1,7 +1,8 @@
 import React from 'react';
 
 import { TRENDS_URL } from '~data/config';
-import { searchQueryLabel } from '~utils/SearchQuery';
+import type { GenericFetchedData, GradesType } from '~pages';
+import { type SearchQuery, searchQueryLabel } from '~utils/SearchQuery';
 
 const gpaToLetterGrade = (gpa: number): string => {
   if (gpa >= 4.0) return 'A';
@@ -16,6 +17,11 @@ const gpaToLetterGrade = (gpa: number): string => {
   if (gpa >= 1.0) return 'D';
   if (gpa >= 0.67) return 'D-';
   return 'F';
+};
+
+type CourseOverviewProps = {
+  course: SearchQuery;
+  grades: GenericFetchedData<GradesType>;
 };
 
 const CourseOverview = ({ course, grades }: CourseOverviewProps) => {

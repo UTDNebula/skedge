@@ -1,5 +1,5 @@
 import { useMediaQuery } from '@mui/material';
-import { ApexOptions } from 'apexcharts';
+import { type ApexOptions } from 'apexcharts';
 import dynamic from 'next/dynamic';
 import React from 'react';
 

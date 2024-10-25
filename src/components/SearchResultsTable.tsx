@@ -22,10 +22,10 @@ import SingleGradesInfo from '~components/SingleGradesInfo';
 import SingleProfInfo from '~components/SingleProfInfo';
 import TableSortLabel from '~components/TableSortLabel';
 import type { RMPInterface } from '~data/fetchFromRmp';
-import type { GenericFetchedData, GradesType } from '~pages/CoursePage';
+import type { GenericFetchedData, GradesType } from '~pages';
 import { useRainbowColors } from '~utils/colors';
-import type SearchQuery from '~utils/SearchQuery';
 import {
+  type SearchQuery,
   convertToCourseOnly,
   convertToProfOnly,
   searchQueryLabel,

@@ -10,11 +10,11 @@ import TopMenu from '~components/TopMenu';
 import { SCHOOL_ID, SCHOOL_NAME, TRENDS_URL } from '~data/config';
 import fetchFromRmp, { type RMPInterface } from '~data/fetchFromRmp';
 import fetchWithCache, {
-  cacheIndexNebula,
+  cacheIndexGrades,
   expireTime,
 } from '~data/fetchWithCache';
-import type SearchQuery from '~utils/SearchQuery';
 import {
+  type SearchQuery,
   convertToProfOnly,
   searchQueryEqual,
   searchQueryLabel,
@@ -104,7 +104,7 @@ function fetchGradesData(course: SearchQuery): Promise<GradesType> {
         Accept: 'application/json',
       },
     },
-    cacheIndexNebula,
+    cacheIndexGrades,
     expireTime,
   ).then((response) => {
     if (response.message !== 'success') {
@@ -128,8 +128,11 @@ function fetchRmpData(professor: SearchQuery): Promise<RMPInterface> {
     SCHOOL_ID,
     SCHOOL_NAME,
   ).then((response) => {
-    if (response.message !== 'success') {
+    if (typeof response === 'string') {
       throw new Error(response);
+    }
+    if (response.message !== 'success') {
+      throw new Error(response.message);
     }
     return response.data;
   });
@@ -255,10 +258,7 @@ const Index = () => {
       .catch((error) => {
         //Set loading status to error
         addToRmp(searchQueryLabel(professor), { state: 'error' });
-        console.error(
-          'RMP data for ' + searchQueryLabel(professor),
-          error.message,
-        );
+        console.error('RMP data for ' + searchQueryLabel(professor), error);
       });
   }
 
