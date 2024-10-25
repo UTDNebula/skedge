@@ -1,10 +1,10 @@
-name: Lint and Formatting Check
+name: Type Check
 
 on: push
 
 jobs:
   main:
-    name: Run ESLint + Prettier
+    name: Run Typescript check
     runs-on: ubuntu-latest
 
     steps:
