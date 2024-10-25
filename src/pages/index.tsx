@@ -14,8 +14,8 @@ import fetchWithCache, {
   expireTime,
 } from '~data/fetchWithCache';
 import {
-  type SearchQuery,
   convertToProfOnly,
+  type SearchQuery,
   searchQueryEqual,
   searchQueryLabel,
 } from '~utils/SearchQuery';
@@ -142,7 +142,7 @@ function fetchRmpData(professor: SearchQuery): Promise<RMPInterface> {
 async function getCourseData() {
   const response: ShowCourseTabPayload = await sendToBackground({
     // See https://docs.plasmo.com/framework/messaging#3-generate-static-types
-    // @ts-ignore:next-line
+    // @ts-expect-error:next-line
     name: 'getScrapeData',
   });
   return response;

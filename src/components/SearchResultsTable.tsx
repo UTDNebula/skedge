@@ -25,9 +25,9 @@ import type { RMPInterface } from '~data/fetchFromRmp';
 import type { GenericFetchedData, GradesType } from '~pages';
 import { useRainbowColors } from '~utils/colors';
 import {
-  type SearchQuery,
   convertToCourseOnly,
   convertToProfOnly,
+  type SearchQuery,
   searchQueryLabel,
 } from '~utils/SearchQuery';
 

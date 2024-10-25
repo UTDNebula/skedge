@@ -5,9 +5,9 @@ import BarGraph from '~components/BarGraph';
 import { TRENDS_URL } from '~data/config';
 import type { GenericFetchedData, GradesType } from '~pages';
 import {
-  type SearchQuery,
   convertToCourseOnly,
   convertToProfOnly,
+  type SearchQuery,
   searchQueryLabel,
 } from '~utils/SearchQuery';
 

@@ -121,7 +121,7 @@ export function listenForTableChange() {
       ) {
         //button corresponding to shown table is given an active class
         if ((mutation.target as Element).classList.contains('active')) {
-          // @ts-ignore:next-line
+          // @ts-expect-error:next-line
           realBrowser.runtime.sendMessage('tableChange');
         }
       }

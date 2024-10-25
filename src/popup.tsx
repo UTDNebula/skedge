@@ -2,8 +2,8 @@ import '~/style.css';
 
 import { useMediaQuery } from '@mui/material';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
-import resolveConfig from 'tailwindcss/resolveConfig';
 import React from 'react';
+import resolveConfig from 'tailwindcss/resolveConfig';
 
 import Index from '~/pages';
 import { neededOrigins } from '~data/config';
