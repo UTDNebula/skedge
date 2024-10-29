@@ -36,6 +36,21 @@ export type GenericFetchedData<T> =
   | GenericFetchedDataLoading
   | GenericFetchedDataDone<T>;
 
+const gpaToLetterGrade = (gpa: number): string => {
+  if (gpa >= 4.0) return 'A';
+  if (gpa >= 3.67) return 'A-';
+  if (gpa >= 3.33) return 'B+';
+  if (gpa >= 3.0) return 'B';
+  if (gpa >= 2.67) return 'B-';
+  if (gpa >= 2.33) return 'C+';
+  if (gpa >= 2.0) return 'C';
+  if (gpa >= 1.67) return 'C-';
+  if (gpa >= 1.33) return 'D+';
+  if (gpa >= 1.0) return 'D';
+  if (gpa >= 0.67) return 'D-';
+  return 'F';
+};
+
 //Find GPA, total, and grade_distribution based on including some set of semesters
 function calculateGrades(grades: GradesData, academicSessions?: string[]) {
   let grade_distribution = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
@@ -68,11 +83,13 @@ function calculateGrades(grades: GradesData, academicSessions?: string[]) {
       ) /
       (total - grade_distribution[grade_distribution.length - 1]);
   }
+  const letter_grade = gpaToLetterGrade(gpa);
 
   return {
     gpa: gpa,
     total: total,
     grade_distribution: grade_distribution,
+    letter_grade: letter_grade,
   };
 }
 type GradesData = {
@@ -83,6 +100,7 @@ export type GradesType = {
   gpa: number;
   total: number;
   grade_distribution: number[];
+  letter_grade: string;
   grades: GradesData;
 };
 //Fetch grades by academic session from nebula api

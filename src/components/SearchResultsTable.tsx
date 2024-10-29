@@ -31,21 +31,6 @@ import {
   searchQueryLabel,
 } from '~utils/SearchQuery';
 
-const gpaToLetterGrade = (gpa: number): string => {
-  if (gpa >= 4.0) return 'A';
-  if (gpa >= 3.67) return 'A-';
-  if (gpa >= 3.33) return 'B+';
-  if (gpa >= 3.0) return 'B';
-  if (gpa >= 2.67) return 'B-';
-  if (gpa >= 2.33) return 'C+';
-  if (gpa >= 2.0) return 'C';
-  if (gpa >= 1.67) return 'C-';
-  if (gpa >= 1.33) return 'D+';
-  if (gpa >= 1.0) return 'D';
-  if (gpa >= 0.67) return 'D-';
-  return 'F';
-};
-
 type RowProps = {
   course: SearchQuery;
   grades: GenericFetchedData<GradesType>;
@@ -164,7 +149,7 @@ function Row({ course, grades, backupGrades, rmp, setPage }: RowProps) {
                         backgroundColor: gpaToColor(backupGrades.data.gpa),
                       }}
                     >
-                      {gpaToLetterGrade(backupGrades.data.gpa)}
+                      {backupGrades.data.letter_grade}
                     </Typography>
                   </Badge>
                 </Tooltip>
@@ -186,7 +171,7 @@ function Row({ course, grades, backupGrades, rmp, setPage }: RowProps) {
                   className="text-base text-black rounded-full px-5 py-2 inline"
                   sx={{ backgroundColor: gpaToColor(grades.data.gpa) }}
                 >
-                  {gpaToLetterGrade(grades.data.gpa)}
+                  {grades.data.letter_grade}
                 </Typography>
               </Tooltip>
             )) ||
