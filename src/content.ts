@@ -1,11 +1,14 @@
+import type { PlasmoCSConfig } from 'plasmo';
+
 export interface CourseHeader {
   subjectPrefix: string;
   courseNumber: string;
 }
 
 // Plasmo CS config export
-export const config = {
+export const config: PlasmoCSConfig = {
   matches: ['https://utdallas.collegescheduler.com/terms/*/courses/*'],
+  world: 'MAIN',
 };
 
 /**
@@ -56,7 +59,15 @@ export async function scrapeCourseData() {
     // add Professor header to the table
     const tableHeaders = courseTable.querySelector('thead > tr');
     const newHeader = document.createElement('th');
-    newHeader.innerText = 'Instructor(s)';
+    const line1 = document.createElement('div');
+    line1.innerText = 'Instructor(s)';
+    newHeader.append(line1);
+    // add Skedge reminder
+    const line2 = document.createElement('div');
+    line2.style.fontWeight = 'normal';
+    line2.style.paddingTop = '0.5rem';
+    line2.innerText = 'From Skedge';
+    newHeader.append(line2);
     tableHeaders.insertBefore(newHeader, tableHeaders.children[7]);
 
     courseRows.forEach((courseRow) => {
@@ -77,7 +88,7 @@ export async function scrapeCourseData() {
       });
       // append professor name to the table
       const newTd = document.createElement('td');
-      newTd.innerText = professor;
+      newTd.innerText = professor ?? 'No Instructor';
       // this is in case we have multiple instructions per section
       const sectionProfessors = professor.split(',');
       sectionProfessors.forEach((sectionProfessor) => {
@@ -86,17 +97,20 @@ export async function scrapeCourseData() {
       const courseRowCells = courseRow.querySelector('tr');
       courseRowCells.insertBefore(newTd, courseRowCells.children[7]);
       //Increase Disabled Reasons row colspan if necessary
-      const sectionDisabled = courseRow.querySelector('tr:nth-child(3) > td');
+      const sectionDisabled = courseRow.querySelector(
+        'tr:nth-child(3) > td',
+      ) as HTMLTableCellElement | null;
       if (sectionDisabled !== null) {
         sectionDisabled.colSpan = sectionDisabled.colSpan + 1;
       }
       // collapse section details
       sectionDetailsButton.click();
     });
-    return [...new Set(professors)];
+    return professors;
   }
 }
 
+const realBrowser = process.env.PLASMO_BROWSER === 'chrome' ? chrome : browser;
 /** This listens for clicks on the buttons that switch between the enabled and disabled professor tabs and reports back to background.ts */
 export function listenForTableChange() {
   const observer = new MutationObserver((mutationsList) => {
@@ -106,8 +120,9 @@ export function listenForTableChange() {
         mutation.attributeName === 'class'
       ) {
         //button corresponding to shown table is given an active class
-        if (mutation.target.classList.contains('active')) {
-          chrome.runtime.sendMessage('tableChange');
+        if ((mutation.target as Element).classList.contains('active')) {
+          // @ts-expect-error:next-line
+          realBrowser.runtime.sendMessage('tableChange');
         }
       }
     }
@@ -117,7 +132,7 @@ export function listenForTableChange() {
     subtree: true,
   });
   //remove observer when ordered by backgroud.ts to avoid duplicates
-  chrome.runtime.onMessage.addListener(function (message) {
+  realBrowser.runtime.onMessage.addListener(function (message) {
     if (message === 'disconnectObserver') {
       observer.disconnect();
     }

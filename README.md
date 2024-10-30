@@ -1,33 +1,51 @@
-This is a [Plasmo extension](https://docs.plasmo.com/) project bootstrapped with [`plasmo init`](https://www.npmjs.com/package/plasmo).
+# Skedge
 
-## Getting Started
+_Get all of your Rate My Professors and grade distribution data without ever leaving schedule planner!_
 
-First, run the development server:
+[![Commitizen friendly](https://img.shields.io/badge/commitizen-friendly-brightgreen.svg)](http://commitizen.github.io/cz-cli/)
+
+## About
+
+### Features
+
+- Multiple Sources
+  - Find grade distributions and Rate My Professors scores for any given class.
+- Aggregate
+  - Powerful query abilities that aggregate grade and Rate My Professors data across several years to give you a more wholistic view.
+- Schedule Planner Integration
+  - Direct integration means getting the exact information you need, right when you need it.
+
+## Contributing
+
+Contributions are welcome!
+
+This project uses the MIT License.
+
+### Process
+
+Once you're ready to make some changes, see the
+[issues](https://github.com/UTDNebula/skedge/issues) for the repository.
+
+If you want to brainstorm, share ideas or ask questions, start a discussion in
+our [Discord](https://discord.utdnebula.com/).
+
+### Set-up
+
+This project requires a working [Node.js](https://nodejs.org/en/) and NPM
+installation. To start, clone the repository, and then run `npm run dev:chrome` or `npm run dev:firefox` to launch
+a local development server.
 
 ```bash
-pnpm dev
-# or
-npm run dev
+git clone https://github.com/UTDNebula/skedge.git
+cd skedge
+npm install
 ```
 
-Open your browser and load the appropriate development build. For example, if you are developing for the chrome browser, using manifest v3, use: `build/chrome-mv3-dev`.
+If you are developing for the Chrome browser run `npm run dev:chrome` and load `build/chrome-mv3-dev` on `chrome://extensions/`
 
-You can start editing the popup by modifying `popup.tsx`. It should auto-update as you make changes. To add an options page, simply add a `options.tsx` file to the root of the project, with a react component default exported. Likewise to add a content page, add a `content.ts` file to the root of the project, importing some module and do some logic, then reload the extension on your browser.
+If you are developing for the Firefox browser run `npm run dev:firefox` and load `build/firefox-mv3-dev` on `about:debugging`
 
-For further guidance, [visit our Documentation](https://docs.plasmo.com/)
+### Contact
 
-## Making production build
-
-Run the following:
-
-```bash
-pnpm build
-# or
-npm run build
-```
-
-This should create a production bundle for your extension, ready to be zipped and published to the stores.
-
-## Submit to the webstores
-
-The easiest way to deploy your Plasmo extension is to use the built-in [bpp](https://bpp.browser.market) GitHub action. Prior to using this action however, make sure to build your extension and upload the first version to the store to establish the basic credentials. Then, simply follow [this setup instruction](https://docs.plasmo.com/framework/workflows/submit) and you should be on your way for automated submission!
+This project is maintained by Nebula Labs. If you have
+any questions about this project or Nebula Labs, see the [discord server](https://discord.utdnebula.com/)

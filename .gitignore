@@ -39,7 +39,7 @@ dist/
 keys.json
 
 # typescript
-.tsbuildinfo
+*.tsbuildinfo
 
 # lint cache
 .eslintcache
