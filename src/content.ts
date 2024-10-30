@@ -59,7 +59,15 @@ export async function scrapeCourseData() {
     // add Professor header to the table
     const tableHeaders = courseTable.querySelector('thead > tr');
     const newHeader = document.createElement('th');
-    newHeader.innerText = 'Instructor(s)';
+    const line1 = document.createElement('div');
+    line1.innerText = 'Instructor(s)';
+    newHeader.append(line1);
+    // add Skedge reminder
+    const line2 = document.createElement('div');
+    line2.style.fontWeight = 'normal';
+    line2.style.paddingTop = '0.5rem';
+    line2.innerText = 'From Skedge';
+    newHeader.append(line2);
     tableHeaders.insertBefore(newHeader, tableHeaders.children[7]);
 
     courseRows.forEach((courseRow) => {
@@ -89,14 +97,16 @@ export async function scrapeCourseData() {
       const courseRowCells = courseRow.querySelector('tr');
       courseRowCells.insertBefore(newTd, courseRowCells.children[7]);
       //Increase Disabled Reasons row colspan if necessary
-      const sectionDisabled = courseRow.querySelector('tr:nth-child(3) > td');
+      const sectionDisabled = courseRow.querySelector(
+        'tr:nth-child(3) > td',
+      ) as HTMLTableCellElement | null;
       if (sectionDisabled !== null) {
         sectionDisabled.colSpan = sectionDisabled.colSpan + 1;
       }
       // collapse section details
       sectionDetailsButton.click();
     });
-    return [...new Set(professors)];
+    return professors;
   }
 }
 
@@ -110,7 +120,8 @@ export function listenForTableChange() {
         mutation.attributeName === 'class'
       ) {
         //button corresponding to shown table is given an active class
-        if (mutation.target.classList.contains('active')) {
+        if ((mutation.target as Element).classList.contains('active')) {
+          // @ts-expect-error:next-line
           realBrowser.runtime.sendMessage('tableChange');
         }
       }

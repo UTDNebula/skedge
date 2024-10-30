@@ -1,33 +1,35 @@
 {
-  "name": "sk.edge",
-  "displayName": "sk.edge",
-  "version": "0.0.6",
+  "name": "Skedge",
+  "displayName": "Skedge",
+  "version": "2.0.0",
   "description": "your registration assistant by students, for students",
   "author": "Nebula Labs",
   "packageManager": "npm@8.19.2",
   "scripts": {
     "dev:chrome": "plasmo dev --target=chrome-mv3",
     "dev:firefox": "plasmo dev --target=firefox-mv3",
-    "build:chrome": "plasmo build --target=chrome-mv3 --zip",
-    "build:firefox": "plasmo build --target=firefox-mv3 --zip",
+    "type-check": "tsc --noEmit",
+    "build:chrome": "tsc --noEmit && plasmo build --target=chrome-mv3 --zip",
+    "build:firefox": "tsc --noEmit && plasmo build --target=firefox-mv3 --zip",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
     "lint": "next lint --fix",
     "lint:check": "next lint"
   },
   "dependencies": {
+    "@emotion/react": "^11.13.3",
+    "@emotion/styled": "^11.13.0",
+    "@mui/icons-material": "^5.16.7",
+    "@mui/material": "^5.15.5",
     "@plasmohq/messaging": "^0.6.2",
     "@plasmohq/storage": "^1.12.0",
+    "@types/firefox-webext-browser": "^120.0.4",
     "apexcharts": "^3.54.0",
     "next": "^14.2.15",
     "plasmo": "^0.89.3",
     "react": "^18.3.1",
     "react-apexcharts": "^1.4.0",
-    "react-dom": "^18.3.1",
-    "react-icons": "^5.3.0",
-    "react-loader-spinner": "^6.1.6",
-    "react-router-dom": "^6.26.2",
-    "sharp": "^0.33.5"
+    "react-dom": "^18.3.1"
   },
   "devDependencies": {
     "@types/chrome": "^0.0.277",
@@ -85,7 +87,8 @@
       "simple-import-sort/exports": "error",
       "import/first": "error",
       "import/newline-after-import": "error",
-      "import/no-duplicates": "error"
+      "import/no-duplicates": "error",
+      "@next/next/no-img-element": "off"
     }
   },
   "manifest": {

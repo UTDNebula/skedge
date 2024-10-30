@@ -1,16 +1,21 @@
 import '~/style.css';
 
+import { useMediaQuery } from '@mui/material';
+import { createTheme, ThemeProvider } from '@mui/material/styles';
 import React from 'react';
-import { MemoryRouter } from 'react-router-dom';
+import resolveConfig from 'tailwindcss/resolveConfig';
 
-import { Routing } from '~/pages';
+import Index from '~/pages';
 import { neededOrigins } from '~data/config';
+
+import tailwindConfig from '../tailwind.config.js';
 
 const realBrowser = process.env.PLASMO_BROWSER === 'chrome' ? chrome : browser;
 async function checkPermissions() {
-  const currentPermissions: { permissions: string[]; origins: string[] } =
+  const currentPermissions: { origins?: string[] } =
     await realBrowser.permissions.getAll();
   if (
+    typeof currentPermissions.origins === 'undefined' ||
     neededOrigins.filter(
       (origin) => !currentPermissions.origins.includes(origin),
     ).length !== 0
@@ -19,18 +24,41 @@ async function checkPermissions() {
     realBrowser.windows.create({
       url: popupURL,
       type: 'popup',
-      width: 550,
-      height: 250,
+      width: 400,
+      height: 600,
     });
   }
 }
 checkPermissions();
 
+const fullConfig = resolveConfig(tailwindConfig);
+
 function IndexPopup() {
+  const prefersDarkMode = useMediaQuery('(prefers-color-scheme: dark)');
+  const muiTheme = createTheme({
+    palette: {
+      mode: prefersDarkMode ? 'dark' : 'light',
+      //copied from tailwind.config.js
+      primary: {
+        main: fullConfig.theme.colors.royal,
+      },
+      secondary: {
+        main: fullConfig.theme.colors.royal,
+        light: fullConfig.theme.colors.periwinkle,
+      },
+      error: {
+        main: fullConfig.theme.colors.persimmon['500'],
+      },
+    },
+    typography: {
+      fontFamily: 'inherit',
+    },
+  });
+
   return (
-    <MemoryRouter>
-      <Routing />
-    </MemoryRouter>
+    <ThemeProvider theme={muiTheme}>
+      <Index />
+    </ThemeProvider>
   );
 }
 

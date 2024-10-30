@@ -1,6 +1,10 @@
 import { Storage } from '@plasmohq/storage';
 
-import { CourseHeader, listenForTableChange, scrapeCourseData } from '~content';
+import {
+  type CourseHeader,
+  listenForTableChange,
+  scrapeCourseData,
+} from '~content';
 import { neededOrigins } from '~data/config';
 
 export interface ShowCourseTabPayload {
@@ -95,9 +99,10 @@ realBrowser.tabs.onActivated.addListener(async () => {
 });
 
 realBrowser.runtime.onInstalled.addListener(async () => {
-  const currentPermissions: { permissions: string[]; origins: string[] } =
+  const currentPermissions: { origins?: string[] } =
     await realBrowser.permissions.getAll();
   if (
+    typeof currentPermissions.origins === 'undefined' ||
     neededOrigins.filter(
       (origin) => !currentPermissions.origins.includes(origin),
     ).length !== 0
@@ -106,8 +111,8 @@ realBrowser.runtime.onInstalled.addListener(async () => {
     realBrowser.windows.create({
       url: popupURL,
       type: 'popup',
-      width: 550,
-      height: 250,
+      width: 400,
+      height: 600,
     });
   }
 });
