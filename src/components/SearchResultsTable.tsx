@@ -63,7 +63,14 @@ function Row({ course, grades, backupGrades, rmp, setPage }: RowProps) {
 
   return (
     <>
-      <TableRow>
+      <TableRow
+        onClick={() => {
+          if (canOpen) {
+            setOpen(!open);
+          }
+        }} // opens/closes the card by clicking anywhere on the row
+        className="cursor-pointer"
+      >
         <TableCell className="border-b-0 pb-0" colSpan={6}>
           <Typography className="leading-tight text-lg text-gray-600 dark:text-gray-200">
             {searchQueryLabel(convertToProfOnly(course))}
@@ -76,6 +83,7 @@ function Row({ course, grades, backupGrades, rmp, setPage }: RowProps) {
             setOpen(!open);
           }
         }} // opens/closes the card by clicking anywhere on the row
+        className="cursor-pointer"
       >
         <TableCell className="border-b-0 pr-0">
           <Tooltip
@@ -91,16 +99,14 @@ function Row({ course, grades, backupGrades, rmp, setPage }: RowProps) {
             </IconButton>
           </Tooltip>
         </TableCell>
-        <TableCell
-          className="border-b-0"
-          onClick={
-            (e) => e.stopPropagation() // prevents opening/closing the card when clicking on the compare checkbox
-          }
-        >
+        <TableCell className="border-b-0">
           <Tooltip title="Open professor profile" placement="top">
             <IconButton
               aria-label="open professor profile"
-              onClick={() => setPage(convertToProfOnly(course))}
+              onClick={(e) => {
+                e.stopPropagation(); // prevents opening/closing the card when clicking on the profile
+                setPage(convertToProfOnly(course));
+              }
             >
               <PersonIcon />
             </IconButton>
