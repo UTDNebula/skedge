@@ -72,7 +72,12 @@ function Row({ course, grades, backupGrades, rmp, setPage }: RowProps) {
         className="cursor-pointer"
       >
         <TableCell className="border-b-0 pb-0" colSpan={6}>
-          <Typography className="leading-tight text-lg text-gray-600 dark:text-gray-200">
+          <Typography
+            onClick={
+              (e) => e.stopPropagation() // prevents opening/closing the card when clicking on the text
+            }
+            className="leading-tight text-lg text-gray-600 dark:text-gray-200"
+          >
             {searchQueryLabel(convertToProfOnly(course))}
           </Typography>
         </TableCell>
@@ -106,7 +111,7 @@ function Row({ course, grades, backupGrades, rmp, setPage }: RowProps) {
               onClick={(e) => {
                 e.stopPropagation(); // prevents opening/closing the card when clicking on the profile
                 setPage(convertToProfOnly(course));
-              }
+              }}
             >
               <PersonIcon />
             </IconButton>
