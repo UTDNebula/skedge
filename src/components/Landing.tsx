@@ -7,6 +7,7 @@ import tutorial2 from 'data-base64:../../assets/tutorial2.png';
 import React, { useEffect, useState } from 'react';
 
 import { TRENDS_URL } from '~data/config';
+import { addGoogleOAuth } from '~popup';
 
 const STORAGE_KEY = 'page';
 
@@ -70,6 +71,9 @@ const storage = new Storage({
   area: 'local',
 });
 
+
+
+
 const Landing = () => {
   const [page, setPage] = useState(0);
   useEffect(() => {
@@ -86,7 +90,7 @@ const Landing = () => {
       },
     });
   }, []);
-
+  
   switch (page) {
     case 0:
       return (
@@ -135,6 +139,7 @@ const Landing = () => {
             >
               Get Started
             </Button>
+            
           </div>
         </div>
       );

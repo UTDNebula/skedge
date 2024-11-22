@@ -6,6 +6,7 @@ import {
   scrapeCourseData,
 } from '~content';
 import { neededOrigins } from '~data/config';
+// import { addGoogleOAuth } from '~popup';
 
 export interface ShowCourseTabPayload {
   header: CourseHeader;
@@ -25,6 +26,9 @@ const realBrowser = process.env.PLASMO_BROWSER === 'chrome' ? chrome : browser;
 realBrowser.webNavigation.onHistoryStateUpdated.addListener((details) => {
   if (
     /^.*:\/\/utdallas\.collegescheduler\.com\/terms\/.*\/courses\/.+$/.test(
+      details.url,
+    ) ||
+    /^.*:\/\/utdallas\.collegescheduler\.com\/terms\/.*\/currentschedule$/.test(
       details.url,
     )
   ) {
@@ -86,6 +90,13 @@ realBrowser.runtime.onMessage.addListener(function (message) {
   }
 });
 
+realBrowser.runtime.onMessage.addListener(function (message) {
+  if (message.name === 'insertEventToGoogleCalendar') {
+    console.log(message.event, message.token);
+    insertEventToGoogleCalendar(message.event);
+  }
+});
+
 /** Sets the icon to be active if we're on a course tab */
 realBrowser.tabs.onActivated.addListener(async () => {
   const cachedTabUrl: string = await storage.get('courseTabUrl');
@@ -131,4 +142,45 @@ async function getCurrentTab() {
   // `tab` will either be a `tabs.Tab` instance or `undefined`.
   const [tab] = await realBrowser.tabs.query(queryOptions);
   return tab;
+}
+
+export async function insertEventToGoogleCalendar(event) {
+  console.log('added', event.pid, event.toString());
+
+  try {
+    chrome.identity.getAuthToken(
+      {
+        interactive: false,
+      },
+      (token) => {
+        if (!token) {
+          chrome.identity.clearAllCachedAuthTokens();
+          chrome.storage.local.set({}, function () {});
+        }
+        chrome.storage.local.set({ token: token }, function () {});
+        const headers = new Headers({
+          Authorization: 'Bearer ' + token,
+          'Content-Type': 'application/json',
+        });
+
+        const body = JSON.stringify(event);
+
+        fetch(
+          'https://www.googleapis.com/calendar/v3/calendars/primary/events',
+          {
+            method: 'POST',
+            headers: headers,
+            body: body,
+          },
+        )
+          .then((response) => response.json())
+          .then((data) => console.log('Event added:', data))
+          .catch((error) => {
+            console.error('Error adding event:', error);
+          });
+      },
+    );
+  } catch (error) {
+    console.error(error); 
+  }
 }
