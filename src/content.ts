@@ -147,30 +147,36 @@ export async function scrapeCourseData() {
       const semester = semesters.S25;
 
       // parse
-      let days = times.split(" ")[0].replace("M", "MO,").replace("W", "WE,").replace("F", "FR,").replace("Th", "TH,").replace("T", "TU,");
+      let days = times
+        .split(' ')[0]
+        .replace('M', 'MO,')
+        .replace('W', 'WE,')
+        .replace('F', 'FR,')
+        .replace('Th', 'TH,')
+        .replace('T', 'TU,');
       if (days[days.length - 1] == ',') {
         days = days.slice(0, days.length - 1);
       }
 
       let day1 = semester.firstMondayOfSemester;
-      switch(days.slice(0, 2)) {
-        case "MO": {
+      switch (days.slice(0, 2)) {
+        case 'MO': {
           day1 = semester.firstMondayOfSemester;
           break;
         }
-        case "TU": {
+        case 'TU': {
           day1 = semester.firstMondayOfSemester + 1;
           break;
         }
-        case "WE": {
+        case 'WE': {
           day1 = semester.firstMondayOfSemester + 2;
           break;
         }
-        case "TH": {
+        case 'TH': {
           day1 = semester.firstMondayOfSemester + 2;
           break;
         }
-        case "FR": {
+        case 'FR': {
           day1 = semester.firstMondayOfSemester + 4;
           break;
         }

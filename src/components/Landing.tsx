@@ -7,7 +7,6 @@ import tutorial2 from 'data-base64:../../assets/tutorial2.png';
 import React, { useEffect, useState } from 'react';
 
 import { TRENDS_URL } from '~data/config';
-import { addGoogleOAuth } from '~popup';
 
 const STORAGE_KEY = 'page';
 
