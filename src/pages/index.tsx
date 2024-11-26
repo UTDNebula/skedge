@@ -343,7 +343,7 @@ const Index = () => {
               rmp={rmp}
               setPage={setPageAndScroll}
             />
-            {(process.env.PLASMO_BROWSER === 'chrome' && !isSignedIn) && (
+            {process.env.PLASMO_BROWSER === 'chrome' && !isSignedIn && (
               <Button
                 variant="contained"
                 disableElevation
@@ -353,8 +353,8 @@ const Index = () => {
               >
                 Optional: Enable Google Calendar to add your classes with the
                 press of a button
-              </Button>)
-            }
+              </Button>
+            )}
           </div>
           {page !== 'list' && (
             <div className="h-fit min-h-full p-4 dark:bg-black">

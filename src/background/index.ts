@@ -181,6 +181,6 @@ export async function insertEventToGoogleCalendar(event) {
       },
     );
   } catch (error) {
-    console.error(error); 
+    console.error(error);
   }
 }

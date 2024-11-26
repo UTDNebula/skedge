@@ -70,9 +70,6 @@ const storage = new Storage({
   area: 'local',
 });
 
-
-
-
 const Landing = () => {
   const [page, setPage] = useState(0);
   useEffect(() => {
@@ -89,7 +86,7 @@ const Landing = () => {
       },
     });
   }, []);
-  
+
   switch (page) {
     case 0:
       return (
@@ -138,7 +135,6 @@ const Landing = () => {
             >
               Get Started
             </Button>
-            
           </div>
         </div>
       );

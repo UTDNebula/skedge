@@ -84,11 +84,18 @@ export async function scrapeCourseData() {
     chrome.storage.local.get('token', async function (tokenStored) {
       console.log(tokenStored);
       if (typeof tokenStored.token !== 'undefined') {
-        // add Save to Skedge
+        // add Save to Google Calendar
         const newHeader2 = document.createElement('th');
         const saveLine = document.createElement('div');
-        line1.innerText = 'Save';
+        saveLine.innerText = 'Save to \nGoogle Calendar';
         newHeader2.append(saveLine);
+
+        // add Skedge reminder
+        const calLine2 = document.createElement('div');
+        calLine2.style.fontWeight = 'normal';
+        calLine2.style.paddingTop = '0.5rem';
+        calLine2.innerText = 'From Skedge';
+        newHeader2.append(calLine2);
         tableHeaders.insertBefore(newHeader2, tableHeaders.children[1]);
       }
     });
@@ -132,8 +139,9 @@ export async function scrapeCourseData() {
       newButton.style.border = 'none';
       newButton.style.borderRadius = '5px';
       newButton.style.padding = '10px';
-      newButton.style.margin = '10px';
-      newButton.innerText = 'Save';
+      newButton.style.margin = '10px auto 10px auto';
+      newButton.style.display = 'block';
+      newButton.innerText = 'Add to Calendar';
       // this is in case we have multiple instructions per section
       const sectionProfessors = professor.split(',');
       sectionProfessors.forEach((sectionProfessor) => {
