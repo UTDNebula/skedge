@@ -1,3 +1,4 @@
+import { Skeleton } from '@mui/material';
 import React from 'react';
 
 import { TRENDS_URL } from '~data/config';
@@ -11,15 +12,20 @@ type CourseOverviewProps = {
 
 const CourseOverview = ({ course, grades }: CourseOverviewProps) => {
   return (
-    <div className="flex flex-col gap-2">
-      <p className="text-2xl font-bold text-center">
+    <div className="flex flex-col items-center gap-2">
+      <p className="text-2xl font-bold">
         {searchQueryLabel(course)}
       </p>
-      {grades.state === 'done' && (
-        <p className="text-lg font-semibold text-center">
-          {'Overall grade: ' + grades.data.letter_grade}
-        </p>
-      )}
+      {(grades.state === 'loading' && (
+        <Skeleton variant="rounded">
+          <p className="text-lg font-semibold">Overall grade: A+</p>
+        </Skeleton>
+      )) ||
+        (grades.state === 'done' && (
+          <p className="text-lg font-semibold">
+            {'Overall grade: ' + grades.data.letter_grade}
+          </p>
+        ))}
       <a
         href={
           TRENDS_URL +
@@ -27,7 +33,7 @@ const CourseOverview = ({ course, grades }: CourseOverviewProps) => {
           encodeURIComponent(searchQueryLabel(course))
         }
         target="_blank"
-        className="underline text-blue-600 hover:text-blue-800 visited:text-purple-600 text-center"
+        className="underline text-blue-600 hover:text-blue-800 visited:text-purple-600"
         rel="noreferrer"
       >
         See on Trends

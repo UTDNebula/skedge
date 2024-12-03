@@ -117,16 +117,16 @@ function Row({ course, grades, backupGrades, rmp, setPage }: RowProps) {
             </IconButton>
           </Tooltip>
         </TableCell>
-        <TableCell align="right" className="border-b-0">
+        <TableCell align="center" className="border-b-0">
           {((typeof grades === 'undefined' || grades.state === 'error') &&
             (((typeof backupGrades === 'undefined' ||
               backupGrades.state === 'error') && <></>) ||
               (backupGrades.state === 'loading' && (
                 <Skeleton
                   variant="rounded"
-                  className="rounded-full px-5 py-2 ml-auto"
+                  className="rounded-full px-5 py-2 w-16 block mx-auto"
                 >
-                  <Typography className="text-base">A</Typography>
+                  <Typography className="text-base w-6">A+</Typography>
                 </Skeleton>
               )) ||
               (backupGrades.state === 'done' && (
@@ -155,7 +155,7 @@ function Row({ course, grades, backupGrades, rmp, setPage }: RowProps) {
                     }
                   >
                     <Typography
-                      className="text-base text-black rounded-full px-5 py-2 inline"
+                      className="text-base text-black text-center rounded-full px-5 py-2 w-16 block mx-auto"
                       sx={{
                         backgroundColor: gpaToColor(backupGrades.data.gpa),
                       }}
@@ -168,9 +168,9 @@ function Row({ course, grades, backupGrades, rmp, setPage }: RowProps) {
             (grades.state === 'loading' && (
               <Skeleton
                 variant="rounded"
-                className="rounded-full px-5 py-2 ml-auto"
+                className="rounded-full px-5 py-2 w-16 block mx-auto"
               >
-                <Typography className="text-base">A</Typography>
+                <Typography className="text-base w-6">A+</Typography>
               </Skeleton>
             )) ||
             (grades.state === 'done' && (
@@ -179,7 +179,7 @@ function Row({ course, grades, backupGrades, rmp, setPage }: RowProps) {
                 placement="top"
               >
                 <Typography
-                  className="text-base text-black rounded-full px-5 py-2 inline"
+                  className="text-base text-black text-center rounded-full px-5 py-2 w-16 block mx-auto"
                   sx={{ backgroundColor: gpaToColor(grades.data.gpa) }}
                 >
                   {grades.data.letter_grade}
@@ -188,10 +188,10 @@ function Row({ course, grades, backupGrades, rmp, setPage }: RowProps) {
             )) ||
             null}
         </TableCell>
-        <TableCell align="right" className="border-b-0">
+        <TableCell align="center" className="border-b-0">
           {((typeof rmp === 'undefined' || rmp.state === 'error') && <></>) ||
             (rmp.state === 'loading' && (
-              <Skeleton variant="rounded" className="rounded-full ml-auto">
+              <Skeleton variant="rounded" className="rounded-full">
                 <Rating sx={{ fontSize: 25 }} readOnly />
               </Skeleton>
             )) ||
