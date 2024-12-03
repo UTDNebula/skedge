@@ -13,9 +13,7 @@ type CourseOverviewProps = {
 const CourseOverview = ({ course, grades }: CourseOverviewProps) => {
   return (
     <div className="flex flex-col items-center gap-2">
-      <p className="text-2xl font-bold">
-        {searchQueryLabel(course)}
-      </p>
+      <p className="text-2xl font-bold">{searchQueryLabel(course)}</p>
       {(grades.state === 'loading' && (
         <Skeleton variant="rounded">
           <p className="text-lg font-semibold">Overall grade: A+</p>
