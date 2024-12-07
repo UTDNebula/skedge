@@ -72,14 +72,32 @@ function Row({ course, grades, backupGrades, rmp, setPage }: RowProps) {
         className="cursor-pointer"
       >
         <TableCell className="border-b-0 pb-0" colSpan={6}>
-          <Typography
-            onClick={
-              (e) => e.stopPropagation() // prevents opening/closing the card when clicking on the text
+          <Tooltip
+            title={
+              typeof course.profFirst !== 'undefined' &&
+              typeof course.profLast !== 'undefined' &&
+              (rmp !== undefined &&
+              rmp.state === 'done' &&
+              rmp.data.teacherRatingTags.length > 0
+                ? 'Tags: ' +
+                  rmp.data.teacherRatingTags
+                    .sort((a, b) => b.tagCount - a.tagCount)
+                    .slice(0, 3)
+                    .map((tag) => tag.tagName)
+                    .join(', ')
+                : 'No Tags Available')
             }
-            className="leading-tight text-lg text-gray-600 dark:text-gray-200"
+            placement="top"
           >
-            {searchQueryLabel(convertToProfOnly(course))}
-          </Typography>
+            <Typography
+              onClick={
+                (e) => e.stopPropagation() // prevents opening/closing the card when clicking on the text
+              }
+              className="leading-tight text-lg text-gray-600 dark:text-gray-200 cursor-text w-fit"
+            >
+              {searchQueryLabel(convertToProfOnly(course))}
+            </Typography>
+          </Tooltip>
         </TableCell>
       </TableRow>
       <TableRow
