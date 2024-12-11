@@ -32,6 +32,10 @@ realBrowser.webNavigation.onHistoryStateUpdated.addListener((details) => {
     /^.*:\/\/utdallas\.collegescheduler\.com\/terms\/.*\/currentschedule$/.test(
       details.url,
     );
+  const onPotentialSchedule =
+    /^.*:\/\/utdallas\.collegescheduler\.com\/terms\/.*\/schedules/.test(
+      details.url,
+    );
   if (onOptions) {
     //Listen for table change to rescrape data
     realBrowser.tabs.sendMessage(details.tabId, 'disconnectObserver');
@@ -42,7 +46,7 @@ realBrowser.webNavigation.onHistoryStateUpdated.addListener((details) => {
       func: listenForTableChange,
     });
   }
-  if (onOptions || onCurrentSchedule) {
+  if (onOptions || onCurrentSchedule || onPotentialSchedule) {
     //Scrape data
     realBrowser.scripting.executeScript(
       {
@@ -79,7 +83,7 @@ realBrowser.webNavigation.onHistoryStateUpdated.addListener((details) => {
       func: addGCalButtons,
     });
   }
-  if (!onOptions && !onCurrentSchedule) {
+  if (!onOptions && !onCurrentSchedule && !onPotentialSchedule) {
     realBrowser.action.setBadgeText({ text: '' });
   }
 });

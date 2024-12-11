@@ -1,4 +1,5 @@
 import type { PlasmoCSConfig } from 'plasmo';
+
 import { type SearchQuery } from '~utils/SearchQuery';
 
 // Plasmo CS config export
@@ -6,6 +7,7 @@ export const config: PlasmoCSConfig = {
   matches: [
     'https://utdallas.collegescheduler.com/terms/*/courses/*',
     'https://utdallas.collegescheduler.com/terms/*/currentschedule',
+    'https://utdallas.collegescheduler.com/terms/*/schedules',
   ],
   world: 'MAIN',
 };
@@ -60,17 +62,7 @@ export async function scrapeCourseData() {
     const courseTable = await waitForElement('table');
     const courseRows = courseTable.querySelectorAll('tbody');
 
-    // add Professor header to the table
-    const newHeader = document.createElement('th');
-    const line1 = document.createElement('div');
-    line1.innerText = 'Instructor(s)';
-    newHeader.append(line1);
-    // add Skedge reminder
-    const line2 = document.createElement('div');
-    line2.style.fontWeight = 'normal';
-    line2.style.paddingTop = '0.5rem';
-    line2.innerText = 'From Skedge';
-    newHeader.append(line2);
+    // find place
     const tableHeaders = courseTable.querySelector('thead > tr');
     let sectionPlace;
     for (
@@ -86,7 +78,22 @@ export async function scrapeCourseData() {
       }
     }
     sectionPlace++;
-    tableHeaders.insertBefore(newHeader, tableHeaders.children[sectionPlace]);
+
+    if (!courseTable.querySelector('[data-skedge="th"]')) {
+      // add Professor header to the table
+      const newHeader = document.createElement('th');
+      newHeader.setAttribute('data-skedge', 'th');
+      const line1 = document.createElement('div');
+      line1.innerText = 'Instructor(s)';
+      newHeader.append(line1);
+      // add Skedge reminder
+      const line2 = document.createElement('div');
+      line2.style.fontWeight = 'normal';
+      line2.style.paddingTop = '0.5rem';
+      line2.innerText = 'From Skedge';
+      newHeader.append(line2);
+      tableHeaders.insertBefore(newHeader, tableHeaders.children[sectionPlace]);
+    }
 
     courseRows.forEach((courseRow) => {
       // get professor name from course row
@@ -96,7 +103,7 @@ export async function scrapeCourseData() {
       sectionDetailsButton.click();
       const sectionDetails = courseRow.querySelector('tr:nth-child(2)');
       const sectionDetailsList = sectionDetails.querySelectorAll('li');
-      let searchQuery: SearchQuery = {};
+      const searchQuery: SearchQuery = {};
       let professor;
       sectionDetailsList.forEach((li) => {
         const detailLabelText =
@@ -112,7 +119,25 @@ export async function scrapeCourseData() {
         }
       });
       // append professor name to the table
-      const newTd = document.createElement('td');
+      const courseRowCells = courseRow.querySelector('tr');
+      let newTd = courseRowCells.querySelector(
+        '[data-skedge="td"]',
+      ) as HTMLElement;
+      if (!newTd) {
+        newTd = document.createElement('td');
+        newTd.setAttribute('data-skedge', 'td');
+        courseRowCells.insertBefore(
+          newTd,
+          courseRowCells.children[sectionPlace],
+        );
+        //Increase Disabled Reasons row colspan if necessary
+        const sectionDisabled = courseRow.querySelector(
+          'tr:nth-child(3) > td',
+        ) as HTMLTableCellElement | null;
+        if (sectionDisabled !== null) {
+          sectionDisabled.colSpan = sectionDisabled.colSpan + 1;
+        }
+      }
       newTd.innerText = professor ?? 'No Instructor';
       if (typeof professor !== 'undefined') {
         // this is in case we have multiple instructions per section
@@ -125,15 +150,6 @@ export async function scrapeCourseData() {
             profLast: splitProf[splitProf.length - 1],
           });
         });
-      }
-      const courseRowCells = courseRow.querySelector('tr');
-      courseRowCells.insertBefore(newTd, courseRowCells.children[sectionPlace]);
-      //Increase Disabled Reasons row colspan if necessary
-      const sectionDisabled = courseRow.querySelector(
-        'tr:nth-child(3) > td',
-      ) as HTMLTableCellElement | null;
-      if (sectionDisabled !== null) {
-        sectionDisabled.colSpan = sectionDisabled.colSpan + 1;
       }
       // collapse section details
       sectionDetailsButton.click();
