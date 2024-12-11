@@ -31,24 +31,6 @@ async function checkPermissions() {
 }
 checkPermissions();
 
-export const addGoogleOAuth = () => {
-  try {
-    chrome.identity.getAuthToken(
-      {
-        interactive: true,
-      },
-      (token) => {
-        if (!token) {
-          console.log('No token found');
-        }
-        chrome.storage.local.set({ token: token }, function () {});
-      },
-    );
-  } catch (error) {
-    console.log('no token');
-    alert(error);
-  }
-};
 const fullConfig = resolveConfig(tailwindConfig);
 
 function IndexPopup() {
