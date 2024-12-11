@@ -82,16 +82,34 @@ function Row({
         className="cursor-pointer"
       >
         <TableCell className="border-b-0 pb-0" colSpan={6}>
-          <Typography
-            onClick={
-              (e) => e.stopPropagation() // prevents opening/closing the card when clicking on the text
+          <Tooltip
+            title={
+              typeof course.profFirst !== 'undefined' &&
+              typeof course.profLast !== 'undefined' &&
+              (rmp !== undefined &&
+              rmp.state === 'done' &&
+              rmp.data.teacherRatingTags.length > 0
+                ? 'Tags: ' +
+                  rmp.data.teacherRatingTags
+                    .sort((a, b) => b.tagCount - a.tagCount)
+                    .slice(0, 3)
+                    .map((tag) => tag.tagName)
+                    .join(', ')
+                : 'No Tags Available')
             }
-            className="leading-tight text-lg text-gray-600 dark:text-gray-200"
+            placement="top"
           >
-            {searchQueryLabel(
-              showProfNameOnly ? convertToProfOnly(course) : course,
-            )}
-          </Typography>
+            <Typography
+              onClick={
+                (e) => e.stopPropagation() // prevents opening/closing the card when clicking on the text
+              }
+              className="leading-tight text-lg text-gray-600 dark:text-gray-200 cursor-text w-fit"
+            >
+              {searchQueryLabel(
+                showProfNameOnly ? convertToProfOnly(course) : course,
+              )}
+            </Typography>
+          </Tooltip>
         </TableCell>
       </TableRow>
       <TableRow
@@ -129,7 +147,7 @@ function Row({
             </IconButton>
           </Tooltip>
         </TableCell>
-        <TableCell align="right" className="border-b-0">
+        <TableCell align="center" className="border-b-0">
           {(fallbackToProfOnly &&
             (typeof grades === 'undefined' || grades.state === 'error') &&
             (((typeof backupGrades === 'undefined' ||
@@ -137,9 +155,9 @@ function Row({
               (backupGrades.state === 'loading' && (
                 <Skeleton
                   variant="rounded"
-                  className="rounded-full px-5 py-2 ml-auto"
+                  className="rounded-full px-5 py-2 w-16 block mx-auto"
                 >
-                  <Typography className="text-base">A</Typography>
+                  <Typography className="text-base w-6">A+</Typography>
                 </Skeleton>
               )) ||
               (backupGrades.state === 'done' && (
@@ -168,7 +186,7 @@ function Row({
                     }
                   >
                     <Typography
-                      className="text-base text-black rounded-full px-5 py-2 inline"
+                      className="text-base text-black text-center rounded-full px-5 py-2 w-16 block mx-auto"
                       sx={{
                         backgroundColor: gpaToColor(backupGrades.data.gpa),
                       }}
@@ -181,9 +199,9 @@ function Row({
             (grades.state === 'loading' && (
               <Skeleton
                 variant="rounded"
-                className="rounded-full px-5 py-2 ml-auto"
+                className="rounded-full px-5 py-2 w-16 block mx-auto"
               >
-                <Typography className="text-base">A</Typography>
+                <Typography className="text-base w-6">A+</Typography>
               </Skeleton>
             )) ||
             (grades.state === 'done' && (
@@ -192,7 +210,7 @@ function Row({
                 placement="top"
               >
                 <Typography
-                  className="text-base text-black rounded-full px-5 py-2 inline"
+                  className="text-base text-black text-center rounded-full px-5 py-2 w-16 block mx-auto"
                   sx={{ backgroundColor: gpaToColor(grades.data.gpa) }}
                 >
                   {grades.data.letter_grade}
@@ -201,10 +219,10 @@ function Row({
             )) ||
             null}
         </TableCell>
-        <TableCell align="right" className="border-b-0">
+        <TableCell align="center" className="border-b-0">
           {((typeof rmp === 'undefined' || rmp.state === 'error') && <></>) ||
             (rmp.state === 'loading' && (
-              <Skeleton variant="rounded" className="rounded-full ml-auto">
+              <Skeleton variant="rounded" className="rounded-full">
                 <Rating sx={{ fontSize: 25 }} readOnly />
               </Skeleton>
             )) ||
