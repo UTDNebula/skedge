@@ -93,9 +93,9 @@
   },
   "manifest": {
     "oauth2": {
-    "client_id": "216702397064-tle6n196strafllqdg5541c55p4ovl1q.apps.googleusercontent.com",
-    "scopes":["openid", "https://www.googleapis.com/auth/calendar.events"]
-  },
+      "client_id": "$CLIENT_ID",
+      "scopes":["openid", "https://www.googleapis.com/auth/calendar.events"]
+    },
     "permissions": [
       "identity",
       "storage",
@@ -114,7 +114,7 @@
         "id": "skedge@utdnebula",
         "strict_min_version": "109.0"
       }
-    }
-  },
-  "key": "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA1+guFMus8aLnloPa1xMFrElLJFEXOPSA9yjup7L44jCLJfSExjpuwHiKPUmgqKcwg1xhVkeCQiZIppeigc6N22fiwERDaW6xRk2YUsS2qoKbprNMb9SGQ+Q5loIguGGSirTWjp4usq5tRbqD7vTVuouxie6HkjtqI4tS2M4pbabgxL3AFPbCr/T0jYSyIpdlSQoLzFgF1b7UNXjMvkuW1Pt5W5AzeltxhL6Fi7uGk+q6dERf+U3XAjoHdQQWJkNc6gvlNBlxzPFuZ7/6ZdCBU2o5tank1Uwj8txReZrAhnIPZe8Bp3K/M+pHPNCsm+ROD0aDFCtKXoI0eOApbFnW3wIDAQAB"
+    },
+    "key": "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAvAmiiOsDH3dFqL26yZgZVRJd+NnnlA2l1x0K9HEFa3UgQ98xI+BOpE+NZuH6I7zSuA+vv+vwFnjj30pRTTUlsrDrrKLR80Rgs6/cZojz0o84E6EtWgAOx2g4BCwesvrJ51WoDz+kLOmSI29DNP/oYM0jstZlYuOvFswron9z48n12nhdg5KI9d0i5q0xYBgB8Hbmi2cKKPnW5urDIVez+D7GqIBXFAVMfas8FanTAqVvQ+c9UZiywauaolf+a1wia3D4pBQxztm/uWH23QIWFeHYxywmxZPKqYOBo1XyZYJAW4FaZgkUuMWSZXDUZk/oGELIVdQ8mzaXKDo+9ug97wIDAQAB"
+  }
 }
