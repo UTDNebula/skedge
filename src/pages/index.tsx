@@ -1,4 +1,3 @@
-import { Button } from '@mui/material';
 import { sendToBackground } from '@plasmohq/messaging';
 import React, { useEffect, useState } from 'react';
 
@@ -14,7 +13,6 @@ import fetchWithCache, {
   cacheIndexGrades,
   expireTime,
 } from '~data/fetchWithCache';
-import { addGoogleOAuth } from '~popup';
 import {
   convertToProfOnly,
   type SearchQuery,
@@ -177,19 +175,6 @@ function removeDuplicates(array: SearchQuery[]) {
 
 const Index = () => {
   const [page, setPage] = useState<'landing' | 'list' | SearchQuery>('landing');
-  const [isSignedIn, setIsSignedIn] = useState(false);
-  useEffect(() => {
-    if (process.env.PLASMO_BROWSER === 'chrome') {
-      chrome.storage.local.get('token', (tokenStored) => {
-        if (!tokenStored.token) {
-          setIsSignedIn(false);
-        } else {
-          console.log(tokenStored.token);
-          setIsSignedIn(true);
-        }
-      });
-    }
-  });
   const [listScroll, setListScroll] = useState(0);
   function setPageAndScroll(set: 'landing' | 'list' | SearchQuery) {
     if (set === 'list') {
@@ -343,18 +328,6 @@ const Index = () => {
               rmp={rmp}
               setPage={setPageAndScroll}
             />
-            {process.env.PLASMO_BROWSER === 'chrome' && !isSignedIn && (
-              <Button
-                variant="contained"
-                disableElevation
-                size="large"
-                className="normal-case bg-royal hover:bg-royalDark"
-                onClick={addGoogleOAuth}
-              >
-                Optional: Enable Google Calendar to add your classes with the
-                press of a button
-              </Button>
-            )}
           </div>
           {page !== 'list' && (
             <div className="h-fit min-h-full p-4 dark:bg-black">

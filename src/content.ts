@@ -21,21 +21,6 @@ export const config: PlasmoCSConfig = {
  * - It injects the instructor names into the section table
  */
 export async function scrapeCourseData() {
-  const semesters = {
-    S25: {
-      firstMonthOfSemester: '01',
-      firstMondayOfSemester: 20,
-      lastMonthOfSemester: '05',
-      lastFridayOfSemester: 15,
-    },
-    F25: {
-      firstMonthOfSemester: '08',
-      firstMondayOfSemester: 18,
-      lastMonthOfSemester: '12',
-      lastFridayOfSemester: 5,
-    },
-  };
-
   const [header, professors] = await Promise.all([
     getCourseInfo(),
     injectAndGetProfessorNames(),
@@ -75,40 +60,34 @@ export async function scrapeCourseData() {
     const courseRows = courseTable.querySelectorAll('tbody');
 
     // add Professor header to the table
-    const tableHeaders = courseTable.querySelector('thead > tr');
     const newHeader = document.createElement('th');
     const line1 = document.createElement('div');
     line1.innerText = 'Instructor(s)';
     newHeader.append(line1);
-
-    chrome.storage.local.get('token', async function (tokenStored) {
-      console.log(tokenStored);
-      if (typeof tokenStored.token !== 'undefined') {
-        // add Save to Google Calendar
-        const newHeader2 = document.createElement('th');
-        const saveLine = document.createElement('div');
-        saveLine.innerText = 'Save to \nGoogle Calendar';
-        newHeader2.append(saveLine);
-
-        // add Skedge reminder
-        const calLine2 = document.createElement('div');
-        calLine2.style.fontWeight = 'normal';
-        calLine2.style.paddingTop = '0.5rem';
-        calLine2.innerText = 'From Skedge';
-        newHeader2.append(calLine2);
-        tableHeaders.insertBefore(newHeader2, tableHeaders.children[1]);
-      }
-    });
     // add Skedge reminder
     const line2 = document.createElement('div');
     line2.style.fontWeight = 'normal';
     line2.style.paddingTop = '0.5rem';
     line2.innerText = 'From Skedge';
     newHeader.append(line2);
-    tableHeaders.insertBefore(newHeader, tableHeaders.children[7]);
+    const tableHeaders = courseTable.querySelector('thead > tr');
+    let sectionPlace;
+    for (
+      sectionPlace = 0;
+      sectionPlace < tableHeaders.children.length;
+      sectionPlace++
+    ) {
+      if (
+        (tableHeaders.children[sectionPlace] as HTMLElement).innerText ===
+        'Section'
+      ) {
+        break;
+      }
+    }
+    sectionPlace++;
+    tableHeaders.insertBefore(newHeader, tableHeaders.children[sectionPlace]);
 
     courseRows.forEach((courseRow) => {
-      console.log('row');
       // get professor name from course row
       const sectionDetailsButton =
         courseRow.querySelector<HTMLButtonElement>('tr > td > button');
@@ -116,134 +95,26 @@ export async function scrapeCourseData() {
       sectionDetailsButton.click();
       const sectionDetails = courseRow.querySelector('tr:nth-child(2)');
       const sectionDetailsList = sectionDetails.querySelectorAll('li');
-      let professor = '';
-      let title = '';
+      let professor;
       sectionDetailsList.forEach((li) => {
         const detailLabelText =
           li.querySelector<HTMLElement>('strong > span').innerText;
         if (detailLabelText.includes('Instructor')) {
           professor = li.innerText.split(':')[1].trim();
         }
-        if (detailLabelText.includes('Description')) {
-          title = li.innerText.split(':')[1].split('(')[0].trim();
-        }
       });
       // append professor name to the table
       const newTd = document.createElement('td');
       newTd.innerText = professor ?? 'No Instructor';
-      const newButtonTd = document.createElement('td');
-      const newButton = document.createElement('button');
-      newButtonTd.appendChild(newButton);
-      newButton.style.background = '#E98300';
-      newButton.style.color = '#000';
-      newButton.style.border = 'none';
-      newButton.style.borderRadius = '5px';
-      newButton.style.padding = '10px';
-      newButton.style.margin = '10px auto 10px auto';
-      newButton.style.display = 'block';
-      newButton.innerText = 'Add to Calendar';
-      // this is in case we have multiple instructions per section
-      const sectionProfessors = professor.split(',');
-      sectionProfessors.forEach((sectionProfessor) => {
-        professors.push(sectionProfessor.trim());
-      });
+      if (typeof professor !== 'undefined') {
+        // this is in case we have multiple instructions per section
+        const sectionProfessors = professor.split(',');
+        sectionProfessors.forEach((sectionProfessor) => {
+          professors.push(sectionProfessor.trim());
+        });
+      }
       const courseRowCells = courseRow.querySelector('tr');
-      const times =
-        courseRowCells.children[courseRowCells.children.length - 1].textContent;
-      courseRowCells.insertBefore(newTd, courseRowCells.children[7]);
-
-      const semester = semesters.S25;
-
-      // parse
-      let days = times
-        .split(' ')[0]
-        .replace('M', 'MO,')
-        .replace('W', 'WE,')
-        .replace('F', 'FR,')
-        .replace('Th', 'TH,')
-        .replace('T', 'TU,');
-      if (days[days.length - 1] == ',') {
-        days = days.slice(0, days.length - 1);
-      }
-
-      let day1 = semester.firstMondayOfSemester;
-      switch (days.slice(0, 2)) {
-        case 'MO': {
-          day1 = semester.firstMondayOfSemester;
-          break;
-        }
-        case 'TU': {
-          day1 = semester.firstMondayOfSemester + 1;
-          break;
-        }
-        case 'WE': {
-          day1 = semester.firstMondayOfSemester + 2;
-          break;
-        }
-        case 'TH': {
-          day1 = semester.firstMondayOfSemester + 2;
-          break;
-        }
-        case 'FR': {
-          day1 = semester.firstMondayOfSemester + 4;
-          break;
-        }
-      }
-
-      const splitTimes = times.split(' ');
-      let startTime = splitTimes[1].replace('am', '');
-      let endTime = splitTimes[3].replace('am', '');
-      if (startTime.includes('pm')) {
-        startTime = startTime.replace('pm', '');
-        const startTimeNum = Number(startTime.split(':')[0]);
-        startTime =
-          (
-            Number(startTime.split(':')[0]) + (startTimeNum !== 12 ? 12 : 0)
-          ).toString() +
-          ':' +
-          startTime.split(':')[1];
-      }
-      if (endTime.includes('pm')) {
-        endTime = endTime.replace('pm', '');
-        const endTimeNum = Number(endTime.split(':')[0]);
-        endTime =
-          (
-            Number(endTime.split(':')[0]) + (endTimeNum !== 12 ? 12 : 0)
-          ).toString() +
-          ':' +
-          endTime.split(':')[1];
-      }
-      const event1 = {
-        summary: title,
-        organization: 'Class from Skedge',
-        start: {
-          dateTime: `2025-${semester.firstMonthOfSemester}-${day1}T${startTime}:00-06:00`,
-          timeZone: 'America/Chicago',
-        },
-        end: {
-          dateTime: `2025-${semester.firstMonthOfSemester}-${day1}T${endTime}:00-06:00`,
-          timeZone: 'America/Chicago',
-        },
-        recurrence: [
-          `RRULE:FREQ=WEEKLY;UNTIL=2025${semester.lastMonthOfSemester}${semester.lastFridayOfSemester}T170000Z;BYDAY=${days}`,
-        ],
-        pid: 0,
-      };
-
-      chrome.storage.local.get('token', async function (tokenStored) {
-        if (typeof tokenStored.token !== 'undefined') {
-          newButton.onclick = async () => {
-            chrome.runtime.sendMessage({
-              name: 'insertEventToGoogleCalendar',
-              event: event1,
-              token: tokenStored.token,
-            });
-            alert(`Added ${event1.summary} to calendar.`);
-          };
-          courseRowCells.insertBefore(newButton, courseRowCells.children[1]);
-        }
-      });
-
+      courseRowCells.insertBefore(newTd, courseRowCells.children[sectionPlace]);
       //Increase Disabled Reasons row colspan if necessary
       const sectionDisabled = courseRow.querySelector(
         'tr:nth-child(3) > td',
@@ -260,7 +131,8 @@ export async function scrapeCourseData() {
 
 /** This listens for clicks on the buttons that switch between the enabled and disabled professor tabs and reports back to background.ts */
 export function listenForTableChange() {
-  const realBrowser = process.env.PLASMO_BROWSER === 'chrome' ? chrome : browser;
+  const realBrowser =
+    process.env.PLASMO_BROWSER === 'chrome' ? chrome : browser;
   const observer = new MutationObserver((mutationsList) => {
     for (const mutation of mutationsList) {
       if (
@@ -285,4 +157,119 @@ export function listenForTableChange() {
       observer.disconnect();
     }
   });
+}
+
+export async function addGCalButtons() {
+  /** Gets the first element from the DOM specified by selector */
+  function waitForElement(selector: string): Promise<HTMLElement> {
+    return new Promise((resolve) => {
+      if (document.querySelector(selector)) {
+        return resolve(document.querySelector<HTMLElement>(selector));
+      }
+      const observer = new MutationObserver(() => {
+        if (document.querySelector(selector)) {
+          resolve(document.querySelector<HTMLElement>(selector));
+          observer.disconnect();
+        }
+      });
+      observer.observe(document.body, {
+        childList: true,
+        subtree: true,
+      });
+    });
+  }
+
+  const courseTable = await waitForElement('table');
+
+  // add Save to Google Calendar
+  const newHeader = document.createElement('th');
+  const line1 = document.createElement('div');
+  line1.innerText = 'Save to \nGoogle Calendar';
+  newHeader.append(line1);
+  // add Skedge reminder
+  const line2 = document.createElement('div');
+  line2.style.fontWeight = 'normal';
+  line2.style.paddingTop = '0.5rem';
+  line2.innerText = 'From Skedge';
+  newHeader.append(line2);
+  const tableHeaders = courseTable.querySelector('thead > tr');
+  tableHeaders.insertBefore(newHeader, tableHeaders.children[1]);
+
+  const courseRows = courseTable.querySelectorAll('tbody');
+  const newTds = [];
+  courseRows.forEach((courseRow) => {
+    const newTd = document.createElement('td');
+    newTds.push(newTd);
+    const courseRowCells = courseRow.querySelector('tr');
+    courseRowCells.insertBefore(newTd, courseRowCells.children[1]);
+  });
+
+  let courses = await fetch(
+    'https://utdallas.collegescheduler.com/api/term-data/2025%20Spring',
+  );
+  courses = (await courses.json()).currentSections;
+
+  if (typeof courses !== 'undefined') {
+    for (let i = 0; i <= newTds.length; i++) {
+      // append button to the table
+      const newTd = newTds[i];
+      const courseData = courses[i];
+      const links = []; // each metting
+      for (let j = 0; j < courseData.meetings.length; j++) {
+        const meeting = courseData.meetings[j];
+        const OFFSET_HOURS = 6; // time zone fix
+        const formatTime = (date, time) => {
+          const datePart = new Date(date);
+          const timePart = String(time).padStart(4, '0');
+          const hours = parseInt(timePart.slice(0, 2), 10);
+          const minutes = parseInt(timePart.slice(2), 10);
+          datePart.setUTCHours(hours + OFFSET_HOURS, minutes, 0, 0);
+          return `${datePart.toISOString().replace(/[-:]/g, '').split('.')[0]}Z`;
+        };
+        const formattedStartDate = formatTime(
+          meeting.startDate,
+          meeting.startTime,
+        );
+        const formattedEndTime = formatTime(meeting.startDate, meeting.endTime);
+        const recurrenceEnd =
+          meeting.endDate.split('T')[0].replaceAll('-', '') + 'T235959Z';
+        const meetingDays = meeting.days
+          .replaceAll('Th', 'X')
+          .split('')
+          .map(
+            (letter) =>
+              ({ M: 'MO', T: 'TU', W: 'WE', X: 'TH', F: 'FR' })[letter],
+          )
+          .join(',');
+        const recurrence = `RRULE:FREQ=WEEKLY;UNTIL=${recurrenceEnd};BYDAY=${meetingDays}`;
+        links.push(
+          `https://calendar.google.com/calendar/r/eventedit?text=${courseData.subject} ${courseData.course}&dates=${formattedStartDate}/${formattedEndTime}&location=${meeting.building}&recur=${recurrence}`,
+        );
+      }
+      // make a button to open multiple links at once when necessaary
+      let newLink;
+      if (links.length > 1) {
+        newLink = document.createElement('button');
+        newLink.innerText = 'Add to Calendar (' + links.length + ')';
+        newLink.onclick = function () {
+          for (const link of links) {
+            window.open(link);
+          }
+        };
+      } else {
+        newLink = document.createElement('a');
+        newLink.innerText = 'Add to Calendar';
+        newLink.target = '_blank';
+        newLink.href = links[0];
+      }
+      newLink.style.background = '#E98300';
+      newLink.style.color = '#000';
+      newLink.style.border = 'none';
+      newLink.style.borderRadius = '4px';
+      newLink.style.padding = '6px 12px';
+      newLink.style.margin = '10px auto';
+      newLink.style.display = 'block';
+      newTd.appendChild(newLink);
+    }
+  }
 }

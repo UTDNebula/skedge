@@ -1,12 +1,12 @@
 import { Storage } from '@plasmohq/storage';
 
 import {
+  addGCalButtons,
   type CourseHeader,
   listenForTableChange,
   scrapeCourseData,
 } from '~content';
 import { neededOrigins } from '~data/config';
-// import { addGoogleOAuth } from '~popup';
 
 export interface ShowCourseTabPayload {
   header: CourseHeader;
@@ -24,14 +24,25 @@ const realBrowser = process.env.PLASMO_BROWSER === 'chrome' ? chrome : browser;
 
 /** Injects the content script if we hit a course page */
 realBrowser.webNavigation.onHistoryStateUpdated.addListener((details) => {
-  if (
+  const onOptions =
     /^.*:\/\/utdallas\.collegescheduler\.com\/terms\/.*\/courses\/.+$/.test(
       details.url,
-    ) ||
+    );
+  const onCurrentSchedule =
     /^.*:\/\/utdallas\.collegescheduler\.com\/terms\/.*\/currentschedule$/.test(
       details.url,
-    )
-  ) {
+    );
+  if (onOptions) {
+    //Listen for table change to rescrape data
+    realBrowser.tabs.sendMessage(details.tabId, 'disconnectObserver');
+    realBrowser.scripting.executeScript({
+      target: {
+        tabId: details.tabId,
+      },
+      func: listenForTableChange,
+    });
+  }
+  if (onOptions || onCurrentSchedule) {
     //Scrape data
     realBrowser.scripting.executeScript(
       {
@@ -50,21 +61,25 @@ realBrowser.webNavigation.onHistoryStateUpdated.addListener((details) => {
         }
       },
     );
-    //Listen for table change to rescrape data
-    realBrowser.tabs.sendMessage(details.tabId, 'disconnectObserver');
-    realBrowser.scripting.executeScript({
-      target: {
-        tabId: details.tabId,
-      },
-      func: listenForTableChange,
-    });
     //Store tab info
     realBrowser.action.setBadgeText({ text: '!' });
     realBrowser.action.setBadgeBackgroundColor({ color: 'green' });
     courseTabId = details.tabId;
     storage.set('courseTabId', courseTabId);
     storage.set('courseTabUrl', details.url);
-  } else {
+  }
+  if (onCurrentSchedule) {
+    //Add GCal buttons
+    realBrowser.scripting.executeScript({
+      target: {
+        tabId: details.tabId,
+      },
+      // content script injection only works reliably on the prod packaged extension
+      // b/c of the plasmo dev server connections
+      func: addGCalButtons,
+    });
+  }
+  if (!onOptions && !onCurrentSchedule) {
     realBrowser.action.setBadgeText({ text: '' });
   }
 });
@@ -87,13 +102,6 @@ realBrowser.runtime.onMessage.addListener(function (message) {
         }
       },
     );
-  }
-});
-
-realBrowser.runtime.onMessage.addListener(function (message) {
-  if (message.name === 'insertEventToGoogleCalendar') {
-    console.log(message.event, message.token);
-    insertEventToGoogleCalendar(message.event);
   }
 });
 
@@ -142,45 +150,4 @@ async function getCurrentTab() {
   // `tab` will either be a `tabs.Tab` instance or `undefined`.
   const [tab] = await realBrowser.tabs.query(queryOptions);
   return tab;
-}
-
-export async function insertEventToGoogleCalendar(event) {
-  console.log('added', event.pid, event.toString());
-
-  try {
-    chrome.identity.getAuthToken(
-      {
-        interactive: false,
-      },
-      (token) => {
-        if (!token) {
-          chrome.identity.clearAllCachedAuthTokens();
-          chrome.storage.local.set({}, function () {});
-        }
-        chrome.storage.local.set({ token: token }, function () {});
-        const headers = new Headers({
-          Authorization: 'Bearer ' + token,
-          'Content-Type': 'application/json',
-        });
-
-        const body = JSON.stringify(event);
-
-        fetch(
-          'https://www.googleapis.com/calendar/v3/calendars/primary/events',
-          {
-            method: 'POST',
-            headers: headers,
-            body: body,
-          },
-        )
-          .then((response) => response.json())
-          .then((data) => console.log('Event added:', data))
-          .catch((error) => {
-            console.error('Error adding event:', error);
-          });
-      },
-    );
-  } catch (error) {
-    console.error(error);
-  }
 }

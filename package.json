@@ -92,12 +92,7 @@
     }
   },
   "manifest": {
-    "oauth2": {
-      "client_id": "$CLIENT_ID",
-      "scopes":["openid", "https://www.googleapis.com/auth/calendar.events"]
-    },
     "permissions": [
-      "identity",
       "storage",
       "scripting",
       "webNavigation",
@@ -114,7 +109,6 @@
         "id": "skedge@utdnebula",
         "strict_min_version": "109.0"
       }
-    },
-    "key": "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAvAmiiOsDH3dFqL26yZgZVRJd+NnnlA2l1x0K9HEFa3UgQ98xI+BOpE+NZuH6I7zSuA+vv+vwFnjj30pRTTUlsrDrrKLR80Rgs6/cZojz0o84E6EtWgAOx2g4BCwesvrJ51WoDz+kLOmSI29DNP/oYM0jstZlYuOvFswron9z48n12nhdg5KI9d0i5q0xYBgB8Hbmi2cKKPnW5urDIVez+D7GqIBXFAVMfas8FanTAqVvQ+c9UZiywauaolf+a1wia3D4pBQxztm/uWH23QIWFeHYxywmxZPKqYOBo1XyZYJAW4FaZgkUuMWSZXDUZk/oGELIVdQ8mzaXKDo+9ug97wIDAQAB"
+    }
   }
 }
