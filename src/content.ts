@@ -258,9 +258,9 @@ export async function scrapeCourseData() {
   }
 }
 
-const realBrowser = process.env.PLASMO_BROWSER === 'chrome' ? chrome : browser;
 /** This listens for clicks on the buttons that switch between the enabled and disabled professor tabs and reports back to background.ts */
 export function listenForTableChange() {
+  const realBrowser = process.env.PLASMO_BROWSER === 'chrome' ? chrome : browser;
   const observer = new MutationObserver((mutationsList) => {
     for (const mutation of mutationsList) {
       if (
