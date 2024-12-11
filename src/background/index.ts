@@ -2,15 +2,15 @@ import { Storage } from '@plasmohq/storage';
 
 import {
   addGCalButtons,
-  type CourseHeader,
   listenForTableChange,
   scrapeCourseData,
 } from '~content';
 import { neededOrigins } from '~data/config';
+import { type SearchQuery } from '~utils/SearchQuery';
 
 export interface ShowCourseTabPayload {
-  header: CourseHeader;
-  professors: string[];
+  header: string | SearchQuery;
+  professors: SearchQuery[];
 }
 
 // State vars

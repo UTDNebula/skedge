@@ -1,9 +1,5 @@
 import type { PlasmoCSConfig } from 'plasmo';
-
-export interface CourseHeader {
-  subjectPrefix: string;
-  courseNumber: string;
-}
+import { type SearchQuery, searchQueryEqual } from '~utils/SearchQuery';
 
 // Plasmo CS config export
 export const config: PlasmoCSConfig = {
@@ -22,7 +18,7 @@ export const config: PlasmoCSConfig = {
  */
 export async function scrapeCourseData() {
   const [header, professors] = await Promise.all([
-    getCourseInfo(),
+    getHeader(),
     injectAndGetProfessorNames(),
   ]);
   return { header: header, professors: professors };
@@ -46,16 +42,21 @@ export async function scrapeCourseData() {
     });
   }
 
-  /** Gets the course prefix and number from the course page */
-  async function getCourseInfo(): Promise<CourseHeader> {
-    const course = await waitForElement('h1');
-    const courseData = course.innerText.split(' ');
-    return { subjectPrefix: courseData[0], courseNumber: courseData[1] };
+  /** Gets the header or course prefix and number from the page */
+  async function getHeader(): Promise<string | SearchQuery> {
+    const header = (await waitForElement('h1')).innerText.trim();
+    if (header.match(/^[a-zA-Z]{2,4} [0-9][0-9V]?[0-9]{0,2}$/)) {
+      // is course
+      const courseData = header.split(' ');
+      return { prefix: courseData[0], number: courseData[1] };
+    }
+    // is text
+    return header;
   }
 
   /** Gets all professor names and then injects them into the section table */
-  async function injectAndGetProfessorNames(): Promise<string[]> {
-    const professors: string[] = [];
+  async function injectAndGetProfessorNames(): Promise<SearchQuery[]> {
+    const professors: SearchQuery[] = [];
     const courseTable = await waitForElement('table');
     const courseRows = courseTable.querySelectorAll('tbody');
 
@@ -95,10 +96,17 @@ export async function scrapeCourseData() {
       sectionDetailsButton.click();
       const sectionDetails = courseRow.querySelector('tr:nth-child(2)');
       const sectionDetailsList = sectionDetails.querySelectorAll('li');
+      let searchQuery: SearchQuery = {};
       let professor;
       sectionDetailsList.forEach((li) => {
         const detailLabelText =
           li.querySelector<HTMLElement>('strong > span').innerText;
+        if (detailLabelText.includes('Subject')) {
+          searchQuery.prefix = li.innerText.split(':')[1].trim();
+        }
+        if (detailLabelText.includes('Course')) {
+          searchQuery.number = li.innerText.split(':')[1].trim();
+        }
         if (detailLabelText.includes('Instructor')) {
           professor = li.innerText.split(':')[1].trim();
         }
@@ -108,9 +116,14 @@ export async function scrapeCourseData() {
       newTd.innerText = professor ?? 'No Instructor';
       if (typeof professor !== 'undefined') {
         // this is in case we have multiple instructions per section
-        const sectionProfessors = professor.split(',');
+        const sectionProfessors = professor.trim().split(',');
         sectionProfessors.forEach((sectionProfessor) => {
-          professors.push(sectionProfessor.trim());
+          const splitProf = sectionProfessor.trim().split(' ');
+          professors.push({
+            ...searchQuery,
+            profFirst: splitProf[0],
+            profLast: splitProf[splitProf.length - 1],
+          });
         });
       }
       const courseRowCells = courseRow.querySelector('tr');
