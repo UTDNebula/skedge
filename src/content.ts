@@ -252,12 +252,9 @@ export async function addGCalButtons() {
       for (let j = 0; j < courseData.meetings.length; j++) {
         const meeting = courseData.meetings[j];
         const formatTime = (date, time) => {
-          const datePart = new Date(date);
+          const datePart = date.split('T')[0].replaceAll('-', '');
           const timePart = String(time).padStart(4, '0');
-          const hours = parseInt(timePart.slice(0, 2), 10);
-          const minutes = parseInt(timePart.slice(2), 10);
-          datePart.setUTCHours(hours, minutes, 0, 0);
-          return `${datePart.toISOString().replace(/[-:]/g, '').split('.')[0]}`;
+          return `${datePart}T${timePart}00Z`;
         };
         const formattedStartDate = formatTime(
           meeting.startDate,
@@ -265,7 +262,7 @@ export async function addGCalButtons() {
         );
         const formattedEndTime = formatTime(meeting.startDate, meeting.endTime);
         const recurrenceEnd =
-          meeting.endDate.split('T')[0].replaceAll('-', '') + 'T235959';
+          meeting.endDate.split('T')[0].replaceAll('-', '') + 'T235959Z';
         const meetingDays = meeting.days
           .replaceAll('Th', 'X')
           .split('')
