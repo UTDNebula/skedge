@@ -246,14 +246,13 @@ export async function addGCalButtons() {
       const links = []; // each metting
       for (let j = 0; j < courseData.meetings.length; j++) {
         const meeting = courseData.meetings[j];
-        const OFFSET_HOURS = 6; // time zone fix
         const formatTime = (date, time) => {
           const datePart = new Date(date);
           const timePart = String(time).padStart(4, '0');
           const hours = parseInt(timePart.slice(0, 2), 10);
           const minutes = parseInt(timePart.slice(2), 10);
-          datePart.setUTCHours(hours + OFFSET_HOURS, minutes, 0, 0);
-          return `${datePart.toISOString().replace(/[-:]/g, '').split('.')[0]}Z`;
+          datePart.setUTCHours(hours, minutes, 0, 0);
+          return `${datePart.toISOString().replace(/[-:]/g, '').split('.')[0]}`;
         };
         const formattedStartDate = formatTime(
           meeting.startDate,
@@ -261,7 +260,7 @@ export async function addGCalButtons() {
         );
         const formattedEndTime = formatTime(meeting.startDate, meeting.endTime);
         const recurrenceEnd =
-          meeting.endDate.split('T')[0].replaceAll('-', '') + 'T235959Z';
+          meeting.endDate.split('T')[0].replaceAll('-', '') + 'T235959';
         const meetingDays = meeting.days
           .replaceAll('Th', 'X')
           .split('')
@@ -272,7 +271,7 @@ export async function addGCalButtons() {
           .join(',');
         const recurrence = `RRULE:FREQ=WEEKLY;UNTIL=${recurrenceEnd};BYDAY=${meetingDays}`;
         links.push(
-          `https://calendar.google.com/calendar/r/eventedit?text=${courseData.subject} ${courseData.course}&dates=${formattedStartDate}/${formattedEndTime}&location=${meeting.building}&recur=${recurrence}`,
+          `https://calendar.google.com/calendar/r/eventedit?text=${courseData.subject} ${courseData.course}&dates=${formattedStartDate}/${formattedEndTime}&ctz=America/Chicago&location=${meeting.building}&recur=${recurrence}`,
         );
       }
       // make a button to open multiple links at once when necessaary
