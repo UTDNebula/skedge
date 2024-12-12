@@ -254,7 +254,7 @@ export async function addGCalButtons() {
         const formatTime = (date, time) => {
           const datePart = date.split('T')[0].replaceAll('-', '');
           const timePart = String(time).padStart(4, '0');
-          return `${datePart}T${timePart}00Z`;
+          return `${datePart}T${timePart}00`;
         };
         const formattedStartDate = formatTime(
           meeting.startDate,
@@ -262,7 +262,7 @@ export async function addGCalButtons() {
         );
         const formattedEndTime = formatTime(meeting.startDate, meeting.endTime);
         const recurrenceEnd =
-          meeting.endDate.split('T')[0].replaceAll('-', '') + 'T235959Z';
+          meeting.endDate.split('T')[0].replaceAll('-', '') + 'T235959';
         const meetingDays = meeting.days
           .replaceAll('Th', 'X')
           .split('')
