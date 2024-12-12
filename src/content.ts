@@ -233,8 +233,10 @@ export async function addGCalButtons() {
     courseRowCells.insertBefore(newTd, courseRowCells.children[1]);
   });
 
+  // automatically fetch current term from page URL
+  const termString = window.location.toString().split('terms/')[1].split('/')[0];
   let courses = await fetch(
-    'https://utdallas.collegescheduler.com/api/term-data/2025%20Spring',
+    'https://utdallas.collegescheduler.com/api/term-data/' + termString,
   );
   courses = (await courses.json()).currentSections;
 
