@@ -1,15 +1,16 @@
 import { Storage } from '@plasmohq/storage';
 
 import {
-  type CourseHeader,
+  addGCalButtons,
   listenForTableChange,
   scrapeCourseData,
 } from '~content';
 import { neededOrigins } from '~data/config';
+import { type SearchQuery } from '~utils/SearchQuery';
 
 export interface ShowCourseTabPayload {
-  header: CourseHeader;
-  professors: string[];
+  header: string | SearchQuery;
+  professors: SearchQuery[];
 }
 
 // State vars
@@ -23,11 +24,29 @@ const realBrowser = process.env.PLASMO_BROWSER === 'chrome' ? chrome : browser;
 
 /** Injects the content script if we hit a course page */
 realBrowser.webNavigation.onHistoryStateUpdated.addListener((details) => {
-  if (
+  const onOptions =
     /^.*:\/\/utdallas\.collegescheduler\.com\/terms\/.*\/courses\/.+$/.test(
       details.url,
-    )
-  ) {
+    );
+  const onCurrentSchedule =
+    /^.*:\/\/utdallas\.collegescheduler\.com\/terms\/.*\/currentschedule$/.test(
+      details.url,
+    );
+  const onPotentialSchedule =
+    /^.*:\/\/utdallas\.collegescheduler\.com\/terms\/.*\/schedules/.test(
+      details.url,
+    );
+  if (onOptions) {
+    //Listen for table change to rescrape data
+    realBrowser.tabs.sendMessage(details.tabId, 'disconnectObserver');
+    realBrowser.scripting.executeScript({
+      target: {
+        tabId: details.tabId,
+      },
+      func: listenForTableChange,
+    });
+  }
+  if (onOptions || onCurrentSchedule || onPotentialSchedule) {
     //Scrape data
     realBrowser.scripting.executeScript(
       {
@@ -46,21 +65,25 @@ realBrowser.webNavigation.onHistoryStateUpdated.addListener((details) => {
         }
       },
     );
-    //Listen for table change to rescrape data
-    realBrowser.tabs.sendMessage(details.tabId, 'disconnectObserver');
-    realBrowser.scripting.executeScript({
-      target: {
-        tabId: details.tabId,
-      },
-      func: listenForTableChange,
-    });
     //Store tab info
     realBrowser.action.setBadgeText({ text: '!' });
     realBrowser.action.setBadgeBackgroundColor({ color: 'green' });
     courseTabId = details.tabId;
     storage.set('courseTabId', courseTabId);
     storage.set('courseTabUrl', details.url);
-  } else {
+  }
+  if (onCurrentSchedule) {
+    //Add GCal buttons
+    realBrowser.scripting.executeScript({
+      target: {
+        tabId: details.tabId,
+      },
+      // content script injection only works reliably on the prod packaged extension
+      // b/c of the plasmo dev server connections
+      func: addGCalButtons,
+    });
+  }
+  if (!onOptions && !onCurrentSchedule && !onPotentialSchedule) {
     realBrowser.action.setBadgeText({ text: '' });
   }
 });

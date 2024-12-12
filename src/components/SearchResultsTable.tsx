@@ -37,9 +37,19 @@ type RowProps = {
   backupGrades: GenericFetchedData<GradesType>;
   rmp: GenericFetchedData<RMPInterface>;
   setPage: (arg0: SearchQuery) => void;
+  showProfNameOnly: boolean;
+  fallbackToProfOnly: boolean;
 };
 
-function Row({ course, grades, backupGrades, rmp, setPage }: RowProps) {
+function Row({
+  course,
+  grades,
+  backupGrades,
+  rmp,
+  setPage,
+  showProfNameOnly,
+  fallbackToProfOnly,
+}: RowProps) {
   const [open, setOpen] = useState(false);
   const canOpen =
     !(typeof grades === 'undefined' || grades.state === 'error') ||
@@ -95,7 +105,9 @@ function Row({ course, grades, backupGrades, rmp, setPage }: RowProps) {
               }
               className="leading-tight text-lg text-gray-600 dark:text-gray-200 cursor-text w-fit"
             >
-              {searchQueryLabel(convertToProfOnly(course))}
+              {searchQueryLabel(
+                showProfNameOnly ? convertToProfOnly(course) : course,
+              )}
             </Typography>
           </Tooltip>
         </TableCell>
@@ -136,7 +148,8 @@ function Row({ course, grades, backupGrades, rmp, setPage }: RowProps) {
           </Tooltip>
         </TableCell>
         <TableCell align="center" className="border-b-0">
-          {((typeof grades === 'undefined' || grades.state === 'error') &&
+          {(fallbackToProfOnly &&
+            (typeof grades === 'undefined' || grades.state === 'error') &&
             (((typeof backupGrades === 'undefined' ||
               backupGrades.state === 'error') && <></>) ||
               (backupGrades.state === 'loading' && (
@@ -250,6 +263,8 @@ type SearchResultsTableProps = {
   grades: { [key: string]: GenericFetchedData<GradesType> };
   rmp: { [key: string]: GenericFetchedData<RMPInterface> };
   setPage: (arg0: SearchQuery) => void;
+  showProfNameOnly: boolean;
+  fallbackToProfOnly: boolean;
 };
 
 const SearchResultsTable = ({
@@ -257,6 +272,8 @@ const SearchResultsTable = ({
   grades,
   rmp,
   setPage,
+  showProfNameOnly,
+  fallbackToProfOnly,
 }: SearchResultsTableProps) => {
   //Table sorting category
   const [orderBy, setOrderBy] = useState<'none' | 'gpa' | 'rating'>('none');
@@ -392,6 +409,8 @@ const SearchResultsTable = ({
               backupGrades={grades[searchQueryLabel(convertToProfOnly(result))]}
               rmp={rmp[searchQueryLabel(convertToProfOnly(result))]}
               setPage={setPage}
+              showProfNameOnly={showProfNameOnly}
+              fallbackToProfOnly={fallbackToProfOnly}
             />
           ))}
         </TableBody>
