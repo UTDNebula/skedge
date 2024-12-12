@@ -234,7 +234,10 @@ export async function addGCalButtons() {
   });
 
   // automatically fetch current term from page URL
-  const termString = window.location.toString().split('terms/')[1].split('/')[0];
+  const termString = window.location
+    .toString()
+    .split('terms/')[1]
+    .split('/')[0];
   let courses = await fetch(
     'https://utdallas.collegescheduler.com/api/term-data/' + termString,
   );
