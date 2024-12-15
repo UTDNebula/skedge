@@ -52,6 +52,31 @@ function SingleProfInfo({ rmp }: Props) {
     );
   }
 
+  if (rmp.data.numRatings == 0) {
+    return (
+      <Grid container spacing={2} className="p-4">
+        <Grid item xs={6}>
+          <p className="text-xl font-bold">
+            {rmp.data.numRatings.toLocaleString()}
+          </p>
+          <p>Ratings given</p>
+        </Grid>
+        <Grid item xs={12}>
+          <a
+            href={
+              'https://www.ratemyprofessors.com/professor/' + rmp.data.legacyId
+            }
+            target="_blank"
+            className="underline text-blue-600 hover:text-blue-800 visited:text-purple-600"
+            rel="noreferrer"
+          >
+            Visit Rate My Professors
+          </a>
+        </Grid>
+      </Grid>
+    );
+  }
+
   const topTags = rmp.data.teacherRatingTags.sort(
     (a, b) => b.tagCount - a.tagCount,
   );
@@ -61,11 +86,15 @@ function SingleProfInfo({ rmp }: Props) {
   return (
     <Grid container spacing={2} className="p-4">
       <Grid item xs={6}>
-        <p className="text-xl font-bold">{rmp.data.avgRating}</p>
+        <p className="text-xl font-bold">
+          {rmp.data.avgRating > 0 ? rmp.data.avgRating : 'N/A'}
+        </p>
         <p>Professor rating</p>
       </Grid>
       <Grid item xs={6}>
-        <p className="text-xl font-bold">{rmp.data.avgDifficulty}</p>
+        <p className="text-xl font-bold">
+          {rmp.data.avgDifficulty > 0 ? rmp.data.avgDifficulty : 'N/A'}
+        </p>
         <p>Difficulty</p>
       </Grid>
       <Grid item xs={6}>
@@ -76,7 +105,9 @@ function SingleProfInfo({ rmp }: Props) {
       </Grid>
       <Grid item xs={6}>
         <p className="text-xl font-bold">
-          {rmp.data.wouldTakeAgainPercent.toFixed(0) + '%'}
+          {rmp.data.wouldTakeAgainPercent > 0
+            ? rmp.data.wouldTakeAgainPercent.toFixed(0) + '%'
+            : 'N/A'}
         </p>
         <p>Would take again</p>
       </Grid>
