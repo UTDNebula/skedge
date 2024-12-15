@@ -14,7 +14,7 @@ const CourseOverview = ({ header, grades }: CourseOverviewProps) => {
   const isCourse = typeof header !== 'string';
   return (
     <div className="flex flex-col items-center gap-2">
-      <p className="text-2xl font-bold">
+      <p className="text-2xl font-bold text-center">
         {isCourse ? searchQueryLabel(header) : header}
       </p>
       {isCourse && (
