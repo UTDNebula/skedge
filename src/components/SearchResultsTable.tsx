@@ -120,7 +120,7 @@ function Row({
         }} // opens/closes the card by clicking anywhere on the row
         className="cursor-pointer"
       >
-        <TableCell className="border-b-0 pr-0">
+        <TableCell className="border-b-0 flex gap-1">
           <Tooltip
             title={open ? 'Minimize Result' : 'Expand Result'}
             placement="top"
@@ -133,8 +133,6 @@ function Row({
               <KeyboardArrowIcon />
             </IconButton>
           </Tooltip>
-        </TableCell>
-        <TableCell className="border-b-0">
           <Tooltip title="Open professor profile" placement="top">
             <IconButton
               aria-label="open professor profile"
@@ -361,8 +359,7 @@ const SearchResultsTable = ({
       <Table stickyHeader aria-label="collapsible table">
         <TableHead>
           <TableRow>
-            <TableCell />
-            <TableCell>Profile</TableCell>
+            <TableCell>Actions</TableCell>
             <TableCell>
               <Tooltip
                 title="Average GPA Across Course Sections"
