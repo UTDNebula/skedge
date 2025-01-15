@@ -31,7 +31,7 @@ async function checkPermissions() {
 }
 checkPermissions();
 
-const fullConfig = resolveConfig(tailwindConfig);
+const fullTailwindConfig = resolveConfig(tailwindConfig);
 
 function IndexPopup() {
   const prefersDarkMode = useMediaQuery('(prefers-color-scheme: dark)');
@@ -40,18 +40,27 @@ function IndexPopup() {
       mode: prefersDarkMode ? 'dark' : 'light',
       //copied from tailwind.config.js
       primary: {
-        main: fullConfig.theme.colors.royal,
+        main: fullTailwindConfig.theme.colors.royal,
       },
       secondary: {
-        main: fullConfig.theme.colors.royal,
-        light: fullConfig.theme.colors.periwinkle,
+        main: fullTailwindConfig.theme.colors.royal,
+        light: fullTailwindConfig.theme.colors.periwinkle,
       },
       error: {
-        main: fullConfig.theme.colors.persimmon['500'],
+        main: fullTailwindConfig.theme.colors.persimmon['500'],
       },
     },
     typography: {
       fontFamily: 'inherit',
+    },
+    breakpoints: {
+      values: {
+        xs: 0,
+        sm: parseInt(fullTailwindConfig.theme.screens.sm),
+        md: parseInt(fullTailwindConfig.theme.screens.md),
+        lg: parseInt(fullTailwindConfig.theme.screens.lg),
+        xl: parseInt(fullTailwindConfig.theme.screens.xl),
+      },
     },
   });
 

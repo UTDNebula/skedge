@@ -143,7 +143,7 @@ const Landing = () => {
         <ExplanatoryPage
           src={tutorial1}
           title="Open Schedule Planner"
-          description="This extension was designed for student at the University of Texas at Dallas and requires the usage of Schedule Planner"
+          description="This extension was designed for students at the University of Texas at Dallas and requires the usage of Schedule Planner"
           prev={0}
           next={2}
         />

@@ -37,9 +37,19 @@ type RowProps = {
   backupGrades: GenericFetchedData<GradesType>;
   rmp: GenericFetchedData<RMPInterface>;
   setPage: (arg0: SearchQuery) => void;
+  showProfNameOnly: boolean;
+  fallbackToProfOnly: boolean;
 };
 
-function Row({ course, grades, backupGrades, rmp, setPage }: RowProps) {
+function Row({
+  course,
+  grades,
+  backupGrades,
+  rmp,
+  setPage,
+  showProfNameOnly,
+  fallbackToProfOnly,
+}: RowProps) {
   const [open, setOpen] = useState(false);
   const canOpen =
     !(typeof grades === 'undefined' || grades.state === 'error') ||
@@ -63,11 +73,43 @@ function Row({ course, grades, backupGrades, rmp, setPage }: RowProps) {
 
   return (
     <>
-      <TableRow>
+      <TableRow
+        onClick={() => {
+          if (canOpen) {
+            setOpen(!open);
+          }
+        }} // opens/closes the card by clicking anywhere on the row
+        className="cursor-pointer"
+      >
         <TableCell className="border-b-0 pb-0" colSpan={6}>
-          <Typography className="leading-tight text-lg text-gray-600 dark:text-gray-200">
-            {searchQueryLabel(convertToProfOnly(course))}
-          </Typography>
+          <Tooltip
+            title={
+              typeof course.profFirst !== 'undefined' &&
+              typeof course.profLast !== 'undefined' &&
+              (rmp !== undefined &&
+              rmp.state === 'done' &&
+              rmp.data.teacherRatingTags.length > 0
+                ? 'Tags: ' +
+                  rmp.data.teacherRatingTags
+                    .sort((a, b) => b.tagCount - a.tagCount)
+                    .slice(0, 3)
+                    .map((tag) => tag.tagName)
+                    .join(', ')
+                : 'No Tags Available')
+            }
+            placement="top"
+          >
+            <Typography
+              onClick={
+                (e) => e.stopPropagation() // prevents opening/closing the card when clicking on the text
+              }
+              className="leading-tight text-lg text-gray-600 dark:text-gray-200 cursor-text w-fit"
+            >
+              {searchQueryLabel(
+                showProfNameOnly ? convertToProfOnly(course) : course,
+              )}
+            </Typography>
+          </Tooltip>
         </TableCell>
       </TableRow>
       <TableRow
@@ -76,8 +118,9 @@ function Row({ course, grades, backupGrades, rmp, setPage }: RowProps) {
             setOpen(!open);
           }
         }} // opens/closes the card by clicking anywhere on the row
+        className="cursor-pointer"
       >
-        <TableCell className="border-b-0 pr-0">
+        <TableCell className="border-b-0 flex gap-1">
           <Tooltip
             title={open ? 'Minimize Result' : 'Expand Result'}
             placement="top"
@@ -90,32 +133,29 @@ function Row({ course, grades, backupGrades, rmp, setPage }: RowProps) {
               <KeyboardArrowIcon />
             </IconButton>
           </Tooltip>
-        </TableCell>
-        <TableCell
-          className="border-b-0"
-          onClick={
-            (e) => e.stopPropagation() // prevents opening/closing the card when clicking on the compare checkbox
-          }
-        >
           <Tooltip title="Open professor profile" placement="top">
             <IconButton
               aria-label="open professor profile"
-              onClick={() => setPage(convertToProfOnly(course))}
+              onClick={(e) => {
+                e.stopPropagation(); // prevents opening/closing the card when clicking on the profile
+                setPage(convertToProfOnly(course));
+              }}
             >
               <PersonIcon />
             </IconButton>
           </Tooltip>
         </TableCell>
-        <TableCell align="right" className="border-b-0">
-          {((typeof grades === 'undefined' || grades.state === 'error') &&
+        <TableCell align="center" className="border-b-0">
+          {(fallbackToProfOnly &&
+            (typeof grades === 'undefined' || grades.state === 'error') &&
             (((typeof backupGrades === 'undefined' ||
               backupGrades.state === 'error') && <></>) ||
               (backupGrades.state === 'loading' && (
                 <Skeleton
                   variant="rounded"
-                  className="rounded-full px-5 py-2 ml-auto"
+                  className="rounded-full px-5 py-2 w-16 block mx-auto"
                 >
-                  <Typography className="text-base">A</Typography>
+                  <Typography className="text-base w-6">A+</Typography>
                 </Skeleton>
               )) ||
               (backupGrades.state === 'done' && (
@@ -144,7 +184,7 @@ function Row({ course, grades, backupGrades, rmp, setPage }: RowProps) {
                     }
                   >
                     <Typography
-                      className="text-base text-black rounded-full px-5 py-2 inline"
+                      className="text-base text-black text-center rounded-full px-5 py-2 w-16 block mx-auto"
                       sx={{
                         backgroundColor: gpaToColor(backupGrades.data.gpa),
                       }}
@@ -157,9 +197,9 @@ function Row({ course, grades, backupGrades, rmp, setPage }: RowProps) {
             (grades.state === 'loading' && (
               <Skeleton
                 variant="rounded"
-                className="rounded-full px-5 py-2 ml-auto"
+                className="rounded-full px-5 py-2 w-16 block mx-auto"
               >
-                <Typography className="text-base">A</Typography>
+                <Typography className="text-base w-6">A+</Typography>
               </Skeleton>
             )) ||
             (grades.state === 'done' && (
@@ -168,7 +208,7 @@ function Row({ course, grades, backupGrades, rmp, setPage }: RowProps) {
                 placement="top"
               >
                 <Typography
-                  className="text-base text-black rounded-full px-5 py-2 inline"
+                  className="text-base text-black text-center rounded-full px-5 py-2 w-16 block mx-auto"
                   sx={{ backgroundColor: gpaToColor(grades.data.gpa) }}
                 >
                   {grades.data.letter_grade}
@@ -177,14 +217,15 @@ function Row({ course, grades, backupGrades, rmp, setPage }: RowProps) {
             )) ||
             null}
         </TableCell>
-        <TableCell align="right" className="border-b-0">
+        <TableCell align="center" className="border-b-0">
           {((typeof rmp === 'undefined' || rmp.state === 'error') && <></>) ||
             (rmp.state === 'loading' && (
-              <Skeleton variant="rounded" className="rounded-full ml-auto">
+              <Skeleton variant="rounded" className="rounded-full">
                 <Rating sx={{ fontSize: 25 }} readOnly />
               </Skeleton>
             )) ||
-            (rmp.state === 'done' && (
+            (rmp.state === 'done' && rmp.data.numRatings == 0 && <></>) ||
+            (rmp.state === 'done' && rmp.data.numRatings != 0 && (
               <Tooltip
                 title={'Professor rating: ' + rmp.data.avgRating}
                 placement="top"
@@ -221,6 +262,8 @@ type SearchResultsTableProps = {
   grades: { [key: string]: GenericFetchedData<GradesType> };
   rmp: { [key: string]: GenericFetchedData<RMPInterface> };
   setPage: (arg0: SearchQuery) => void;
+  showProfNameOnly: boolean;
+  fallbackToProfOnly: boolean;
 };
 
 const SearchResultsTable = ({
@@ -228,6 +271,8 @@ const SearchResultsTable = ({
   grades,
   rmp,
   setPage,
+  showProfNameOnly,
+  fallbackToProfOnly,
 }: SearchResultsTableProps) => {
   //Table sorting category
   const [orderBy, setOrderBy] = useState<'none' | 'gpa' | 'rating'>('none');
@@ -285,16 +330,16 @@ const SearchResultsTable = ({
         const bRmp = rmp[searchQueryLabel(convertToProfOnly(b))];
         //drop loading/error rows to bottom
         if (
-          (!aRmp || aRmp.state !== 'done') &&
-          (!bRmp || bRmp.state !== 'done')
+          (!aRmp || aRmp.state !== 'done' || aRmp.data.numRatings == 0) &&
+          (!bRmp || bRmp.state !== 'done' || bRmp.data.numRatings == 0)
         ) {
           // If both aRmp and bRmp are not done, treat them as equal and return 0
           return 0;
         }
-        if (!aRmp || aRmp.state !== 'done') {
+        if (!aRmp || aRmp.state !== 'done' || aRmp.data.numRatings == 0) {
           return 9999;
         }
-        if (!bRmp || bRmp.state !== 'done') {
+        if (!bRmp || bRmp.state !== 'done' || bRmp.data.numRatings == 0) {
           return -9999;
         }
         const aRating = aRmp?.data?.avgRating ?? 0; // Fallback to 0 if undefined
@@ -314,8 +359,7 @@ const SearchResultsTable = ({
       <Table stickyHeader aria-label="collapsible table">
         <TableHead>
           <TableRow>
-            <TableCell />
-            <TableCell>Profile</TableCell>
+            <TableCell>Actions</TableCell>
             <TableCell>
               <Tooltip
                 title="Average GPA Across Course Sections"
@@ -363,6 +407,8 @@ const SearchResultsTable = ({
               backupGrades={grades[searchQueryLabel(convertToProfOnly(result))]}
               rmp={rmp[searchQueryLabel(convertToProfOnly(result))]}
               setPage={setPage}
+              showProfNameOnly={showProfNameOnly}
+              fallbackToProfOnly={fallbackToProfOnly}
             />
           ))}
         </TableBody>

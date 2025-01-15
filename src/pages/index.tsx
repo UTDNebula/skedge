@@ -187,7 +187,7 @@ const Index = () => {
     }
     setPage(set);
   }
-  const [course, setCourse] = useState<SearchQuery>({});
+  const [header, setHeader] = useState<string | SearchQuery>('');
 
   const [results, setResults] = useState<SearchQuery[]>([]);
 
@@ -198,27 +198,13 @@ const Index = () => {
         return;
       }
       setPage('list');
-      const newCourse = {
-        prefix: payload.header.subjectPrefix,
-        number: payload.header.courseNumber,
-      };
-      setCourse(newCourse);
-      fetchAndStoreGradesData(newCourse);
-      let newResults = [];
-      for (const professor of payload.professors) {
-        const splitProf = professor.split(' ');
-        const profFirst = splitProf[0];
-        const profLast = splitProf[splitProf.length - 1];
-        newResults.push({
-          prefix: payload.header.subjectPrefix,
-          number: payload.header.courseNumber,
-          profFirst: profFirst,
-          profLast: profLast,
-        });
+      setHeader(payload.header);
+      console.log(payload.header, typeof payload.header);
+      if (typeof payload.header !== 'string') {
+        fetchAndStoreGradesData(payload.header);
       }
-      newResults = removeDuplicates(newResults);
-      setResults(newResults);
-      getData(newResults);
+      setResults(removeDuplicates(payload.professors));
+      getData(payload.professors);
     });
   }, []);
 
@@ -318,8 +304,12 @@ const Index = () => {
           >
             <div className="p-4">
               <CourseOverview
-                course={course}
-                grades={grades[searchQueryLabel(course)]}
+                header={header}
+                grades={
+                  typeof header !== 'string'
+                    ? grades[searchQueryLabel(header)]
+                    : undefined
+                }
               />
             </div>
             <SearchResultsTable
@@ -327,6 +317,8 @@ const Index = () => {
               grades={grades}
               rmp={rmp}
               setPage={setPageAndScroll}
+              showProfNameOnly={typeof header !== 'string'}
+              fallbackToProfOnly={typeof header !== 'string'}
             />
           </div>
           {page !== 'list' && (
