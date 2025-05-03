@@ -1,4 +1,4 @@
-import '~/style.css';
+import '~/styles/globals.css';
 
 import { useMediaQuery } from '@mui/material';
 import { createTheme, ThemeProvider } from '@mui/material/styles';

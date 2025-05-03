@@ -1,4 +1,4 @@
-import '~/style.css';
+import '~/styles/globals.css';
 
 import { Button } from '@mui/material';
 import React, { useState } from 'react';
