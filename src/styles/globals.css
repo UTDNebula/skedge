@@ -69,6 +69,11 @@
     font-weight: 900;
     font-style: italic;
   }
+
+  html,
+  body {
+    @apply font-main;
+  }
 }
 
 @layer utilities {

@@ -3,12 +3,9 @@ import '~/styles/globals.css';
 import { useMediaQuery } from '@mui/material';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import React from 'react';
-import resolveConfig from 'tailwindcss/resolveConfig';
 
 import Index from '~/pages';
 import { neededOrigins } from '~data/config';
-
-import tailwindConfig from '../tailwind.config.js';
 
 const realBrowser = process.env.PLASMO_BROWSER === 'chrome' ? chrome : browser;
 async function checkPermissions() {
@@ -31,8 +28,6 @@ async function checkPermissions() {
 }
 checkPermissions();
 
-const fullTailwindConfig = resolveConfig(tailwindConfig);
-
 function IndexPopup() {
   const prefersDarkMode = useMediaQuery('(prefers-color-scheme: dark)');
   const muiTheme = createTheme({
@@ -40,14 +35,14 @@ function IndexPopup() {
       mode: prefersDarkMode ? 'dark' : 'light',
       //copied from tailwind.config.js
       primary: {
-        main: fullTailwindConfig.theme.colors.royal,
+        main: prefersDarkMode ? '#a297fd' : '#573dff',
       },
       secondary: {
-        main: fullTailwindConfig.theme.colors.royal,
-        light: fullTailwindConfig.theme.colors.periwinkle,
+        main: '#573dff',
+        light: '#c2c8ff',
       },
       error: {
-        main: fullTailwindConfig.theme.colors.persimmon['500'],
+        main: '#ff5743',
       },
     },
     typography: {
@@ -55,11 +50,12 @@ function IndexPopup() {
     },
     breakpoints: {
       values: {
+        //copied from tailwind.config.js
         xs: 0,
-        sm: parseInt(fullTailwindConfig.theme.screens.sm),
-        md: parseInt(fullTailwindConfig.theme.screens.md),
-        lg: parseInt(fullTailwindConfig.theme.screens.lg),
-        xl: parseInt(fullTailwindConfig.theme.screens.xl),
+        sm: 640,
+        md: 768,
+        lg: 1024,
+        xl: 1280,
       },
     },
   });

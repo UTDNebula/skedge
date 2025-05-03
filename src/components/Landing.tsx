@@ -130,7 +130,7 @@ const Landing = () => {
               variant="contained"
               disableElevation
               size="large"
-              className="normal-case bg-royal hover:bg-royalDark"
+              className="normal-case"
               onClick={() => storage.set(STORAGE_KEY, 1)}
             >
               Get Started
