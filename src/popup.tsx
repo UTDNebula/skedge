@@ -4,7 +4,7 @@ import { useMediaQuery } from '@mui/material';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import React from 'react';
 
-import Index from '~/pages';
+import Index from '~/app';
 import { neededOrigins } from '~data/config';
 
 const realBrowser = process.env.PLASMO_BROWSER === 'chrome' ? chrome : browser;

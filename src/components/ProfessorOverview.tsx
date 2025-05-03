@@ -10,8 +10,9 @@ import fetchWithCache, {
   cacheIndexProfessor,
   expireTime,
 } from '~data/fetchWithCache';
-import type { GenericFetchedData, GradesType } from '~pages';
-import { type SearchQuery, searchQueryLabel } from '~utils/SearchQuery';
+import type { GenericFetchedData } from '~types/GenericFetchedData';
+import type { GradesType } from '~types/GradesType';
+import { type SearchQuery, searchQueryLabel } from '~types/SearchQuery';
 
 const fallbackSrc = 'https://profiles.utdallas.edu/img/default.png';
 

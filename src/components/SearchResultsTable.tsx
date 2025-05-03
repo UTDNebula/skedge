@@ -22,14 +22,16 @@ import SingleGradesInfo from '~components/SingleGradesInfo';
 import SingleProfInfo from '~components/SingleProfInfo';
 import TableSortLabel from '~components/TableSortLabel';
 import type { RMPInterface } from '~data/fetchFromRmp';
-import type { GenericFetchedData, GradesType } from '~pages';
-import { useRainbowColors } from '~utils/colors';
+import type { GenericFetchedData } from '~types/GenericFetchedData';
+import type { GradesType } from '~types/GradesType';
 import {
   convertToCourseOnly,
   convertToProfOnly,
   type SearchQuery,
   searchQueryLabel,
-} from '~utils/SearchQuery';
+} from '~types/SearchQuery';
+import { useRainbowColors } from '~utils/colors';
+import gpaToLetterGrade from '~utils/gpaToLetterGrade';
 
 type RowProps = {
   course: SearchQuery;
@@ -160,7 +162,12 @@ function Row({
               )) ||
               (backupGrades.state === 'done' && (
                 <Tooltip
-                  title={'GPA: ' + backupGrades.data.gpa.toFixed(2)}
+                  title={
+                    'Median GPA: ' +
+                    backupGrades.data.gpa.toFixed(2) +
+                    ' | Mean GPA: ' +
+                    backupGrades.data.mean_gpa.toFixed(2)
+                  }
                   placement="top"
                 >
                   <Badge
@@ -189,7 +196,7 @@ function Row({
                         backgroundColor: gpaToColor(backupGrades.data.gpa),
                       }}
                     >
-                      {backupGrades.data.letter_grade}
+                      {gpaToLetterGrade(backupGrades.data.gpa)}
                     </Typography>
                   </Badge>
                 </Tooltip>
@@ -204,14 +211,19 @@ function Row({
             )) ||
             (grades.state === 'done' && (
               <Tooltip
-                title={'GPA: ' + grades.data.gpa.toFixed(2)}
+                title={
+                  'Median GPA: ' +
+                  grades.data.gpa.toFixed(2) +
+                  ' | Mean GPA: ' +
+                  grades.data.mean_gpa.toFixed(2)
+                }
                 placement="top"
               >
                 <Typography
                   className="text-base text-black text-center rounded-full px-5 py-2 w-16 block mx-auto"
                   sx={{ backgroundColor: gpaToColor(grades.data.gpa) }}
                 >
-                  {grades.data.letter_grade}
+                  {gpaToLetterGrade(grades.data.gpa)}
                 </Typography>
               </Tooltip>
             )) ||
@@ -362,7 +374,7 @@ const SearchResultsTable = ({
             <TableCell>Actions</TableCell>
             <TableCell>
               <Tooltip
-                title="Average GPA Across Course Sections"
+                title="Median GPA Across Course Sections"
                 placement="top"
               >
                 <div>
