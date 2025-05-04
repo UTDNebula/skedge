@@ -3,7 +3,7 @@ import { Chip, Collapse, Grid, IconButton, Skeleton } from '@mui/material';
 import React, { useState } from 'react';
 
 import type { RMPInterface } from '~data/fetchFromRmp';
-import type { GenericFetchedData } from '~pages';
+import type { GenericFetchedData } from '~types/GenericFetchedData';
 
 type Props = {
   rmp: GenericFetchedData<RMPInterface>;

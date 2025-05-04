@@ -1,6 +1,6 @@
 import type { PlasmoCSConfig } from 'plasmo';
 
-import { type SearchQuery } from '~utils/SearchQuery';
+import { type SearchQuery } from '~types/SearchQuery';
 
 // Plasmo CS config export
 export const config: PlasmoCSConfig = {
