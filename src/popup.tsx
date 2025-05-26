@@ -8,6 +8,7 @@ import React from 'react';
 import Index from '~/app';
 import { neededOrigins } from '~data/config';
 
+//Same as in src/tabs/permissions.tsx
 Sentry.init({
   dsn: 'https://c7a0478d8f145e3c8f690bf523d8b9cd@o4504918397353984.ingest.us.sentry.io/4509386315071488',
 
