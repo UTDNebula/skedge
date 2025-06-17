@@ -40,7 +40,7 @@ module.exports = {
       },
     },
     fontFamily: {
-      main: ['Inter', 'sans-serif'],
+      main: ['Inter', 'Roboto', 'sans-serif'],
     },
   },
   plugins: [],

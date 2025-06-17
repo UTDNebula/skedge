@@ -3,13 +3,15 @@ import React from 'react';
 
 import BarGraph from '~components/BarGraph';
 import { TRENDS_URL } from '~data/config';
-import type { GenericFetchedData, GradesType } from '~pages';
+import type { GenericFetchedData } from '~types/GenericFetchedData';
+import type { GradesType } from '~types/GradesType';
 import {
   convertToCourseOnly,
   convertToProfOnly,
   type SearchQuery,
   searchQueryLabel,
-} from '~utils/SearchQuery';
+} from '~types/SearchQuery';
+import gpaToLetterGrade from '~utils/gpaToLetterGrade';
 
 function convertNumbersToPercents(distribution: GradesType): number[] {
   const total = distribution.total;
@@ -37,7 +39,10 @@ function SingleGradesInfo({ title, course, grades }: Props) {
             Grades: <Skeleton className="inline-block w-[5ch]" />
           </p>
           <p>
-            GPA: <Skeleton className="inline-block w-[5ch]" />
+            Median GPA: <Skeleton className="inline-block w-[5ch]" />
+          </p>
+          <p>
+            Mean GPA: <Skeleton className="inline-block w-[5ch]" />
           </p>
         </div>
       </div>
@@ -102,8 +107,20 @@ function SingleGradesInfo({ title, course, grades }: Props) {
           Grades: <b>{grades.data.total.toLocaleString()}</b>
         </p>
         <p>
-          GPA:{' '}
-          <b>{grades.data.gpa === -1 ? 'None' : grades.data.gpa.toFixed(3)}</b>
+          Median GPA:{' '}
+          <b>
+            {grades.data.gpa === -1
+              ? 'None'
+              : gpaToLetterGrade(grades.data.gpa)}
+          </b>
+        </p>
+        <p>
+          Mean GPA:{' '}
+          <b>
+            {grades.data.mean_gpa === -1
+              ? 'None'
+              : grades.data.mean_gpa.toFixed(3)}
+          </b>
         </p>
       </div>
       <div className="flex justify-center">

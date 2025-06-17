@@ -13,43 +13,14 @@ import fetchWithCache, {
   cacheIndexGrades,
   expireTime,
 } from '~data/fetchWithCache';
+import type { GenericFetchedData } from '~types/GenericFetchedData';
+import type { GradesData, GradesType } from '~types/GradesType';
 import {
   convertToProfOnly,
   type SearchQuery,
   searchQueryEqual,
   searchQueryLabel,
-} from '~utils/SearchQuery';
-
-type GenericFetchedDataError<T> = {
-  state: 'error';
-  data?: T;
-};
-type GenericFetchedDataLoading = {
-  state: 'loading';
-};
-type GenericFetchedDataDone<T> = {
-  state: 'done';
-  data: T;
-};
-export type GenericFetchedData<T> =
-  | GenericFetchedDataError<T>
-  | GenericFetchedDataLoading
-  | GenericFetchedDataDone<T>;
-
-const gpaToLetterGrade = (gpa: number): string => {
-  if (gpa >= 4.0) return 'A';
-  if (gpa >= 3.67) return 'A-';
-  if (gpa >= 3.33) return 'B+';
-  if (gpa >= 3.0) return 'B';
-  if (gpa >= 2.67) return 'B-';
-  if (gpa >= 2.33) return 'C+';
-  if (gpa >= 2.0) return 'C';
-  if (gpa >= 1.67) return 'C-';
-  if (gpa >= 1.33) return 'D+';
-  if (gpa >= 1.0) return 'D';
-  if (gpa >= 0.67) return 'D-';
-  return 'F';
-};
+} from '~types/SearchQuery';
 
 //Find GPA, total, and grade_distribution based on including some set of semesters
 function calculateGrades(grades: GradesData, academicSessions?: string[]) {
@@ -73,9 +44,9 @@ function calculateGrades(grades: GradesData, academicSessions?: string[]) {
   const GPALookup = [
     4, 4, 3.67, 3.33, 3, 2.67, 2.33, 2, 1.67, 1.33, 1, 0.67, 0,
   ];
-  let gpa = -1;
+  let mean_gpa = -1;
   if (total !== 0) {
-    gpa =
+    mean_gpa =
       GPALookup.reduce(
         (accumulator, currentValue, index) =>
           accumulator + currentValue * grade_distribution[index],
@@ -83,26 +54,25 @@ function calculateGrades(grades: GradesData, academicSessions?: string[]) {
       ) /
       (total - grade_distribution[grade_distribution.length - 1]);
   }
-  const letter_grade = gpaToLetterGrade(gpa);
+
+  let median_gpa = -1;
+  let medianIndex = -1;
+  if (total != 0) {
+    let i = Math.floor(total / 2);
+    while (i > 0) {
+      medianIndex++;
+      i -= grade_distribution[medianIndex];
+    }
+    median_gpa = GPALookup[medianIndex];
+  }
 
   return {
-    gpa: gpa,
+    mean_gpa: mean_gpa,
+    gpa: median_gpa,
     total: total,
     grade_distribution: grade_distribution,
-    letter_grade: letter_grade,
   };
 }
-type GradesData = {
-  _id: string;
-  grade_distribution: number[];
-}[];
-export type GradesType = {
-  gpa: number;
-  total: number;
-  grade_distribution: number[];
-  letter_grade: string;
-  grades: GradesData;
-};
 //Fetch grades by academic session from nebula api
 function fetchGradesData(course: SearchQuery): Promise<GradesType> {
   return fetchWithCache(

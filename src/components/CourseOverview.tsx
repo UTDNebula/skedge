@@ -2,8 +2,10 @@ import { Skeleton } from '@mui/material';
 import React from 'react';
 
 import { TRENDS_URL } from '~data/config';
-import type { GenericFetchedData, GradesType } from '~pages';
-import { type SearchQuery, searchQueryLabel } from '~utils/SearchQuery';
+import type { GenericFetchedData } from '~types/GenericFetchedData';
+import type { GradesType } from '~types/GradesType';
+import { type SearchQuery, searchQueryLabel } from '~types/SearchQuery';
+import gpaToLetterGrade from '~utils/gpaToLetterGrade';
 
 type CourseOverviewProps = {
   header: string | SearchQuery;
@@ -26,7 +28,7 @@ const CourseOverview = ({ header, grades }: CourseOverviewProps) => {
           )) ||
             (grades.state === 'done' && (
               <p className="text-lg font-semibold">
-                {'Overall grade: ' + grades.data.letter_grade}
+                {'Overall grade: ' + gpaToLetterGrade(grades.data.gpa)}
               </p>
             ))}
           <a

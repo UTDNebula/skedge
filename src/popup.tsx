@@ -1,14 +1,39 @@
-import '~/style.css';
+import '~/styles/globals.css';
 
 import { useMediaQuery } from '@mui/material';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
+import * as Sentry from '@sentry/react';
 import React from 'react';
-import resolveConfig from 'tailwindcss/resolveConfig';
 
-import Index from '~/pages';
+import Index from '~/app';
 import { neededOrigins } from '~data/config';
 
-import tailwindConfig from '../tailwind.config.js';
+//Same as in src/tabs/permissions.tsx
+Sentry.init({
+  dsn: 'https://c7a0478d8f145e3c8f690bf523d8b9cd@o4504918397353984.ingest.us.sentry.io/4509386315071488',
+
+  // Add optional integrations for additional features
+  integrations: [
+    Sentry.replayIntegration(),
+    Sentry.feedbackIntegration({
+      showBranding: false,
+    }),
+  ],
+
+  // Define how likely traces are sampled. Adjust this value in production, or use tracesSampler for greater control.
+  tracesSampleRate: 1,
+
+  // Define how likely Replay events are sampled.
+  // This sets the sample rate to be 10%. You may want this to be 100% while
+  // in development and sample at a lower rate in production
+  replaysSessionSampleRate: 0.1,
+
+  // Define how likely Replay events are sampled when an error occurs.
+  replaysOnErrorSampleRate: 1.0,
+
+  // Setting this option to true will print useful information to the console while you're setting up Sentry.
+  debug: false,
+});
 
 const realBrowser = process.env.PLASMO_BROWSER === 'chrome' ? chrome : browser;
 async function checkPermissions() {
@@ -31,8 +56,6 @@ async function checkPermissions() {
 }
 checkPermissions();
 
-const fullTailwindConfig = resolveConfig(tailwindConfig);
-
 function IndexPopup() {
   const prefersDarkMode = useMediaQuery('(prefers-color-scheme: dark)');
   const muiTheme = createTheme({
@@ -40,14 +63,14 @@ function IndexPopup() {
       mode: prefersDarkMode ? 'dark' : 'light',
       //copied from tailwind.config.js
       primary: {
-        main: fullTailwindConfig.theme.colors.royal,
+        main: prefersDarkMode ? '#a297fd' : '#573dff',
       },
       secondary: {
-        main: fullTailwindConfig.theme.colors.royal,
-        light: fullTailwindConfig.theme.colors.periwinkle,
+        main: '#573dff',
+        light: '#c2c8ff',
       },
       error: {
-        main: fullTailwindConfig.theme.colors.persimmon['500'],
+        main: '#ff5743',
       },
     },
     typography: {
@@ -55,11 +78,12 @@ function IndexPopup() {
     },
     breakpoints: {
       values: {
+        //copied from tailwind.config.js
         xs: 0,
-        sm: parseInt(fullTailwindConfig.theme.screens.sm),
-        md: parseInt(fullTailwindConfig.theme.screens.md),
-        lg: parseInt(fullTailwindConfig.theme.screens.lg),
-        xl: parseInt(fullTailwindConfig.theme.screens.xl),
+        sm: 640,
+        md: 768,
+        lg: 1024,
+        xl: 1280,
       },
     },
   });
@@ -71,4 +95,4 @@ function IndexPopup() {
   );
 }
 
-export default IndexPopup;
+export default Sentry.withProfiler(IndexPopup);

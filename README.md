@@ -2,6 +2,8 @@
 
 _Get all of your Rate My Professors and grade distribution data without ever leaving schedule planner!_
 
+Available on the [Chrome Web Store](https://chromewebstore.google.com/detail/skedge/ghipfanpcodcmkjacmmfjdmccdiaahab) and on [Firefox Add-ons](https://addons.mozilla.org/en-US/firefox/addon/sk-edge/)
+
 [![Commitizen friendly](https://img.shields.io/badge/commitizen-friendly-brightgreen.svg)](http://commitizen.github.io/cz-cli/)
 
 ## About
@@ -48,4 +50,4 @@ If you are developing for the Firefox browser run `npm run dev:firefox` and load
 ### Contact
 
 This project is maintained by Nebula Labs. If you have
-any questions about this project or Nebula Labs, see the [discord server](https://discord.utdnebula.com/)
+any questions about this project or Nebula Labs, see the [Discord server](https://discord.utdnebula.com/)

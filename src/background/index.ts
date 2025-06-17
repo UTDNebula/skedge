@@ -6,7 +6,7 @@ import {
   scrapeCourseData,
 } from '~content';
 import { neededOrigins } from '~data/config';
-import { type SearchQuery } from '~utils/SearchQuery';
+import { type SearchQuery } from '~types/SearchQuery';
 
 export interface ShowCourseTabPayload {
   header: string | SearchQuery;

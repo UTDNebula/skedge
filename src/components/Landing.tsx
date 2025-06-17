@@ -30,7 +30,7 @@ const ExplanatoryPage = ({
         alt="tutorial descriptive"
         className="w-full bg-gray-100"
       />
-      <div className="grow p-8 flex flex-col gap-4 bg-gray-100 dark:bg-gray-900">
+      <div className="grow p-8 pb-20 flex flex-col gap-4 bg-gray-100 dark:bg-gray-900">
         <h1 className="text-2xl font-bold">{title}</h1>
         <p className="text-sm">{description}</p>
         <a
@@ -130,7 +130,7 @@ const Landing = () => {
               variant="contained"
               disableElevation
               size="large"
-              className="normal-case bg-royal hover:bg-royalDark"
+              className="normal-case"
               onClick={() => storage.set(STORAGE_KEY, 1)}
             >
               Get Started
