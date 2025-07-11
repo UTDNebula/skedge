@@ -15,8 +15,8 @@ export function TopMenu() {
         alt="gradient background"
         className="absolute h-full w-full inset-0 object-cover -z-10"
       />
-      <h1 className="text-xl font-kallisto font-bold">SKEDGE</h1>
-      <h2 className="text-sm font-normal font-kallisto">
+      <h1 className="text-xl font-display font-bold">SKEDGE</h1>
+      <h2 className="text-sm font-normal font-display">
         FROM{' '}
         <a
           href={TRENDS_URL}

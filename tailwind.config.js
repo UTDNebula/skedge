@@ -36,7 +36,7 @@ module.exports = {
         shade: '#101828', // drop shadow color from shipfaster ui
       },
       fontFamily: {
-        kallisto: ['Kallisto', 'Roboto', 'sans-serif'],
+        display: ['Bai Jamjuree', 'Roboto', 'sans-serif'],
       },
     },
     fontFamily: {
