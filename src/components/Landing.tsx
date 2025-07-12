@@ -108,10 +108,10 @@ const Landing = () => {
                 NEBULA LABS
               </a>
             </h2>
-            <h1 className="text-6xl font-extrabold font-kallisto mb-2">
+            <h1 className="text-6xl font-extrabold font-display mb-2">
               SKEDGE
             </h1>
-            <h3 className="text-sm font-semibold font-kallisto mb-6">
+            <h3 className="text-sm font-semibold font-display mb-6">
               FROM{' '}
               <a
                 href={TRENDS_URL}
