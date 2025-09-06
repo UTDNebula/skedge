@@ -1,7 +1,7 @@
 {
   "name": "Skedge",
   "displayName": "Skedge",
-  "version": "2.2.1",
+  "version": "2.2.2",
   "description": "your registration assistant by students, for students",
   "author": "Nebula Labs",
   "packageManager": "npm@8.19.2",
@@ -104,7 +104,8 @@
     "host_permissions": [
       "https://utdallas.collegescheduler.com/*",
       "https://www.ratemyprofessors.com/*",
-      "https://trends.utdnebula.com/*"
+      "https://trends.utdnebula.com/*",
+      "https://*.sentry.io/*"
     ],
     "browser_specific_settings": {
       "gecko": {
