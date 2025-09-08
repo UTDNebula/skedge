@@ -6,6 +6,7 @@ import tutorial1 from 'data-base64:../../assets/tutorial1.png';
 import tutorial2 from 'data-base64:../../assets/tutorial2.png';
 import React, { useEffect, useState } from 'react';
 
+import NebulaLogo from '~components/NebulaLogo';
 import { TRENDS_URL } from '~data/config';
 
 const STORAGE_KEY = 'page';
@@ -97,15 +98,17 @@ const Landing = () => {
             className="absolute h-full w-full inset-0 object-cover -z-10"
           />
           <div className="max-w-xl">
-            <h2 className="text-sm font-semibold mb-3 text-cornflower-600 dark:text-cornflower-400 tracking-wider">
-              POWERED BY{' '}
+            <h2 className="text-sm font-semibold mb-3 text-cornflower-600 dark:text-cornflower-400 tracking-wider flex gap-1 items-center">
+              <span className="leading-none">POWERED BY</span>
+              {/*eslint-disable-next-line react/jsx-no-target-blank*/}
               <a
                 href="https://www.utdnebula.com/"
                 target="_blank"
-                className="underline decoration-transparent hover:decoration-inherit transition"
-                rel="noreferrer"
+                rel="noopener"
+                className="underline decoration-transparent hover:decoration-inherit transition flex gap-1 items-center"
               >
-                NEBULA LABS
+                <NebulaLogo className="h-4 w-auto fill-cornflower-600 dark:fill-cornflower-400" />
+                <span className="leading-none">NEBULA LABS</span>
               </a>
             </h2>
             <h1 className="text-6xl font-extrabold font-display mb-2">
