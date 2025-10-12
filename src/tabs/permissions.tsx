@@ -51,7 +51,7 @@ function PermissionsPls() {
         variant="contained"
         disableElevation
         size="large"
-        className="normal-case bg-royal hover:bg-royalDark"
+        className="normal-case bg-royal hover:bg-royal-dark"
         onClick={async () => {
           const response = await realBrowser.permissions.request({
             origins: neededOrigins,
