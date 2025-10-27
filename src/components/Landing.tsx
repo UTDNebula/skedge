@@ -25,7 +25,7 @@ const ExplanatoryPage = ({
   next?: number;
 }) => {
   return (
-    <div className="h-full w-full flex flex-col dark:bg-black">
+    <div className="h-full w-full flex flex-col bg-[rgb(246,246,246)] dark:bg-black">
       <img
         src={src}
         alt="tutorial descriptive"
