@@ -269,7 +269,7 @@ const Index = () => {
           <TopMenu />
           <div
             className={
-              'h-fit dark:bg-black' + (page !== 'list' ? ' hidden' : '')
+              'h-fit bg-[rgb(246,246,246)] dark:bg-black' + (page !== 'list' ? ' hidden' : '')
             }
           >
             <div className="p-4">
@@ -292,7 +292,7 @@ const Index = () => {
             />
           </div>
           {page !== 'list' && (
-            <div className="h-fit min-h-full p-4 dark:bg-black">
+            <div className="h-fit min-h-full p-4 bg-[rgb(246,246,246)] dark:bg-black">
               <ProfessorOverview
                 professor={convertToProfOnly(page)}
                 grades={grades[searchQueryLabel(convertToProfOnly(page))]}
