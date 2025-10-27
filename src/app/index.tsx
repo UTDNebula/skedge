@@ -269,7 +269,8 @@ const Index = () => {
           <TopMenu />
           <div
             className={
-              'h-fit bg-[rgb(246,246,246)] dark:bg-black' + (page !== 'list' ? ' hidden' : '')
+              'h-fit bg-[rgb(246,246,246)] dark:bg-black' +
+              (page !== 'list' ? ' hidden' : '')
             }
           >
             <div className="p-4">
