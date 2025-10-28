@@ -98,7 +98,7 @@ const Landing = () => {
             className="absolute h-full w-full inset-0 object-cover -z-10"
           />
           <div className="max-w-xl">
-            <h2 className="text-sm font-semibold mb-3 text-cornflower-600 dark:text-cornflower-400 tracking-wider flex gap-1 items-center">
+            <h2 className="text-sm font-semibold mb-3 text-royal dark:text-cornflower-300 tracking-wider flex gap-1 items-center">
               <span className="leading-none">POWERED BY</span>
               {/*eslint-disable-next-line react/jsx-no-target-blank*/}
               <a
@@ -107,7 +107,7 @@ const Landing = () => {
                 rel="noopener"
                 className="underline decoration-transparent hover:decoration-inherit transition flex gap-1 items-center"
               >
-                <NebulaLogo className="h-4 w-auto fill-cornflower-600 dark:fill-cornflower-400" />
+                <NebulaLogo className="h-4 w-auto fill-royal dark:fill-cornflower-300" />
                 <span className="leading-none">NEBULA LABS</span>
               </a>
             </h2>
