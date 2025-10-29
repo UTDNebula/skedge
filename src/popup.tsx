@@ -84,7 +84,7 @@ function IndexPopup() {
     },
     breakpoints: {
       values: {
-        //copied from tailwind.config.js
+        //copied from globals.css
         xs: 0,
         sm: 640,
         md: 768,
