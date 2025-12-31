@@ -1,8 +1,7 @@
-import gradient from 'data-base64:../../assets/gradient.png';
-import React from 'react';
-
 import NebulaLogo from '~components/NebulaLogo';
 import { TRENDS_URL } from '~data/config';
+import gradient from 'data-base64:../../assets/gradient.png';
+import React from 'react';
 
 /**
  * This is a component to hold Skedge branding

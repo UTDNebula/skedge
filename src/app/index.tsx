@@ -1,6 +1,4 @@
 import { sendToBackground } from '@plasmohq/messaging';
-import React, { useEffect, useState } from 'react';
-
 import type { ShowCourseTabPayload } from '~background';
 import CourseOverview from '~components/CourseOverview';
 import Landing from '~components/Landing';
@@ -17,10 +15,11 @@ import type { GenericFetchedData } from '~types/GenericFetchedData';
 import type { GradesData, GradesType } from '~types/GradesType';
 import {
   convertToProfOnly,
-  type SearchQuery,
   searchQueryEqual,
   searchQueryLabel,
+  type SearchQuery,
 } from '~types/SearchQuery';
+import React, { useEffect, useState } from 'react';
 
 //Find GPA, total, and grade_distribution based on including some set of semesters
 function calculateGrades(grades: GradesData, academicSessions?: string[]) {

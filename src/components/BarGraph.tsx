@@ -1,9 +1,8 @@
 import { useMediaQuery } from '@mui/material';
+import { useRainbowColors } from '~utils/colors';
 import { type ApexOptions } from 'apexcharts';
 import dynamic from 'next/dynamic';
 import React from 'react';
-
-import { useRainbowColors } from '~utils/colors';
 
 const Chart = dynamic(() => import('react-apexcharts'), { ssr: false });
 

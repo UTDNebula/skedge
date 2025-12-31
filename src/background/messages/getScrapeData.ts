@@ -1,5 +1,4 @@
 import type { PlasmoMessaging } from '@plasmohq/messaging';
-
 import { getScrapedCourseData } from '..';
 
 const handler: PlasmoMessaging.MessageHandler = async (req, res) => {

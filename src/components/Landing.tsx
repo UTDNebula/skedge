@@ -1,13 +1,12 @@
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import { Button, IconButton } from '@mui/material';
 import { Storage } from '@plasmohq/storage';
+import NebulaLogo from '~components/NebulaLogo';
+import { TRENDS_URL } from '~data/config';
 import gradient from 'data-base64:../../assets/gradient.png';
 import tutorial1 from 'data-base64:../../assets/tutorial1.png';
 import tutorial2 from 'data-base64:../../assets/tutorial2.png';
 import React, { useEffect, useState } from 'react';
-
-import NebulaLogo from '~components/NebulaLogo';
-import { TRENDS_URL } from '~data/config';
 
 const STORAGE_KEY = 'page';
 
