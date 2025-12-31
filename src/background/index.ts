@@ -1,5 +1,4 @@
 import { Storage } from '@plasmohq/storage';
-
 import {
   addGCalButtons,
   listenForTableChange,

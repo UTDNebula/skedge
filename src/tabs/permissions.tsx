@@ -1,10 +1,8 @@
 import '~/styles/globals.css';
-
 import { Button } from '@mui/material';
 import * as Sentry from '@sentry/react';
-import React, { useState } from 'react';
-
 import { neededOrigins } from '~data/config';
+import React, { useState } from 'react';
 
 //Same as in src/popup.tsx
 Sentry.init({

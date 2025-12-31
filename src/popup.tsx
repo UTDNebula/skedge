@@ -1,12 +1,10 @@
 import '~/styles/globals.css';
-
 import { useMediaQuery } from '@mui/material';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import * as Sentry from '@sentry/react';
-import React from 'react';
-
 import Index from '~/app';
 import { neededOrigins } from '~data/config';
+import React from 'react';
 
 const realBrowser = process.env.PLASMO_BROWSER === 'chrome' ? chrome : browser;
 
