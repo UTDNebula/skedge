@@ -1,7 +1,7 @@
 {
   "name": "Skedge",
   "displayName": "Skedge",
-  "version": "2.2.3",
+  "version": "2.2.4",
   "description": "your registration assistant by students, for students",
   "author": "Nebula Labs",
   "packageManager": "npm@8.19.2",
