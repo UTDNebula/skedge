@@ -15,8 +15,6 @@ import {
   Tooltip,
   Typography,
 } from '@mui/material';
-import React, { useState } from 'react';
-
 import Rating from '~components/Rating';
 import SingleGradesInfo from '~components/SingleGradesInfo';
 import SingleProfInfo from '~components/SingleProfInfo';
@@ -27,11 +25,12 @@ import type { GradesType } from '~types/GradesType';
 import {
   convertToCourseOnly,
   convertToProfOnly,
-  type SearchQuery,
   searchQueryLabel,
+  type SearchQuery,
 } from '~types/SearchQuery';
 import { useRainbowColors } from '~utils/colors';
 import gpaToLetterGrade from '~utils/gpaToLetterGrade';
+import React, { useState } from 'react';
 
 type RowProps = {
   course: SearchQuery;

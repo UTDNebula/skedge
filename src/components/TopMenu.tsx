@@ -1,8 +1,7 @@
+import { TRENDS_URL } from '~data/config';
 import gradient from 'data-base64:../../assets/gradient.png';
 import React from 'react';
-
-import NebulaLogo from '~components/NebulaLogo';
-import { TRENDS_URL } from '~data/config';
+import { SkedgeLogoStandalone } from './SkedgeLogo';
 
 /**
  * This is a component to hold Skedge branding
@@ -16,20 +15,26 @@ export function TopMenu() {
         alt="gradient background"
         className="absolute h-full w-full inset-0 object-cover -z-10"
       />
-      <NebulaLogo className="h-8 w-auto fill-haiti dark:fill-white" />
-      <div className="flex flex-col">
-        <h1 className="text-xl font-display font-bold">SKEDGE</h1>
-        <h2 className="text-sm font-normal font-display">
-          FROM{' '}
-          <a
-            href={TRENDS_URL}
-            target="_blank"
-            className="underline decoration-transparent hover:decoration-inherit transition"
-            rel="noreferrer"
-          >
-            UTD TRENDS
-          </a>
-        </h2>
+      <div className="font-display flex gap-2 items-center select-none text-haiti dark:text-white py-2">
+        <div className="flex flex-row items-center">
+          <SkedgeLogoStandalone className="h-10 w-auto fill-haiti dark:fill-white" />
+        </div>
+        <div className="flex flex-col">
+          <span className="whitespace-nowrap text-lg md:text-xl font-bold leading-5">
+            SKEDGE
+          </span>
+          <span className="whitespace-nowrap text-xs md:text-sm font-medium">
+            from{' '}
+            <a
+              href={TRENDS_URL}
+              target="_blank"
+              className="underline decoration-transparent hover:decoration-inherit transition"
+              rel="noreferrer"
+            >
+              UTD TRENDS
+            </a>
+          </span>
+        </div>
       </div>
     </div>
   );

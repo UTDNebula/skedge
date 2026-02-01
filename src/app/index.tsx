@@ -1,6 +1,4 @@
 import { sendToBackground } from '@plasmohq/messaging';
-import React, { useEffect, useState } from 'react';
-
 import type { ShowCourseTabPayload } from '~background';
 import CourseOverview from '~components/CourseOverview';
 import Landing from '~components/Landing';
@@ -17,10 +15,11 @@ import type { GenericFetchedData } from '~types/GenericFetchedData';
 import type { GradesData, GradesType } from '~types/GradesType';
 import {
   convertToProfOnly,
-  type SearchQuery,
   searchQueryEqual,
   searchQueryLabel,
+  type SearchQuery,
 } from '~types/SearchQuery';
+import React, { useEffect, useState } from 'react';
 
 //Find GPA, total, and grade_distribution based on including some set of semesters
 function calculateGrades(grades: GradesData, academicSessions?: string[]) {
@@ -269,7 +268,8 @@ const Index = () => {
           <TopMenu />
           <div
             className={
-              'h-fit dark:bg-black' + (page !== 'list' ? ' hidden' : '')
+              'h-fit bg-[rgb(246,246,246)] dark:bg-black' +
+              (page !== 'list' ? ' hidden' : '')
             }
           >
             <div className="p-4">
@@ -292,7 +292,7 @@ const Index = () => {
             />
           </div>
           {page !== 'list' && (
-            <div className="h-fit min-h-full p-4 dark:bg-black">
+            <div className="h-fit min-h-full p-4 bg-[rgb(246,246,246)] dark:bg-black">
               <ProfessorOverview
                 professor={convertToProfOnly(page)}
                 grades={grades[searchQueryLabel(convertToProfOnly(page))]}

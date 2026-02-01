@@ -1,6 +1,4 @@
 import { Skeleton } from '@mui/material';
-import React from 'react';
-
 import BarGraph from '~components/BarGraph';
 import { TRENDS_URL } from '~data/config';
 import type { GenericFetchedData } from '~types/GenericFetchedData';
@@ -8,10 +6,11 @@ import type { GradesType } from '~types/GradesType';
 import {
   convertToCourseOnly,
   convertToProfOnly,
-  type SearchQuery,
   searchQueryLabel,
+  type SearchQuery,
 } from '~types/SearchQuery';
 import gpaToLetterGrade from '~utils/gpaToLetterGrade';
+import React from 'react';
 
 function convertNumbersToPercents(distribution: GradesType): number[] {
   const total = distribution.total;
