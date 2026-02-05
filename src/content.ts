@@ -104,6 +104,7 @@ export async function scrapeCourseData() {
       const sectionDetailsList = sectionDetails.querySelectorAll('li');
       const searchQuery: SearchQuery = {};
       let professor;
+      let capacity;
       sectionDetailsList.forEach((li) => {
         const detailLabelText =
           li.querySelector<HTMLElement>('strong > span').innerText;
@@ -116,7 +117,31 @@ export async function scrapeCourseData() {
         if (detailLabelText.includes('Instructor')) {
           professor = li.innerText.split(':')[1].trim();
         }
+        if (detailLabelText.includes('Capacity')) {
+          capacity = li.innerText.split(':')[1].trim();
+        }
       });
+      
+      // Modify "Seats Open" column to show "seats open / capacity"
+      let seatsOpenIndex;
+      for (let i = 0; i < tableHeaders.children.length; i++) {
+        if ((tableHeaders.children[i] as HTMLElement).innerText.includes('Seats Open')) {
+          seatsOpenIndex = i - 1; // i + 0 affected the waitlist column
+          break;
+        }
+      }
+      
+      if (typeof seatsOpenIndex !== 'undefined') {
+        const courseRowCells = courseRow.querySelector('tr');
+        const seatsOpenCell = courseRowCells.children[seatsOpenIndex] as HTMLElement;
+        const numSeatsOpen = seatsOpenCell.innerText.trim();
+        
+        // Modify the seats open display
+        if (capacity) {
+          seatsOpenCell.innerText = `${numSeatsOpen}/${capacity}`;
+        }
+      }
+
       // append professor name to the table
       const courseRowCells = courseRow.querySelector('tr');
       let newTd = courseRowCells.querySelector(
