@@ -121,21 +121,27 @@ export async function scrapeCourseData() {
           capacity = li.innerText.split(':')[1].trim();
         }
       });
-      
+
       // Modify "Seats Open" column to show "seats open / capacity"
       let seatsOpenIndex;
       for (let i = 0; i < tableHeaders.children.length; i++) {
-        if ((tableHeaders.children[i] as HTMLElement).innerText.includes('Seats Open')) {
+        if (
+          (tableHeaders.children[i] as HTMLElement).innerText.includes(
+            'Seats Open',
+          )
+        ) {
           seatsOpenIndex = i - 1; // i + 0 affected the waitlist column
           break;
         }
       }
-      
+
       if (typeof seatsOpenIndex !== 'undefined') {
         const courseRowCells = courseRow.querySelector('tr');
-        const seatsOpenCell = courseRowCells.children[seatsOpenIndex] as HTMLElement;
+        const seatsOpenCell = courseRowCells.children[
+          seatsOpenIndex
+        ] as HTMLElement;
         const numSeatsOpen = seatsOpenCell.innerText.trim();
-        
+
         // Modify the seats open display
         if (capacity) {
           seatsOpenCell.innerText = `${numSeatsOpen}/${capacity}`;
