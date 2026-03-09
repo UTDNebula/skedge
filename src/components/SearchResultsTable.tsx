@@ -368,10 +368,10 @@ const SearchResultsTable = ({
     //TODO: sticky header
     <TableContainer component={Paper}>
       <Table stickyHeader aria-label="collapsible table">
-        <TableHead>
+        <TableHead >
           <TableRow>
-            <TableCell>Actions</TableCell>
-            <TableCell>
+            <TableCell className="bg-white dark:bg-neutral-800">Actions</TableCell>
+            <TableCell className="bg-white dark:bg-neutral-800">
               <Tooltip
                 title="Median GPA Across Course Sections"
                 placement="top"
@@ -389,7 +389,7 @@ const SearchResultsTable = ({
                 </div>
               </Tooltip>
             </TableCell>
-            <TableCell>
+            <TableCell className="bg-white dark:bg-neutral-800">
               <Tooltip
                 title="Average Professor Rating from Rate My Professors"
                 placement="top"
