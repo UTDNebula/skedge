@@ -24,11 +24,11 @@ const ExplanatoryPage = ({
   next?: number;
 }) => {
   return (
-    <div className="h-full w-full flex flex-col bg-[rgb(246,246,246)] dark:bg-black">
+    <div className="h-full w-full flex flex-col bg-light dark:bg-dark">
       <img
         src={src}
         alt="tutorial descriptive"
-        className="w-full bg-gray-100"
+        className="w-full bg-gray-100 dark:bg-gray-900"
       />
       <div className="grow p-8 pb-20 flex flex-col gap-4 bg-gray-100 dark:bg-gray-900">
         <h1 className="text-2xl font-bold">{title}</h1>
