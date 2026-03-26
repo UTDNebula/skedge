@@ -20,6 +20,8 @@ module.exports = {
         },
         royal: '#573dff', // brand secondary (dark)
         royalDark: '#3c2ab2',
+        light: '#f6f6f6',
+        dark: '#101010',
         cornflower: {
           50: '#eae4ff',
           100: '#d3caff', // ~periwinkle
@@ -31,6 +33,7 @@ module.exports = {
           700: '#45449f', // ~royal
           800: '#363475',
           900: '#28254d',
+          950: '#141327',
         },
         periwinkle: '#c2c8ff', // brand secondary (light)
         shade: '#101828', // drop shadow color from shipfaster ui
