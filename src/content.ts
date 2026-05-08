@@ -242,16 +242,16 @@ export async function scrapeCourseData() {
         const profQuery = { profFirst: profFirst, profLast: profLast };
         fullQuery = { ...fullQuery, ...profQuery };
         profAbbreviated = `${profFirst.charAt(0)}. ${profLast}`;
-        // @ts-expect-error:next-line
         realBrowser.runtime
+          // @ts-expect-error:next-line
           .sendMessage({ type: 'fetchRMP', query: profQuery })
           .then((rmpData) => {
             RMPText = `\nRMP Average: ${rmpData.avgRating.toFixed(2)}`;
           });
       }
       let GradesText = '\n[No Grade Data]';
-      // @ts-expect-error:next-line
       realBrowser.runtime
+        // @ts-expect-error:next-line
         .sendMessage({ type: 'fetchGrades', query: fullQuery })
         .then((gradesData) => {
           GradesText = `\nMedian GPA: ${gradesData.gpa.toFixed(2)}`;
