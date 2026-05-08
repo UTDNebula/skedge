@@ -58,9 +58,8 @@ export async function scrapeCourseData() {
 
   /** Gets all professor names and then injects them into the section table */
   async function injectAndGetProfessorNames(): Promise<SearchQuery[]> {
-
-      const realBrowser =
-    process.env.PLASMO_BROWSER === 'chrome' ? chrome : browser;
+    const realBrowser =
+      process.env.PLASMO_BROWSER === 'chrome' ? chrome : browser;
 
     const professors: SearchQuery[] = [];
     const courseTable = await waitForElement('table');
@@ -99,45 +98,39 @@ export async function scrapeCourseData() {
       tableHeaders.insertBefore(newHeader, tableHeaders.children[sectionPlace]);
     }
 
-
-   
     // create tooltip element
-    const tooltip = document.createElement("div")    
-    const tooltipContent = document.createElement("div")
-    const arrow = document.createElement("div")
-    console.log("arrow is: " + arrow);
-    tooltip.appendChild(arrow)
-    tooltip.appendChild(tooltipContent)
-    console.log("children are: " + tooltip.children.item(0));
-    courseTable.appendChild(tooltip)
-    tooltip.style.position= 'fixed';
+    const tooltip = document.createElement('div');
+    const tooltipContent = document.createElement('div');
+    const arrow = document.createElement('div');
+    tooltip.appendChild(arrow);
+    tooltip.appendChild(tooltipContent);
+    courseTable.appendChild(tooltip);
+    tooltip.style.position = 'fixed';
     tooltip.style.zIndex = '999999';
-    tooltip.style.background= '#4A18FF';
-    tooltip.style.color= 'white';
+    tooltip.style.background = '#4A18FF';
+    tooltip.style.color = 'white';
     tooltip.style.padding = '6px 8px';
-    tooltip.style.borderRadius= '6px';
-    tooltip.style.fontSize= '12px';
-    tooltip.style.pointerEvents= 'none';
+    tooltip.style.borderRadius = '6px';
+    tooltip.style.fontSize = '12px';
+    tooltip.style.pointerEvents = 'none';
     tooltip.style.opacity = '0';
-    tooltip.style.transition= 'opacity 0.12s ease';
-    tooltip.style.maxWidth= '250px';
-    tooltip.style.whiteSpace = 'pre-wrap'
-
+    tooltip.style.transition = 'opacity 0.12s ease';
+    tooltip.style.maxWidth = '250px';
+    tooltip.style.whiteSpace = 'pre-wrap';
 
     const arrowSize = 8;
-    const arrowLocation = 0.9
-    arrow.style.position = "absolute"
-    arrow.style.top = "-" + arrowSize + "px"
-    arrow.style.left = arrowLocation * 100 + "%"
-    arrow.style.transform = "translateX(-50%)"
+    const arrowLocation = 0.9;
+    arrow.style.position = 'absolute';
+    arrow.style.top = '-' + arrowSize + 'px';
+    arrow.style.left = arrowLocation * 100 + '%';
+    arrow.style.transform = 'translateX(-50%)';
 
-    arrow.style.width = "0"
-    arrow.style.height = "0"
+    arrow.style.width = '0';
+    arrow.style.height = '0';
 
-    arrow.style.borderLeft = "6px solid transparent"
-    arrow.style.borderRight = "6px solid transparent"
-    arrow.style.borderBottom = arrowSize + "px solid #4A18FF"
-
+    arrow.style.borderLeft = '6px solid transparent';
+    arrow.style.borderRight = '6px solid transparent';
+    arrow.style.borderBottom = arrowSize + 'px solid #4A18FF';
 
     courseRows.forEach((courseRow) => {
       // get professor name from course row
@@ -212,96 +205,90 @@ export async function scrapeCourseData() {
         if (sectionDisabled !== null) {
           sectionDisabled.colSpan = sectionDisabled.colSpan + 1;
         }
-      }    
-      const container = newTd.appendChild(document.createElement('div'))
+      }
+      const container = newTd.appendChild(document.createElement('div'));
       container.style.alignItems = 'center';
       container.style.display = 'flex';
       container.style.justifyContent = 'center';
-      const text = container.appendChild(document.createElement('span'))
-      text.innerText = professor ?? 'No Instructor';    
-      text.style.maxWidth = '80%';      
-      text.style.margin = '2px 0 4px 0'
+      const text = container.appendChild(document.createElement('span'));
+      text.innerText = professor ?? 'No Instructor';
+      text.style.maxWidth = '80%';
+      text.style.margin = '2px 0 4px 0';
 
-      text.style.textDecoration = 'underline dotted'
-      text.style.textDecorationThickness = '2px'
+      text.style.textDecoration = 'underline dotted';
+      text.style.textDecorationThickness = '2px';
       text.style.textUnderlineOffset = '4px';
 
       const iconSize = 10;
       const icon = container.appendChild(document.createElement('span'));
       icon.style.borderRadius = '100%';
       icon.style.backgroundColor = '#4A18FF';
-      icon.style.opacity = "90%"
+      icon.style.opacity = '90%';
       icon.style.display = 'inline-block';
       icon.style.width = iconSize + 'px';
-      icon.style.height = iconSize +'px';
+      icon.style.height = iconSize + 'px';
       icon.style.marginLeft = '1em';
       icon.style.flexShrink = '0';
 
-
-      
-
-
-      let profAbbreviated : string = '[Overall]'
-      let fullQuery = {...searchQuery}
-      let RMPText = ''
+      let profAbbreviated: string = '[Overall]';
+      let fullQuery = { ...searchQuery };
+      let RMPText = '';
       if (typeof professor !== 'undefined') {
-        // TODO: implement Alias table from Trends 
-        RMPText = '\n[No RMP Data]'
-        const professorSplit : string[] = professor.split(' ');
-        const profLast = professorSplit[professorSplit.length-1];
+        // TODO: implement Alias table from Trends
+        RMPText = '\n[No RMP Data]';
+        const professorSplit: string[] = professor.split(' ');
+        const profLast = professorSplit[professorSplit.length - 1];
         const profFirst = professorSplit[0];
-        const profQuery = {profFirst: profFirst,
-                    profLast: profLast
-            }
-        fullQuery = {...fullQuery, ...profQuery}        
-        profAbbreviated = `${profFirst.charAt(0)}. ${profLast}`
-        realBrowser.runtime.sendMessage(
-          {type: 'fetchRMP',
-            query: profQuery
-          }).then((rmpData) => {                  
-        RMPText = `\nRMP Average: ${rmpData.avgRating.toFixed(2)}`
-      });      
+        const profQuery = { profFirst: profFirst, profLast: profLast };
+        fullQuery = { ...fullQuery, ...profQuery };
+        profAbbreviated = `${profFirst.charAt(0)}. ${profLast}`;
+        // @ts-expect-error:next-line
+        realBrowser.runtime
+          .sendMessage({ type: 'fetchRMP', query: profQuery })
+          .then((rmpData) => {
+            RMPText = `\nRMP Average: ${rmpData.avgRating.toFixed(2)}`;
+          });
       }
-      let GradesText = '\n[No Grade Data]'
-      realBrowser.runtime.sendMessage(
-        {type: 'fetchGrades',
-          query: fullQuery
-        }).then((gradesData) => {
+      let GradesText = '\n[No Grade Data]';
+      // @ts-expect-error:next-line
+      realBrowser.runtime
+        .sendMessage({ type: 'fetchGrades', query: fullQuery })
+        .then((gradesData) => {
           GradesText = `\nMedian GPA: ${gradesData.gpa.toFixed(2)}`;
         });
 
-      function repositionTooltip(){
+      function repositionTooltip() {
         // move to icon location -- arrow on right side pointing up to icon
-        const rect = icon.getBoundingClientRect()
-        const width = tooltip.getBoundingClientRect().width
+        const rect = icon.getBoundingClientRect();
+        const width = tooltip.getBoundingClientRect().width;
 
-        tooltip.style.top = rect.bottom + 8 + "px"        
-        tooltip.style.left = (rect.left - arrowLocation*width + iconSize *0.5) + "px"
+        tooltip.style.top = rect.bottom + 8 + 'px';
+        tooltip.style.left =
+          rect.left - arrowLocation * width + iconSize * 0.5 + 'px';
       }
-      const el  = container;
-      el.addEventListener("mouseenter", () => {
-        
+      const el = container;
+      el.addEventListener('mouseenter', () => {
         // show
         tooltip.style.opacity = '90%';
-                
-        const content = 
-        `${searchQuery.prefix.toUpperCase()} ${searchQuery.number} - ${profAbbreviated}`+
-        GradesText+
-        RMPText;
+
+        const content =
+          `${searchQuery.prefix.toUpperCase()} ${searchQuery.number} - ${profAbbreviated}` +
+          GradesText +
+          RMPText;
         tooltipContent.textContent = content;
 
         repositionTooltip();
-      })
+      });
 
-      el.addEventListener("mouseleave", () => {
+      el.addEventListener('mouseleave', () => {
         tooltip.style.opacity = '0';
-      })
-      
+      });
+
       // hide tooltip on window scroll to avoid weird positioning
-      window.addEventListener("scroll", () => {
-        tooltip.style.opacity = '0'        
-      })      
-            
+      window.addEventListener('scroll', () => {
+        tooltip.style.opacity = '0';
+      });
+
       if (typeof professor !== 'undefined') {
         // this is in case we have multiple instructions per section
         const sectionProfessors = professor.trim().split(',');
@@ -316,7 +303,7 @@ export async function scrapeCourseData() {
       }
       // collapse section details
       sectionDetailsButton.click();
-    });    
+    });
     return professors;
   }
 }

@@ -5,7 +5,7 @@ import {
   scrapeCourseData,
 } from '~content';
 import { neededOrigins } from '~data/config';
-import {fetchGradesData, fetchRmpData} from '~data/fetchGradesData'
+import { fetchGradesData, fetchRmpData } from '~data/fetchGradesData';
 import { type SearchQuery } from '~types/SearchQuery';
 
 export interface ShowCourseTabPayload {
@@ -110,13 +110,10 @@ realBrowser.runtime.onMessage.addListener(function (message) {
 });
 
 realBrowser.runtime.onMessage.addListener((message, sender, sendResponse) => {
-  if (message.type === 'fetchGrades')
-  {
+  if (message.type === 'fetchGrades') {
     fetchGradesData(message.query).then(sendResponse); // run fetchGradesData on the provided query and send the result back
-  }
-  else if (message.type === 'fetchRMP')
-  {
-    fetchRmpData(message.query).then(sendResponse) // fetch RMP data for query, send it back
+  } else if (message.type === 'fetchRMP') {
+    fetchRmpData(message.query).then(sendResponse); // fetch RMP data for query, send it back
   }
 });
 
