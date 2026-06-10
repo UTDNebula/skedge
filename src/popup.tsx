@@ -10,8 +10,7 @@ const realBrowser = process.env.PLASMO_BROWSER === 'chrome' ? chrome : browser;
 
 //Same as in src/tabs/permissions.tsx
 Sentry.init({
-  dsn:
-    process.env.PLASMO_PUBLIC_SENTRY_DSN,
+  dsn: process.env.PLASMO_PUBLIC_SENTRY_DSN,
 
   // Add optional integrations for additional features
   integrations: [
