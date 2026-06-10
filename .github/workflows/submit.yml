@@ -26,6 +26,9 @@ jobs:
 
       - name: Install packages
         run: npm ci
+      
+      - name: Set up test environment file
+        run: echo "PLASMO_PUBLIC_SENTRY_DSN=https://c7a0478d8f145e3c8f690bf523d8b9cd@o4504918397353984.ingest.us.sentry.io/4509386315071488" > .env.local
 
       - name: Build and package extension
         run: npm run build:chrome && npm run build:firefox
