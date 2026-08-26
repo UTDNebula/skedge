@@ -101,6 +101,8 @@ export async function scrapeCourseData() {
       // expand section details to load the details
       sectionDetailsButton.click();
       const sectionDetails = courseRow.querySelector('tr:nth-child(2)');
+      const sectionDetailsCell =
+        sectionDetails.querySelector<HTMLTableCellElement>('td');
       const sectionDetailsList = sectionDetails.querySelectorAll('li');
       const searchQuery: SearchQuery = {};
       let professor;
@@ -160,13 +162,15 @@ export async function scrapeCourseData() {
           newTd,
           courseRowCells.children[sectionPlace],
         );
-        //Increase Disabled Reasons row colspan if necessary
+        // Increase spanning row colspans to match the added professor column.
         const sectionDisabled = courseRow.querySelector(
           'tr:nth-child(3) > td',
         ) as HTMLTableCellElement | null;
-        if (sectionDisabled !== null) {
-          sectionDisabled.colSpan = sectionDisabled.colSpan + 1;
-        }
+        [sectionDetailsCell, sectionDisabled].forEach((cell) => {
+          if (cell !== null) {
+            cell.colSpan += 1;
+          }
+        });
       }
       newTd.innerText = professor ?? 'No Instructor';
       if (typeof professor !== 'undefined') {
