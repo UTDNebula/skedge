@@ -239,9 +239,13 @@ export async function addGCalButtons() {
   }
 
   const courseTable = await waitForElement('table');
+  if (courseTable.querySelector('[data-skedge="gcal-th"]')) {
+    return;
+  }
 
   // add Save to Google Calendar
   const newHeader = document.createElement('th');
+  newHeader.setAttribute('data-skedge', 'gcal-th');
   const line1 = document.createElement('div');
   line1.innerText = 'Save to \nGoogle Calendar';
   newHeader.append(line1);
@@ -258,6 +262,7 @@ export async function addGCalButtons() {
   const newTds = [];
   courseRows.forEach((courseRow) => {
     const newTd = document.createElement('td');
+    newTd.setAttribute('data-skedge', 'gcal-td');
     newTds.push(newTd);
     const courseRowCells = courseRow.querySelector('tr');
     courseRowCells.insertBefore(newTd, courseRowCells.children[1]);
