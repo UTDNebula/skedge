@@ -8,3 +8,4 @@ package-lock.json
 pnpm-lock.yaml
 build
 assets
+.github/pull_request_template.md
