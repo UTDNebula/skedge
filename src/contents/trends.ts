@@ -1,6 +1,7 @@
 import { Storage } from '@plasmohq/storage';
 import type { PlasmoCSConfig } from 'plasmo';
 
+
 export interface ClassData {
   query: {
     prefix: string;
@@ -16,15 +17,15 @@ export interface ClassData {
 // { query: { prefix, number, profFirst, profLast, sectionNumbers: string[] }, semester }
 
 export const config: PlasmoCSConfig = {
-  matches: ['https://trends.utdnebula.com/'],
-  world: 'MAIN',
+  matches: ['https://trends.utdnebula.com/*'],
 };
 
 const storage = new Storage();
 
 export async function fetchFromTrends() {
-  let classes = window.localStorage.getItem('planner_v2');
-  JSON.parse(classes).filter((entry: ClassData) => {
+  const classes = window.localStorage.getItem('planner_v2');
+  const parsedClasses = JSON.parse(classes);
+  const filteredClasses = parsedClasses.filter((entry: ClassData) => {
     // Only add current semester classes with a specific section
     return (
       entry.query.prefix &&
@@ -35,6 +36,12 @@ export async function fetchFromTrends() {
       entry.query.sectionNumbers.length > 0
     );
   });
-  storage.set('planner_v2_classData', classes);
-  console.log(classes);
+  storage.set('planner_v2_classData', filteredClasses);
+  console.log('Updated planner_v2_classData with new data:', filteredClasses);
 }
+
+// Listen for changes to localStorage
+window.addEventListener('planner-updated', fetchFromTrends);
+
+// When extensions load, fetch the data from Trends
+fetchFromTrends()
