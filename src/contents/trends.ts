@@ -1,7 +1,6 @@
 import { Storage } from '@plasmohq/storage';
 import type { PlasmoCSConfig } from 'plasmo';
 
-
 export interface ClassData {
   query: {
     prefix: string;
@@ -44,4 +43,4 @@ export async function fetchFromTrends() {
 window.addEventListener('planner-updated', fetchFromTrends);
 
 // When extensions load, fetch the data from Trends
-fetchFromTrends()
+fetchFromTrends();

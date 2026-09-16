@@ -1,6 +1,5 @@
 import type { PlasmoCSConfig } from 'plasmo';
 
-
 // Storage prototype is only available in the main world
 
 export const config: PlasmoCSConfig = {
