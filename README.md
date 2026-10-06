@@ -45,7 +45,7 @@ npm install
 
 If you are developing for the Chrome browser run `npm run dev:chrome` and load `build/chrome-mv3-dev` on `chrome://extensions/`
 
-If you are developing for the Firefox browser run `npm run dev:firefox` and load `build/firefox-mv3-dev` on `about:debugging`
+If you are developing for the Firefox browser run `npm run dev:firefox` and load `build/firefox-mv3-dev` on `about:debugging` (Type about:debugging into the URL bar, click This Firefox -> Load Temporary Add-on..., and select the build/firefox-mv3-dev/manifest.json file.)
 
 ### Contact
 
