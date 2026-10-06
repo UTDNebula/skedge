@@ -43,13 +43,37 @@ export async function fetchFromTrends() {
       entry.query.sectionNumbers.length > 0
     );
   });
-  storage.set('planner_v2_classData', filteredClasses);
+  await storage.set('planner_v2_classData', filteredClasses);
   console.log('Updated planner_v2_classData with new data:', filteredClasses);
   console.log('Current semester:', getCurrentSemester());
 }
 
-// Listen for changes to localStorage
-window.addEventListener('planner-updated', fetchFromTrends);
+async function fetchFromTrendsIfAutosyncEnabled() {
+  if (await storage.get<boolean>('autosync')) {
+    await fetchFromTrends();
+  }
+}
 
-// When extensions load, fetch the data from Trends
-fetchFromTrends();
+window.addEventListener('planner-updated', fetchFromTrendsIfAutosyncEnabled);
+
+window.addEventListener('message', async (event) => {
+  if (event.source !== window || event.data?.source !== 'trends') {
+    return;
+  }
+
+  if (event.data.type === 'HANDSHAKE') {
+    window.postMessage({ source: 'skedge', type: 'HANDSHAKE_RESPONSE' }, '*');
+  }
+
+  if (event.data.type === 'MANUAL_SYNC') {
+    await fetchFromTrends();
+    window.postMessage({ source: 'skedge', type: 'MANUAL_SYNC_CONFIRM' }, '*');
+  }
+
+  if (event.data.type === 'AUTOSYNC_UPDATE') {
+    await storage.set('autosync', event.data.payload);
+    window.postMessage({ source: 'skedge', type: 'AUTOSYNC_CONFIRM' }, '*');
+  }
+});
+
+fetchFromTrendsIfAutosyncEnabled();
