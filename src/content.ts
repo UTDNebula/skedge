@@ -219,6 +219,16 @@ export function listenForTableChange() {
 }
 
 export async function addGCalButtons() {
+  const injectionKey = `calendar:${window.location.href}`;
+  const documentElement = document.documentElement;
+  if (
+    documentElement.getAttribute('data-skedge-calendar-injection') ===
+    injectionKey
+  ) {
+    return;
+  }
+  documentElement.setAttribute('data-skedge-calendar-injection', injectionKey);
+
   /** Gets the first element from the DOM specified by selector */
   function waitForElement(selector: string): Promise<HTMLElement> {
     return new Promise((resolve) => {
@@ -239,9 +249,13 @@ export async function addGCalButtons() {
   }
 
   const courseTable = await waitForElement('table');
+  if (courseTable.querySelector('[data-skedge="calendar-th"]')) {
+    return;
+  }
 
   // add Save to Google Calendar
   const newHeader = document.createElement('th');
+  newHeader.setAttribute('data-skedge', 'calendar-th');
   const line1 = document.createElement('div');
   line1.innerText = 'Save to \nGoogle Calendar';
   newHeader.append(line1);
