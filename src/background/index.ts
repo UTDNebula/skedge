@@ -109,11 +109,13 @@ realBrowser.runtime.onMessage.addListener(function (message) {
   }
 });
 
-realBrowser.runtime.onMessage.addListener((message, sender, sendResponse) => {
+realBrowser.runtime.onMessage.addListener((message) => {
   if (message.type === 'fetchGrades') {
-    fetchGradesData(message.query).then(sendResponse); // run fetchGradesData on the provided query and send the result back
-  } else if (message.type === 'fetchRMP') {
-    fetchRmpData(message.query).then(sendResponse); // fetch RMP data for query, send it back
+    return fetchGradesData(message.query);
+  }
+
+  if (message.type === 'fetchRMP') {
+    return fetchRmpData(message.query);
   }
 });
 
