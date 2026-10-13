@@ -32,18 +32,34 @@ export function getCurrentSemester(): ClassData['semester'] {
 
 export async function fetchFromTrends() {
   const classes = window.localStorage.getItem('planner_v2');
-  const parsedClasses = JSON.parse(classes);
-  const filteredClasses = parsedClasses.filter((entry: ClassData) => {
+  let parsedClasses: unknown = [];
+
+  try {
+    parsedClasses = JSON.parse(classes ?? '[]');
+  } catch {
+    parsedClasses = [];
+  }
+
+  const filteredClasses = (Array.isArray(parsedClasses) ? parsedClasses : []).filter((entry) => {
     // Only add current semester classes with a specific section
     return (
+      entry &&
+      typeof entry === 'object' &&
+      'query' in entry &&
+      entry.query &&
+      typeof entry.query === 'object' &&
+      'prefix' in entry.query &&
       entry.query.prefix &&
+      'number' in entry.query &&
       entry.query.number &&
+      'semester' in entry &&
       entry.semester &&
       entry.semester === getCurrentSemester() &&
-      entry.query.sectionNumbers &&
+      'sectionNumbers' in entry.query &&
+      Array.isArray(entry.query.sectionNumbers) &&
       entry.query.sectionNumbers.length > 0
     );
-  });
+  }) as ClassData[];
   await storage.set('planner_v2_classData', filteredClasses);
   console.log('Updated planner_v2_classData with new data:', filteredClasses);
   console.log('Current semester:', getCurrentSemester());
