@@ -17,6 +17,7 @@ export interface ClassData {
 
 export const config: PlasmoCSConfig = {
   matches: ['https://trends.utdnebula.com/*'],
+  run_at: 'document_start',
 };
 
 const storage = new Storage();
