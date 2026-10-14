@@ -215,16 +215,14 @@ export async function scrapeCourseData() {
       text.style.maxWidth = '80%';
       text.style.margin = '2px 0 4px 0';
 
-      text.style.textDecoration = 'underline dotted';
-      text.style.textDecorationThickness = '2px';
-      text.style.textUnderlineOffset = '4px';
+      text.style.textDecoration = 'none';
 
       const iconSize = 10;
       const icon = container.appendChild(document.createElement('span'));
       icon.style.borderRadius = '100%';
       icon.style.backgroundColor = '#4A18FF';
       icon.style.opacity = '90%';
-      icon.style.display = 'inline-block';
+      icon.style.display = 'none';
       icon.style.width = iconSize + 'px';
       icon.style.height = iconSize + 'px';
       icon.style.marginLeft = '1em';
@@ -233,9 +231,11 @@ export async function scrapeCourseData() {
       let profAbbreviated: string = '[Overall]';
       let fullQuery = { ...searchQuery };
       let RMPText = '';
+      let GradesText = '';
+      let hasUsableData = false;
       if (typeof professor !== 'undefined') {
         // TODO: implement Alias table from Trends
-        RMPText = '\n[No RMP Data]';
+        // TODO: handle multiple instructors for a single section
         const professorSplit: string[] = professor.split(' ');
         const profLast = professorSplit[professorSplit.length - 1];
         const profFirst = professorSplit[0];
@@ -246,16 +246,23 @@ export async function scrapeCourseData() {
           // @ts-expect-error:next-line
           .sendMessage({ type: 'fetchRMP', query: profQuery })
           .then((rmpData) => {
-            RMPText = `\nRMP Average: ${rmpData.avgRating.toFixed(2)}`;
-          });
+            if (rmpData.numRatings > 0 && Number.isFinite(rmpData.avgRating)) {
+              RMPText = `\nRMP Average: ${rmpData.avgRating.toFixed(2)}`;
+              showTooltipCue();
+            }
+          })
+          .catch(() => undefined);
       }
-      let GradesText = '\n[No Grade Data]';
       realBrowser.runtime
         // @ts-expect-error:next-line
         .sendMessage({ type: 'fetchGrades', query: fullQuery })
         .then((gradesData) => {
-          GradesText = `\nMedian GPA: ${gradesData.gpa.toFixed(2)}`;
-        });
+          if (gradesData.total > 0 && gradesData.gpa >= 0) {
+            GradesText = `\nMedian GPA: ${gradesData.gpa.toFixed(2)}`;
+            showTooltipCue();
+          }
+        })
+        .catch(() => undefined);
 
       function repositionTooltip() {
         // move to icon location -- arrow on right side pointing up to icon
@@ -266,8 +273,28 @@ export async function scrapeCourseData() {
         tooltip.style.left =
           rect.left - arrowLocation * width + iconSize * 0.5 + 'px';
       }
+
+      function hideTooltipCue() {
+        icon.style.display = 'none';
+        text.style.textDecoration = 'none';
+        tooltip.style.opacity = '0';
+      }
+
+      function showTooltipCue() {
+        hasUsableData = true;
+        icon.style.display = 'inline-block';
+        text.style.textDecoration = 'underline dotted';
+        text.style.textDecorationThickness = '2px';
+        text.style.textUnderlineOffset = '4px';
+      }
+
       const el = container;
       el.addEventListener('mouseenter', () => {
+        if (!hasUsableData) {
+          hideTooltipCue();
+          return;
+        }
+
         // show
         tooltip.style.opacity = '90%';
 
