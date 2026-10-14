@@ -3,7 +3,7 @@ import {
   addGCalButtons,
   listenForTableChange,
   scrapeCourseData,
-} from '~content';
+} from '~contents/galaxy';
 import { neededOrigins } from '~data/config';
 import { type SearchQuery } from '~types/SearchQuery';
 
