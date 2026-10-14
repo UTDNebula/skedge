@@ -215,14 +215,14 @@ export async function scrapeCourseData() {
       text.style.maxWidth = '80%';
       text.style.margin = '2px 0 4px 0';
 
-      text.style.textDecoration = 'underline dotted';
-      text.style.textDecorationThickness = '2px';
-      text.style.textUnderlineOffset = '4px';
+      text.style.textDecoration = 'none';
 
       const iconSize = 10;
       const icon = container.appendChild(document.createElement('span'));
       icon.style.borderRadius = '100%';
-      icon.style.backgroundColor = '#4A18FF';
+      icon.style.backgroundColor = 'transparent';
+      icon.style.border = '2px solid #4A18FF';
+      icon.style.boxSizing = 'border-box';
       icon.style.opacity = '90%';
       icon.style.display = 'inline-block';
       icon.style.width = iconSize + 'px';
@@ -230,48 +230,119 @@ export async function scrapeCourseData() {
       icon.style.marginLeft = '1em';
       icon.style.flexShrink = '0';
 
-      let profAbbreviated: string = '[Overall]';
-      let fullQuery = { ...searchQuery };
-      let RMPText = '';
-      let GradesText = '';
-      let hasUsableData = false;
-      let pendingRequests = typeof professor === 'undefined' ? 1 : 2;
-      if (typeof professor !== 'undefined') {
-        // TODO: implement Alias table from Trends
-        // TODO: handle multiple instructors for a single section
-        const professorSplit: string[] = professor.split(' ');
-        const profLast = professorSplit[professorSplit.length - 1];
-        const profFirst = professorSplit[0];
-        const profQuery = { profFirst: profFirst, profLast: profLast };
-        fullQuery = { ...fullQuery, ...profQuery };
-        profAbbreviated = `${profFirst.charAt(0)}. ${profLast}`;
+      const professorLookups =
+        typeof professor === 'undefined'
+          ? []
+          : professor
+              .split(',')
+              .map((sectionProfessor) => {
+                const nameParts = sectionProfessor.trim().split(/\s+/);
+                const profFirst = nameParts[0];
+                const profLast = nameParts[nameParts.length - 1];
+
+                return {
+                  profFirst,
+                  profLast,
+                  abbreviated: `${profFirst.charAt(0)}. ${profLast}`,
+                };
+              })
+              .filter(({ profFirst, profLast }) => profFirst && profLast); // only keep professors with both first and last names
+      type TooltipData = {
+        abbreviated: string;
+        gradesText: string;
+        rmpText: string;
+        hasUsableData: boolean;
+      };
+      const instructorData: TooltipData[] = professorLookups.map(
+        ({ abbreviated }) => ({
+          abbreviated,
+          gradesText: '',
+          rmpText: '',
+          hasUsableData: false,
+        }),
+      );
+      const overallData: TooltipData = {
+        abbreviated: '[Overall]',
+        gradesText: '',
+        rmpText: '',
+        hasUsableData: false,
+      };
+      const tooltipData =
+        instructorData.length > 0 ? instructorData : [overallData];
+      let pendingRequests =
+        instructorData.length > 0 ? instructorData.length * 2 : 1;
+
+      function showOpenCircleNoUnderline() {
+        text.style.textDecoration = 'none';
+        icon.style.display = 'inline-block';
+        icon.style.backgroundColor = 'transparent';
+        icon.style.border = '2px solid #4A18FF';
+        icon.style.boxSizing = 'border-box';
+      }
+
+      function showFilledCircleWithUnderline() {
+        text.style.textDecoration = 'underline dotted';
+        text.style.textDecorationThickness = '2px';
+        text.style.textUnderlineOffset = '4px';
+        icon.style.backgroundColor = '#4A18FF';
+        icon.style.border = 'none';
+        icon.style.boxSizing = 'content-box';
+      }
+
+      function finishDataRequest() {
+        pendingRequests--;
+        if (pendingRequests === 0) {
+          const usableData = tooltipData.filter((data) => data.hasUsableData);
+          if (usableData.length === 1) {
+            showFilledCircleWithUnderline();
+          } else {
+            showOpenCircleNoUnderline();
+          }
+        }
+      }
+
+      function requestRmpData(data: TooltipData, profQuery: SearchQuery) {
         realBrowser.runtime
           // @ts-expect-error:next-line
           .sendMessage({ type: 'fetchRMP', query: profQuery })
           .then((rmpData) => {
             if (rmpData.numRatings > 0 && Number.isFinite(rmpData.avgRating)) {
-              RMPText = `\nRMP Average: ${rmpData.avgRating.toFixed(2)}`;
-              hasUsableData = true;
+              data.rmpText = `\nRMP Average: ${rmpData.avgRating.toFixed(2)}`;
+              data.hasUsableData = true;
             }
           })
           .catch(() => undefined)
           .finally(() => {
-            pendingRequests--;
+            finishDataRequest();
           });
       }
-      realBrowser.runtime
-        // @ts-expect-error:next-line
-        .sendMessage({ type: 'fetchGrades', query: fullQuery })
-        .then((gradesData) => {
-          if (gradesData.total > 0 && gradesData.gpa >= 0) {
-            GradesText = `\nMedian GPA: ${gradesData.gpa.toFixed(2)}`;
-            hasUsableData = true;
-          }
-        })
-        .catch(() => undefined)
-        .finally(() => {
-          pendingRequests--;
+
+      function requestGradeData(data: TooltipData, gradeQuery: SearchQuery) {
+        realBrowser.runtime
+          // @ts-expect-error:next-line
+          .sendMessage({ type: 'fetchGrades', query: gradeQuery })
+          .then((gradesData) => {
+            if (gradesData.total > 0 && gradesData.gpa >= 0) {
+              data.gradesText = `\nMedian GPA: ${gradesData.gpa.toFixed(2)}`;
+              data.hasUsableData = true;
+            }
+          })
+          .catch(() => undefined)
+          .finally(() => {
+            finishDataRequest();
+          });
+      }
+
+      if (instructorData.length > 0) {
+        professorLookups.forEach(({ profFirst, profLast }, index) => {
+          const profQuery = { profFirst, profLast };
+          const data = instructorData[index];
+          requestRmpData(data, profQuery);
+          requestGradeData(data, { ...searchQuery, ...profQuery });
         });
+      } else {
+        requestGradeData(overallData, searchQuery);
+      }
 
       function repositionTooltip() {
         // move to icon location -- arrow on right side pointing up to icon
@@ -285,7 +356,8 @@ export async function scrapeCourseData() {
 
       const el = container;
       el.addEventListener('mouseenter', () => {
-        if (!hasUsableData && pendingRequests > 0) {
+        if (pendingRequests > 0) {
+          // don't show tooltip until we've fetched all data to show
           tooltip.style.opacity = '0';
           return;
         }
@@ -293,11 +365,15 @@ export async function scrapeCourseData() {
         // show
         tooltip.style.opacity = '90%';
 
-        const content = hasUsableData
-          ? `${searchQuery.prefix.toUpperCase()} ${searchQuery.number} - ${profAbbreviated}` +
-            GradesText +
-            RMPText
-          : '[No Skedge data available for this section]';
+        const usableData = tooltipData.filter((data) => data.hasUsableData);
+        const content =
+          usableData.length === 1 // we can show an unambiguous tooltip if we have data for exactly one instructor
+            ? `${searchQuery.prefix.toUpperCase()} ${searchQuery.number} - ${usableData[0].abbreviated}` +
+              usableData[0].gradesText +
+              usableData[0].rmpText
+            : usableData.length > 1 // display disclaimers for 0 or multiple instructors with usable data
+              ? 'Skedge found data for multiple instructors. Open the Skedge popup or visit the Trends website.'
+              : 'No Skedge data is available for this section. Open the Skedge popup or visit the Trends website.';
         tooltipContent.textContent = content;
 
         repositionTooltip();
@@ -312,15 +388,12 @@ export async function scrapeCourseData() {
         tooltip.style.opacity = '0';
       });
 
-      if (typeof professor !== 'undefined') {
-        // this is in case we have multiple instructions per section
-        const sectionProfessors = professor.trim().split(',');
-        sectionProfessors.forEach((sectionProfessor) => {
-          const splitProf = sectionProfessor.trim().split(' ');
+      if (professorLookups.length > 0) {
+        professorLookups.forEach(({ profFirst, profLast }) => {
           professors.push({
             ...searchQuery,
-            profFirst: splitProf[0],
-            profLast: splitProf[splitProf.length - 1],
+            profFirst,
+            profLast,
           });
         });
       }
