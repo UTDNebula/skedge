@@ -215,14 +215,16 @@ export async function scrapeCourseData() {
       text.style.maxWidth = '80%';
       text.style.margin = '2px 0 4px 0';
 
-      text.style.textDecoration = 'none';
+      text.style.textDecoration = 'underline dotted';
+      text.style.textDecorationThickness = '2px';
+      text.style.textUnderlineOffset = '4px';
 
       const iconSize = 10;
       const icon = container.appendChild(document.createElement('span'));
       icon.style.borderRadius = '100%';
       icon.style.backgroundColor = '#4A18FF';
       icon.style.opacity = '90%';
-      icon.style.display = 'none';
+      icon.style.display = 'inline-block';
       icon.style.width = iconSize + 'px';
       icon.style.height = iconSize + 'px';
       icon.style.marginLeft = '1em';
@@ -233,6 +235,7 @@ export async function scrapeCourseData() {
       let RMPText = '';
       let GradesText = '';
       let hasUsableData = false;
+      let pendingRequests = typeof professor === 'undefined' ? 1 : 2;
       if (typeof professor !== 'undefined') {
         // TODO: implement Alias table from Trends
         // TODO: handle multiple instructors for a single section
@@ -248,10 +251,13 @@ export async function scrapeCourseData() {
           .then((rmpData) => {
             if (rmpData.numRatings > 0 && Number.isFinite(rmpData.avgRating)) {
               RMPText = `\nRMP Average: ${rmpData.avgRating.toFixed(2)}`;
-              showTooltipCue();
+              hasUsableData = true;
             }
           })
-          .catch(() => undefined);
+          .catch(() => undefined)
+          .finally(() => {
+            pendingRequests--;
+          });
       }
       realBrowser.runtime
         // @ts-expect-error:next-line
@@ -259,10 +265,13 @@ export async function scrapeCourseData() {
         .then((gradesData) => {
           if (gradesData.total > 0 && gradesData.gpa >= 0) {
             GradesText = `\nMedian GPA: ${gradesData.gpa.toFixed(2)}`;
-            showTooltipCue();
+            hasUsableData = true;
           }
         })
-        .catch(() => undefined);
+        .catch(() => undefined)
+        .finally(() => {
+          pendingRequests--;
+        });
 
       function repositionTooltip() {
         // move to icon location -- arrow on right side pointing up to icon
@@ -274,34 +283,21 @@ export async function scrapeCourseData() {
           rect.left - arrowLocation * width + iconSize * 0.5 + 'px';
       }
 
-      function hideTooltipCue() {
-        icon.style.display = 'none';
-        text.style.textDecoration = 'none';
-        tooltip.style.opacity = '0';
-      }
-
-      function showTooltipCue() {
-        hasUsableData = true;
-        icon.style.display = 'inline-block';
-        text.style.textDecoration = 'underline dotted';
-        text.style.textDecorationThickness = '2px';
-        text.style.textUnderlineOffset = '4px';
-      }
-
       const el = container;
       el.addEventListener('mouseenter', () => {
-        if (!hasUsableData) {
-          hideTooltipCue();
+        if (!hasUsableData && pendingRequests > 0) {
+          tooltip.style.opacity = '0';
           return;
         }
 
         // show
         tooltip.style.opacity = '90%';
 
-        const content =
-          `${searchQuery.prefix.toUpperCase()} ${searchQuery.number} - ${profAbbreviated}` +
-          GradesText +
-          RMPText;
+        const content = hasUsableData
+          ? `${searchQuery.prefix.toUpperCase()} ${searchQuery.number} - ${profAbbreviated}` +
+            GradesText +
+            RMPText
+          : '[No Skedge data available for this section]';
         tooltipContent.textContent = content;
 
         repositionTooltip();
