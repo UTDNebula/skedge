@@ -16,6 +16,7 @@ export const config: PlasmoCSConfig = {
  * - It scrapes the page for course data
  * - It scrapes the names of instructors
  * - It injects the instructor names into the section table
+ * - It populates the tooltips with  grade data for the course/instructor combos.
  */
 export async function scrapeCourseData() {
   const [header, professors] = await Promise.all([
@@ -57,6 +58,9 @@ export async function scrapeCourseData() {
 
   /** Gets all professor names and then injects them into the section table */
   async function injectAndGetProfessorNames(): Promise<SearchQuery[]> {
+    const realBrowser =
+      process.env.PLASMO_BROWSER === 'chrome' ? chrome : browser;
+
     const professors: SearchQuery[] = [];
     const courseTable = await waitForElement('table');
     const courseRows = courseTable.querySelectorAll('tbody');
@@ -93,6 +97,40 @@ export async function scrapeCourseData() {
       newHeader.append(line2);
       tableHeaders.insertBefore(newHeader, tableHeaders.children[sectionPlace]);
     }
+
+    // create tooltip element
+    const tooltip = document.createElement('div');
+    const tooltipContent = document.createElement('div');
+    const arrow = document.createElement('div');
+    tooltip.appendChild(arrow);
+    tooltip.appendChild(tooltipContent);
+    courseTable.appendChild(tooltip);
+    tooltip.style.position = 'fixed';
+    tooltip.style.zIndex = '999999';
+    tooltip.style.background = '#4A18FF';
+    tooltip.style.color = 'white';
+    tooltip.style.padding = '6px 8px';
+    tooltip.style.borderRadius = '6px';
+    tooltip.style.fontSize = '12px';
+    tooltip.style.pointerEvents = 'none';
+    tooltip.style.opacity = '0';
+    tooltip.style.transition = 'opacity 0.12s ease';
+    tooltip.style.maxWidth = '250px';
+    tooltip.style.whiteSpace = 'pre-wrap';
+
+    const arrowSize = 8;
+    const arrowLocation = 0.9;
+    arrow.style.position = 'absolute';
+    arrow.style.top = '-' + arrowSize + 'px';
+    arrow.style.left = arrowLocation * 100 + '%';
+    arrow.style.transform = 'translateX(-50%)';
+
+    arrow.style.width = '0';
+    arrow.style.height = '0';
+
+    arrow.style.borderLeft = '6px solid transparent';
+    arrow.style.borderRight = '6px solid transparent';
+    arrow.style.borderBottom = arrowSize + 'px solid #4A18FF';
 
     courseRows.forEach((courseRow) => {
       // get professor name from course row
@@ -168,16 +206,194 @@ export async function scrapeCourseData() {
           sectionDisabled.colSpan = sectionDisabled.colSpan + 1;
         }
       }
-      newTd.innerText = professor ?? 'No Instructor';
-      if (typeof professor !== 'undefined') {
-        // this is in case we have multiple instructions per section
-        const sectionProfessors = professor.trim().split(',');
-        sectionProfessors.forEach((sectionProfessor) => {
-          const splitProf = sectionProfessor.trim().split(' ');
+      const container = newTd.appendChild(document.createElement('div'));
+      container.style.alignItems = 'center';
+      container.style.display = 'flex';
+      container.style.justifyContent = 'center';
+      const text = container.appendChild(document.createElement('span'));
+      text.innerText = professor ?? 'No Instructor';
+      text.style.maxWidth = '80%';
+      text.style.margin = '2px 0 4px 0';
+
+      text.style.textDecoration = 'none';
+
+      const iconSize = 10;
+      const icon = container.appendChild(document.createElement('span'));
+      icon.style.borderRadius = '100%';
+      icon.style.backgroundColor = 'transparent';
+      icon.style.border = '2px solid #4A18FF';
+      icon.style.boxSizing = 'border-box';
+      icon.style.opacity = '90%';
+      icon.style.display = 'inline-block';
+      icon.style.width = iconSize + 'px';
+      icon.style.height = iconSize + 'px';
+      icon.style.marginLeft = '1em';
+      icon.style.flexShrink = '0';
+
+      const professorLookups =
+        typeof professor === 'undefined'
+          ? []
+          : professor
+              .split(',')
+              .map((sectionProfessor) => {
+                const nameParts = sectionProfessor.trim().split(/\s+/);
+                const profFirst = nameParts[0];
+                const profLast = nameParts[nameParts.length - 1];
+
+                return {
+                  profFirst,
+                  profLast,
+                  abbreviated: `${profFirst.charAt(0)}. ${profLast}`,
+                };
+              })
+              .filter(({ profFirst, profLast }) => profFirst && profLast); // only keep professors with both first and last names
+      type TooltipData = {
+        abbreviated: string;
+        gradesText: string;
+        rmpText: string;
+        hasUsableData: boolean;
+      };
+      const instructorData: TooltipData[] = professorLookups.map(
+        ({ abbreviated }) => ({
+          abbreviated,
+          gradesText: '',
+          rmpText: '',
+          hasUsableData: false,
+        }),
+      );
+      const overallData: TooltipData = {
+        abbreviated: '[Overall]',
+        gradesText: '',
+        rmpText: '',
+        hasUsableData: false,
+      };
+      const tooltipData =
+        instructorData.length > 0 ? instructorData : [overallData];
+      let pendingRequests =
+        instructorData.length > 0 ? instructorData.length * 2 : 1;
+
+      function showOpenCircleNoUnderline() {
+        text.style.textDecoration = 'none';
+        icon.style.display = 'inline-block';
+        icon.style.backgroundColor = 'transparent';
+        icon.style.border = '2px solid #4A18FF';
+        icon.style.boxSizing = 'border-box';
+      }
+
+      function showFilledCircleWithUnderline() {
+        text.style.textDecoration = 'underline dotted';
+        text.style.textDecorationThickness = '2px';
+        text.style.textUnderlineOffset = '4px';
+        icon.style.backgroundColor = '#4A18FF';
+        icon.style.border = 'none';
+        icon.style.boxSizing = 'content-box';
+      }
+
+      function finishDataRequest() {
+        pendingRequests--;
+        if (pendingRequests === 0) {
+          const usableData = tooltipData.filter((data) => data.hasUsableData);
+          if (usableData.length === 1) {
+            showFilledCircleWithUnderline();
+          } else {
+            showOpenCircleNoUnderline();
+          }
+        }
+      }
+
+      function requestRmpData(data: TooltipData, profQuery: SearchQuery) {
+        realBrowser.runtime
+          // @ts-expect-error:next-line
+          .sendMessage({ type: 'fetchRMP', query: profQuery })
+          .then((rmpData) => {
+            if (rmpData.numRatings > 0 && Number.isFinite(rmpData.avgRating)) {
+              data.rmpText = `\nRMP Average: ${rmpData.avgRating.toFixed(2)}`;
+              data.hasUsableData = true;
+            }
+          })
+          .catch(() => undefined)
+          .finally(() => {
+            finishDataRequest();
+          });
+      }
+
+      function requestGradeData(data: TooltipData, gradeQuery: SearchQuery) {
+        realBrowser.runtime
+          // @ts-expect-error:next-line
+          .sendMessage({ type: 'fetchGrades', query: gradeQuery })
+          .then((gradesData) => {
+            if (gradesData.total > 0 && gradesData.gpa >= 0) {
+              data.gradesText = `\nMedian GPA: ${gradesData.gpa.toFixed(2)}`;
+              data.hasUsableData = true;
+            }
+          })
+          .catch(() => undefined)
+          .finally(() => {
+            finishDataRequest();
+          });
+      }
+
+      if (instructorData.length > 0) {
+        professorLookups.forEach(({ profFirst, profLast }, index) => {
+          const profQuery = { profFirst, profLast };
+          const data = instructorData[index];
+          requestRmpData(data, profQuery);
+          requestGradeData(data, { ...searchQuery, ...profQuery });
+        });
+      } else {
+        requestGradeData(overallData, searchQuery);
+      }
+
+      function repositionTooltip() {
+        // move to icon location -- arrow on right side pointing up to icon
+        const rect = icon.getBoundingClientRect();
+        const width = tooltip.getBoundingClientRect().width;
+
+        tooltip.style.top = rect.bottom + 8 + 'px';
+        tooltip.style.left =
+          rect.left - arrowLocation * width + iconSize * 0.5 + 'px';
+      }
+
+      const el = container;
+      el.addEventListener('mouseenter', () => {
+        if (pendingRequests > 0) {
+          // don't show tooltip until we've fetched all data to show
+          tooltip.style.opacity = '0';
+          return;
+        }
+
+        // show
+        tooltip.style.opacity = '90%';
+
+        const usableData = tooltipData.filter((data) => data.hasUsableData);
+        const content =
+          usableData.length === 1 // we can show an unambiguous tooltip if we have data for exactly one instructor
+            ? `${searchQuery.prefix.toUpperCase()} ${searchQuery.number} - ${usableData[0].abbreviated}` +
+              usableData[0].gradesText +
+              usableData[0].rmpText
+            : usableData.length > 1 // display disclaimers for 0 or multiple instructors with usable data
+              ? 'Skedge found data for multiple instructors. Open the Skedge popup or visit the Trends website.'
+              : 'No Skedge data is available for this section. Open the Skedge popup or visit the Trends website.';
+        tooltipContent.textContent = content;
+
+        repositionTooltip();
+      });
+
+      el.addEventListener('mouseleave', () => {
+        tooltip.style.opacity = '0';
+      });
+
+      // hide tooltip on window scroll to avoid weird positioning
+      window.addEventListener('scroll', () => {
+        tooltip.style.opacity = '0';
+      });
+
+      if (professorLookups.length > 0) {
+        professorLookups.forEach(({ profFirst, profLast }) => {
           professors.push({
             ...searchQuery,
-            profFirst: splitProf[0],
-            profLast: splitProf[splitProf.length - 1],
+            profFirst,
+            profLast,
           });
         });
       }
