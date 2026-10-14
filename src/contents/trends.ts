@@ -40,7 +40,9 @@ export async function fetchFromTrends() {
     parsedClasses = [];
   }
 
-  const filteredClasses = (Array.isArray(parsedClasses) ? parsedClasses : []).filter((entry) => {
+  const filteredClasses = (
+    Array.isArray(parsedClasses) ? parsedClasses : []
+  ).filter((entry) => {
     // Only add current semester classes with a specific section
     return (
       entry &&
