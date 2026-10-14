@@ -40,30 +40,8 @@ export async function fetchFromTrends() {
     parsedClasses = [];
   }
 
-  const filteredClasses = (
-    Array.isArray(parsedClasses) ? parsedClasses : []
-  ).filter((entry) => {
-    // Only add current semester classes with a specific section
-    return (
-      entry &&
-      typeof entry === 'object' &&
-      'query' in entry &&
-      entry.query &&
-      typeof entry.query === 'object' &&
-      'prefix' in entry.query &&
-      entry.query.prefix &&
-      'number' in entry.query &&
-      entry.query.number &&
-      'semester' in entry &&
-      entry.semester &&
-      entry.semester === getCurrentSemester() &&
-      'sectionNumbers' in entry.query &&
-      Array.isArray(entry.query.sectionNumbers) &&
-      entry.query.sectionNumbers.length > 0
-    );
-  }) as ClassData[];
-  await storage.set('planner_v2_classData', filteredClasses);
-  console.log('Updated planner_v2_classData with new data:', filteredClasses);
+  await storage.set('planner_v2_classData', parsedClasses);
+  console.log('Updated planner_v2_classData with new data:', parsedClasses);
   console.log('Current semester:', getCurrentSemester());
 }
 
