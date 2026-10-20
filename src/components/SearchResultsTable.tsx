@@ -82,7 +82,7 @@ function Row({
         }} // opens/closes the card by clicking anywhere on the row
         className="cursor-pointer"
       >
-        <TableCell className="border-b-0 pb-0" colSpan={6}>
+        <TableCell className="border-b-0 pb-0" colSpan={7}>
           <Tooltip
             title={
               typeof course.profFirst !== 'undefined' &&
